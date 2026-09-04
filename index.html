@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineVerse</title>
+    <title>CineVerse - Discover Movies & TV</title>
     <style>
-        /* --- CSS VARIABLES & RESET --- */
         :root {
             --bg-primary: #0b0c10;
             --bg-secondary: #1f2833;
             --bg-card: #1a1d29;
+            --bg-modal: #12141d;
             --text-primary: #ffffff;
             --text-secondary: #a0a0a0;
             --accent: #66fcf1; 
@@ -18,43 +18,49 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        
-        body { 
-            background-color: var(--bg-primary); 
-            color: var(--text-primary); 
-            min-height: 100vh; 
-        }
+        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
 
         /* --- NAVIGATION --- */
         .navbar {
             position: sticky; top: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 1rem 2rem;
-            background: rgba(11, 12, 16, 0.85);
+            padding: 1rem 2rem; gap: 1.5rem;
+            background: rgba(11, 12, 16, 0.9);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .logo {
-            font-size: 1.6rem; font-weight: 800; letter-spacing: -1px;
-            text-decoration: none;
+            font-size: 1.6rem; font-weight: 800; letter-spacing: -1px; text-decoration: none;
             background: linear-gradient(90deg, var(--accent), #ffffff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            flex-shrink: 0;
         }
-
         .nav-links { display: flex; gap: 1.5rem; }
-        
         .nav-links a {
             color: var(--text-secondary); text-decoration: none; font-weight: 500;
             padding: 0.5rem 0; position: relative; transition: var(--transition);
         }
-        
         .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
-        
         .nav-links a.active::after {
             content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px;
             background: var(--accent); border-radius: 2px;
+        }
+
+        /* --- SEARCH BAR --- */
+        .search-container {
+            display: flex; align-items: center; background: var(--bg-secondary);
+            border-radius: 50px; padding: 0.4rem 1rem; border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition); flex: 1; max-width: 300px;
+        }
+        .search-container:focus-within { border-color: var(--accent); box-shadow: 0 0 10px rgba(102, 252, 241, 0.2); }
+        .search-container input {
+            background: transparent; border: none; outline: none; color: var(--text-primary);
+            width: 100%; font-size: 0.9rem;
+        }
+        .search-container input::placeholder { color: var(--text-secondary); }
+        .search-btn {
+            background: transparent; border: none; color: var(--text-secondary); cursor: pointer;
+            font-size: 1.1rem; display: flex; align-items: center;
         }
 
         .btn-pick {
@@ -62,86 +68,114 @@
             color: var(--bg-primary); border: none; padding: 0.6rem 1.4rem;
             border-radius: 50px; font-weight: 700; cursor: pointer;
             transition: var(--transition); box-shadow: 0 4px 15px rgba(102, 252, 241, 0.2);
-            font-size: 0.9rem;
+            font-size: 0.9rem; flex-shrink: 0;
         }
+        .btn-pick:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 252, 241, 0.4); }
 
-        .btn-pick:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(102, 252, 241, 0.4); 
-        }
-
-        /* --- MAIN CONTENT GRID --- */
+        /* --- MAIN CONTENT --- */
         .main-content { padding: 2rem; max-width: 1400px; margin: 0 auto; }
-        
         .grid {
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.5rem; 
-            transition: opacity 0.4s ease;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem; transition: opacity 0.4s ease;
         }
-
-        /* --- MEDIA CARDS --- */
         .card {
             background: var(--bg-card); border-radius: 12px; overflow: hidden;
             transition: var(--transition); cursor: pointer; position: relative;
             border: 1px solid rgba(255,255,255,0.03);
         }
-
-        .card:hover { 
-            transform: translateY(-8px) scale(1.03); 
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); 
-            z-index: 10; 
-            border-color: rgba(102, 252, 241, 0.3);
-        }
-        
+        .card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); z-index: 10; border-color: rgba(102, 252, 241, 0.3); }
         .card-img {
             width: 100%; height: 270px; background: var(--bg-secondary);
             background-size: cover; background-position: center;
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.3); font-size: 0.9rem; text-align: center; padding: 1rem;
         }
-
         .card-info { padding: 1rem; }
-        
-        .card-title {
-            font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .card-meta {
-            font-size: 0.8rem; color: var(--text-secondary);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .rating { color: #f5c518; font-weight: bold; display: flex; align-items: center; gap: 3px; }
+        .card-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-meta { font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between; }
+        .rating { color: #f5c518; font-weight: bold; }
 
         /* --- LOADER --- */
-        .loader-container {
-            display: none; flex-direction: column; align-items: center;
-            justify-content: center; padding: 3rem; gap: 1rem;
-        }
+        .loader-container { display: none; flex-direction: column; align-items: center; padding: 3rem; gap: 1rem; }
         .loader-container.active { display: flex; }
-        
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid rgba(102, 252, 241, 0.2);
-            border-top: 4px solid var(--accent); border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(102, 252, 241, 0.2); border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .loader-text {
-            color: var(--text-secondary); font-size: 0.95rem;
-            animation: pulse 1.5s ease-in-out infinite;
+
+        /* --- DETAIL MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            z-index: 1000; display: none; justify-content: center; align-items: flex-start;
+            overflow-y: auto; padding: 2rem;
         }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--bg-modal); width: 100%; max-width: 1000px;
+            border-radius: 16px; overflow: hidden; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-close {
+            position: absolute; top: 1rem; right: 1rem; z-index: 10;
+            background: rgba(0,0,0,0.6); border: none; color: white; width: 40px; height: 40px;
+            border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .modal-close:hover { background: var(--danger, #e50914); transform: rotate(90deg); }
+
+        .modal-hero {
+            height: 350px; background-size: cover; background-position: center;
+            position: relative; display: flex; align-items: flex-end; padding: 2rem;
+            background: linear-gradient(to top, var(--bg-modal) 10%, transparent 100%), var(--bg-secondary);
+        }
+        .modal-logo { max-width: 300px; max-height: 150px; object-fit: contain; margin-bottom: 1rem; }
+        .modal-title { font-size: 2.5rem; font-weight: 800; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        
+        .modal-body { padding: 2rem; }
+        .modal-meta { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 0.95rem; flex-wrap: wrap;}
+        .modal-meta span { display: flex; align-items: center; gap: 0.4rem; }
+        .modal-overview { line-height: 1.6; color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.05rem; }
+
+        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent); }
+
+        /* Cast & Providers */
+        .cast-list, .provider-list { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2rem; }
+        .cast-item { flex: 0 0 100px; text-align: center; }
+        .cast-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: var(--bg-secondary); margin-bottom: 0.5rem; }
+        .cast-name { font-size: 0.8rem; font-weight: 600; }
+        .cast-char { font-size: 0.7rem; color: var(--text-secondary); }
+        
+        .provider-item { flex: 0 0 auto; background: var(--bg-card); padding: 0.8rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; }
+        .provider-logo { height: 30px; width: auto; border-radius: 4px; }
+
+        /* TV Show Specifics */
+        .season-selector {
+            background: var(--bg-card); color: white; border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.6rem 1rem; border-radius: 8px; font-size: 1rem; margin-bottom: 1.5rem; cursor: pointer;
+        }
+        .episode-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .episode-card { display: flex; gap: 1rem; background: var(--bg-card); padding: 1rem; border-radius: 10px; transition: var(--transition); }
+        .episode-card:hover { background: #252938; }
+        .episode-thumb { width: 140px; height: 80px; border-radius: 6px; object-fit: cover; background: var(--bg-secondary); flex-shrink: 0; }
+        .episode-info { display: flex; flex-direction: column; justify-content: center; }
+        .episode-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .episode-date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .episode-overview { font-size: 0.8rem; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .navbar { flex-wrap: wrap; gap: 1rem; padding: 1rem; }
-            .nav-links { order: 3; width: 100%; justify-content: space-around; }
+            .navbar { flex-wrap: wrap; padding: 1rem; gap: 1rem; }
+            .search-container { order: 3; width: 100%; max-width: 100%; }
+            .nav-links { order: 2; gap: 1rem; }
+            .btn-pick { order: 1; padding: 0.5rem 1rem; font-size: 0.8rem; }
             .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; }
             .card-img { height: 200px; }
-            .btn-pick { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .modal-overlay { padding: 0; }
+            .modal-content { border-radius: 0; }
+            .modal-hero { height: 250px; padding: 1rem; }
+            .modal-title { font-size: 1.5rem; }
+            .episode-card { flex-direction: column; }
+            .episode-thumb { width: 100%; height: 150px; }
         }
     </style>
 </head>
@@ -149,157 +183,330 @@
 
     <!-- Navigation -->
     <nav class="navbar">
-        <a href="#all" class="logo">CineVerse</a>
+        <a href="#" class="logo" onclick="resetToTrending()">CineVerse</a>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search movies, TV shows...">
+            <button class="search-btn" onclick="performSearch()">🔍</button>
+        </div>
+
         <div class="nav-links">
             <a href="#all" class="active" data-filter="all">All</a>
             <a href="#movie" data-filter="movie">Movies</a>
             <a href="#tv" data-filter="tv">TV Shows</a>
         </div>
+        
         <button class="btn-pick" id="pickForMeBtn">✨ Pick for me</button>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content">
         <div class="grid" id="contentGrid"></div>
-        
-        <!-- Loading State -->
         <div class="loader-container" id="loader">
             <div class="spinner"></div>
-            <p class="loader-text">Loading more content...</p>
+            <p style="color: var(--text-secondary);">Loading more content...</p>
         </div>
     </main>
 
-    <script>
-        // ==========================================
-        // 🔑 YOUR TMDB API KEY
-        // ==========================================
-        const API_KEY = '9c95420163879f1c4726c540b305cbc6'; 
-        // ==========================================
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-hero" id="modalHero">
+                <div>
+                    <img src="" alt="Logo" class="modal-logo" id="modalLogo" style="display:none;">
+                    <h1 class="modal-title" id="modalTitle"></h1>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta" id="modalMeta"></div>
+                <p class="modal-overview" id="modalOverview"></p>
 
+                <h3 class="section-title">Where to Watch</h3>
+                <div class="provider-list" id="providerList"></div>
+
+                <h3 class="section-title">Cast</h3>
+                <div class="cast-list" id="castList"></div>
+
+                <!-- TV Show Specific Sections -->
+                <div id="tvSections" style="display:none;">
+                    <h3 class="section-title">Episodes</h3>
+                    <select class="season-selector" id="seasonSelector" onchange="loadSeasonEpisodes()"></select>
+                    <div class="episode-list" id="episodeList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = '9c95420163879f1c4726c540b305cbc6'; 
         const BASE_URL = 'https://api.themoviedb.org/3';
-        const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+        const IMG_BASE = 'https://image.tmdb.org/t/p/';
         
         const grid = document.getElementById('contentGrid');
         const loader = document.getElementById('loader');
         const navLinks = document.querySelectorAll('.nav-links a');
         const pickBtn = document.getElementById('pickForMeBtn');
+        const searchInput = document.getElementById('searchInput');
+        const modal = document.getElementById('detailModal');
 
-        let currentData = []; 
+        let currentData = [];
+        let currentTvId = null;
 
-        // --- FETCH DATA FROM TMDB ---
-        async function fetchContent(type) {
-            let endpoint = '';
-            if (type === 'movie') endpoint = '/trending/movie/week';
-            else if (type === 'tv') endpoint = '/trending/tv/week';
-            else endpoint = '/trending/all/week';
-
-            const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}`;
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                return data.results;
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                return null;
-            }
+        // --- FORMAT DATE ---
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
         }
 
-        // --- RENDER CARDS ---
+        // --- FETCH CONTENT (GRID) ---
+        async function fetchContent(type, query = '') {
+            let url = '';
+            if (query) {
+                url = `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
+            } else {
+                let endpoint = type === 'movie' ? '/trending/movie/week' : type === 'tv' ? '/trending/tv/week' : '/trending/all/week';
+                url = `${BASE_URL}${endpoint}?api_key=${API_KEY}`;
+            }
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                return data.results.filter(item => item.media_type !== 'person'); // Filter out people from multi-search
+            } catch (e) { return null; }
+        }
+
+        // --- RENDER GRID ---
         function renderCards(data) {
             grid.innerHTML = '';
-            currentData = data; 
-            
+            currentData = data;
             if (!data || data.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:var(--text-secondary);">No content found.</p>';
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary);">No results found.</p>';
                 return;
             }
 
             data.forEach(item => {
-                const title = item.title || item.name || 'Unknown Title';
-                const year = (item.release_date || item.first_air_date || '').split('-')[0] || 'N/A';
+                const title = item.title || item.name;
+                const year = (item.release_date || item.first_air_date || '').split('-')[0];
                 const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-                
-                const posterUrl = item.poster_path 
-                    ? `${IMG_BASE_URL}${item.poster_path}` 
-                    : `https://via.placeholder.com/500x750/1f2833/66fcf1?text=${encodeURIComponent(title)}`;
+                const type = item.media_type || (item.title ? 'movie' : 'tv');
+                const poster = item.poster_path ? `${IMG_BASE}w500${item.poster_path}` : `https://via.placeholder.com/500x750/1f2833/66fcf1?text=${encodeURIComponent(title)}`;
 
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.onclick = () => openDetails(item.id, type);
                 card.innerHTML = `
-                    <div class="card-img" style="background-image: url('${posterUrl}')"></div>
+                    <div class="card-img" style="background-image: url('${poster}')"></div>
                     <div class="card-info">
                         <div class="card-title" title="${title}">${title}</div>
-                        <div class="card-meta">
-                            <span>${year}</span>
-                            <span class="rating">★ ${rating}</span>
-                        </div>
+                        <div class="card-meta"><span>${year}</span><span class="rating">★ ${rating}</span></div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // --- NAVIGATION LOGIC ---
+        // --- SEARCH LOGIC ---
+        searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+            showLoader();
+            fetchContent('all', query).then(data => {
+                hideLoader();
+                renderCards(data);
+            });
+        }
+        function resetToTrending() {
+            searchInput.value = '';
+            navLinks.forEach(l => l.classList.remove('active'));
+            document.querySelector('[data-filter="all"]').classList.add('active');
+            showLoader();
+            fetchContent('all').then(data => { hideLoader(); renderCards(data); });
+        }
+
+        // --- NAV LOGIC ---
         navLinks.forEach(link => {
             link.addEventListener('click', async (e) => {
                 e.preventDefault();
                 navLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
-                
+                searchInput.value = '';
                 showLoader();
                 const data = await fetchContent(link.dataset.filter);
                 hideLoader();
-
                 if (data) renderCards(data);
             });
         });
 
-        // --- PICK FOR ME LOGIC ---
+        // --- PICK FOR ME ---
         pickBtn.addEventListener('click', () => {
             const cards = document.querySelectorAll('.card');
             if (cards.length === 0) return;
-            
-            const randomIndex = Math.floor(Math.random() * cards.length);
-            const chosenCard = cards[randomIndex];
-            
-            // Smooth scroll to the chosen card
-            chosenCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Highlight effect
-            chosenCard.style.boxShadow = `0 0 30px var(--accent)`;
-            chosenCard.style.transform = 'scale(1.08)';
-            chosenCard.style.zIndex = '20';
-            chosenCard.style.borderColor = 'var(--accent)';
-            
-            setTimeout(() => {
-                chosenCard.style.boxShadow = '';
-                chosenCard.style.transform = '';
-                chosenCard.style.zIndex = '';
-                chosenCard.style.borderColor = '';
-            }, 3000);
+            const chosen = cards[Math.floor(Math.random() * cards.length)];
+            chosen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            chosen.style.boxShadow = `0 0 30px var(--accent)`;
+            chosen.style.transform = 'scale(1.08)';
+            setTimeout(() => { chosen.style.boxShadow = ''; chosen.style.transform = ''; }, 2500);
         });
 
-        // --- LOADER HELPERS ---
-        function showLoader() {
-            loader.classList.add('active');
-            grid.style.opacity = '0.3';
+        // --- DETAIL MODAL LOGIC ---
+        async function openDetails(id, type) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Reset modal
+            document.getElementById('tvSections').style.display = 'none';
+            document.getElementById('modalLogo').style.display = 'none';
+            document.getElementById('castList').innerHTML = '<p style="color:var(--text-secondary)">Loading cast...</p>';
+            document.getElementById('providerList').innerHTML = '<p style="color:var(--text-secondary)">Loading providers...</p>';
+
+            try {
+                // Fetch Details + Credits + Providers + Images (for Logo)
+                const url = `${BASE_URL}/${type}/${id}?api_key=${API_KEY}&append_to_response=credits,watch/providers,images`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                renderModalHeader(data, type);
+                renderModalMeta(data, type);
+                document.getElementById('modalOverview').innerText = data.overview || 'No overview available.';
+                renderCast(data.credits?.cast || []);
+                renderProviders(data['watch/providers']?.results || {});
+
+                if (type === 'tv') {
+                    currentTvId = id;
+                    document.getElementById('tvSections').style.display = 'block';
+                    renderSeasonSelector(data.seasons || []);
+                    loadSeasonEpisodes(); // Load first season
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
-        function hideLoader() {
-            loader.classList.remove('active');
-            grid.style.opacity = '1';
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        function renderModalHeader(data, type) {
+            const backdrop = data.backdrop_path ? `${IMG_BASE}w1280${data.backdrop_path}` : '';
+            document.getElementById('modalHero').style.backgroundImage = `linear-gradient(to top, var(--bg-modal) 10%, transparent 100%), url('${backdrop}')`;
+            
+            const title = data.title || data.name;
+            document.getElementById('modalTitle').innerText = title;
+
+            // Try to find a logo
+            const logos = data.images?.logos || [];
+            const englishLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
+            if (englishLogo) {
+                const logoImg = document.getElementById('modalLogo');
+                logoImg.src = `${IMG_BASE}w500${englishLogo.file_path}`;
+                logoImg.style.display = 'block';
+                document.getElementById('modalTitle').style.display = 'none'; // Hide text title if logo exists
+            } else {
+                document.getElementById('modalTitle').style.display = 'block';
+            }
         }
 
-        // --- INITIAL LOAD ---
+        function renderModalMeta(data, type) {
+            const date = type === 'movie' ? data.release_date : data.first_air_date;
+            const runtime = type === 'movie' && data.runtime ? `${data.runtime} min` : '';
+            const genres = data.genres?.map(g => g.name).join(', ') || '';
+            
+            document.getElementById('modalMeta').innerHTML = `
+                <span>📅 ${formatDate(date)}</span>
+                <span>⭐ ${data.vote_average?.toFixed(1) || 'N/A'}</span>
+                ${runtime ? `<span>⏱️ ${runtime}</span>` : ''}
+                <span>🎭 ${genres}</span>
+            `;
+        }
+
+        function renderCast(cast) {
+            const list = document.getElementById('castList');
+            if (cast.length === 0) { list.innerHTML = '<p style="color:var(--text-secondary)">No cast info available.</p>'; return; }
+            
+            list.innerHTML = cast.slice(0, 10).map(person => `
+                <div class="cast-item">
+                    <img src="${person.profile_path ? IMG_BASE + 'w185' + person.profile_path : 'https://via.placeholder.com/100x100/1f2833/66fcf1?text=?'}" class="cast-img" alt="${person.name}">
+                    <div class="cast-name">${person.name}</div>
+                    <div class="cast-char">${person.character || ''}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderProviders(providers) {
+            const list = document.getElementById('providerList');
+            // Check US, then IN, then any available
+            const region = providers.US || providers.IN || Object.values(providers)[0];
+            const flatrate = region?.flatrate || [];
+            
+            if (flatrate.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-secondary)">Not currently available on tracked OTT platforms.</p>';
+                return;
+            }
+
+            list.innerHTML = flatrate.map(p => `
+                <div class="provider-item">
+                    <img src="${IMG_BASE}w200${p.logo_path}" class="provider-logo" alt="${p.provider_name}">
+                    <span>${p.provider_name}</span>
+                </div>
+            `).join('');
+        }
+
+        // --- TV SHOW SPECIFICS ---
+        function renderSeasonSelector(seasons) {
+            const selector = document.getElementById('seasonSelector');
+            // Filter out specials (season 0) unless it's the only one
+            const validSeasons = seasons.filter(s => s.season_number > 0 || seasons.length === 1);
+            
+            selector.innerHTML = validSeasons.map(s => 
+                `<option value="${s.season_number}">Season ${s.season_number} (${s.episode_count} eps)</option>`
+            ).join('');
+        }
+
+        async function loadSeasonEpisodes() {
+            if (!currentTvId) return;
+            const seasonNum = document.getElementById('seasonSelector').value;
+            const list = document.getElementById('episodeList');
+            list.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1;">Loading episodes...</p>';
+
+            try {
+                const res = await fetch(`${BASE_URL}/tv/${currentTvId}/season/${seasonNum}?api_key=${API_KEY}`);
+                const data = await res.json();
+                
+                if (!data.episodes || data.episodes.length === 0) {
+                    list.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1;">No episodes found for this season.</p>';
+                    return;
+                }
+
+                list.innerHTML = data.episodes.map(ep => `
+                    <div class="episode-card">
+                        <img src="${ep.still_path ? IMG_BASE + 'w300' + ep.still_path : 'https://via.placeholder.com/140x80/1f2833/66fcf1?text=No+Image'}" class="episode-thumb" alt="">
+                        <div class="episode-info">
+                            <div class="episode-title">E${ep.episode_number}: ${ep.name}</div>
+                            <div class="episode-date">📅 ${formatDate(ep.air_date)}</div>
+                            <div class="episode-overview">${ep.overview || 'No description available.'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1;">Failed to load episodes.</p>';
+            }
+        }
+
+        // --- HELPERS ---
+        function showLoader() { loader.classList.add('active'); grid.style.opacity = '0.3'; }
+        function hideLoader() { loader.classList.remove('active'); grid.style.opacity = '1'; }
+
+        // --- INIT ---
         async function init() {
             showLoader();
             const data = await fetchContent('all');
             hideLoader();
             if (data) renderCards(data);
         }
-
         init();
     </script>
 </body>
