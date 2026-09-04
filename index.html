@@ -33,7 +33,6 @@
         }
 
         body.modal-open { overflow: hidden; }
-        
         a { text-decoration: none; color: inherit; }
 
         /* Header Navigation */
@@ -120,7 +119,7 @@
         }
         
         .modal-layout {
-            display: flex; gap: 40px; padding: 40px; max-width: 1400px; margin: 40px auto 0 auto;
+            display: flex; gap: 40px; padding: 30px 40px 40px 40px; max-width: 1400px; margin: 0 auto;
             align-items: flex-start;
         }
 
@@ -130,21 +129,25 @@
             padding: 20px; border-radius: 12px; border: 1px solid #222;
         }
 
+        /* Modern Back Button styling */
         .close-btn {
-            position: fixed; top: 20px; left: 30px; background: rgba(0, 0, 0, 0.7);
-            color: white; border: 2px solid #555; font-size: 26px;
-            width: 45px; height: 45px; border-radius: 50%; cursor: pointer;
+            position: sticky; top: 20px; margin-bottom: 20px; background: rgba(30, 30, 30, 0.8);
+            color: white; border: 1px solid #444; font-size: 20px;
+            width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
             z-index: 3000; display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s, border-color 0.2s;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .close-btn:hover { background: var(--primary); border-color: var(--primary); }
+        .close-btn:hover { background: var(--primary); border-color: var(--primary); transform: translateX(-3px); }
 
+        /* Backdrop Image Fixed (No box, full width cover without stretch) */
         .backdrop-img {
-            width: 100%; height: auto; max-height: 450px;
-            object-fit: contain; /* Prevents stretching */
-            background: #000; /* Dark background for standard aspect ratios */
-            border-radius: 12px; border: 1px solid #222; margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%; 
+            max-height: 480px;
+            object-fit: cover; 
+            border-radius: 12px; 
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
 
         .detail-logo { max-height: 90px; max-width: 400px; object-fit: contain; margin-bottom: 10px; }
@@ -168,9 +171,8 @@
         .loader { text-align: center; padding: 40px; font-size: 18px; color: var(--text-muted); grid-column: 1 / -1; }
 
         @media(max-width: 1024px) {
-            .modal-layout { flex-direction: column; padding: 20px; margin-top: 60px; }
+            .modal-layout { flex-direction: column; padding: 20px; }
             .modal-right { width: 100%; box-sizing: border-box; }
-            .close-btn { left: 15px; top: 15px; width: 40px; height: 40px; font-size: 22px; }
         }
     </style>
 </head>
@@ -185,7 +187,7 @@
         </div>
     </header>
 
-    <!-- Sub Navigation (Now using hrefs for native behavior) -->
+    <!-- Sub Navigation -->
     <div class="sub-nav">
         <a href="#all" class="tab-btn" id="tab-all">All</a>
         <a href="#movie" class="tab-btn" id="tab-movie">Movies</a>
@@ -200,7 +202,6 @@
 
     <!-- Full-Screen Detail View Modal -->
     <div id="detailModal" class="modal">
-        <a href="javascript:void(0)" class="close-btn" onclick="closeModal()">←</a>
         <div id="modalContentContainer"></div>
     </div>
 
@@ -215,12 +216,10 @@
         let isLoading = false;
         let totalPages = 100;
 
-        // Hash Routing setup
         window.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('hashchange', handleRoute);
-            handleRoute(); // Execute on initial load
+            handleRoute();
 
-            // Infinite Scroll
             window.addEventListener('scroll', () => {
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoading) {
                     if (document.getElementById('detailModal').style.display !== 'block') {
@@ -233,18 +232,14 @@
             });
         });
 
-        // Router Logic (Fixes refresh redirect issue)
         function handleRoute() {
             let hash = window.location.hash.substring(1);
             if (!hash) hash = 'all';
 
-            // Check if hash is for a detailed view (e.g., #movie-12345)
             if (hash.startsWith('movie-') || hash.startsWith('tv-')) {
                 const parts = hash.split('-');
                 openDetailModal(parts[1], parts[0]);
-            } 
-            // Otherwise, it's a tab view (all, movie, tv)
-            else {
+            } else {
                 closeModalUI();
                 if (['all', 'movie', 'tv'].includes(hash)) {
                     if (currentTab !== hash || currentPage === 1 || currentQuery !== '') {
@@ -269,7 +264,7 @@
             if (e.key === 'Enter') {
                 const query = e.target.value.trim();
                 if (query) {
-                    window.location.hash = ''; // Clear hash to force main view
+                    window.location.hash = '';
                     closeModalUI();
                     currentQuery = query;
                     currentPage = 1;
@@ -330,7 +325,6 @@
                 const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
                 const poster = item.poster_path ? `${IMAGE_BASE_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image';
 
-                // Wrapping in Anchor tag allows Right Click -> Open in New Tab
                 const card = document.createElement('a');
                 card.className = 'card';
                 card.href = `#${type}-${item.id}`; 
@@ -459,6 +453,7 @@
                 container.innerHTML = `
                     <div class="modal-layout">
                         <div class="modal-left">
+                            <a href="javascript:void(0)" class="close-btn" onclick="closeModal()">←</a>
                             <img src="${backdrop}" class="backdrop-img" alt="${title} Backdrop">
                             
                             ${logoPath ? `<img src="${logoPath}" class="detail-logo" alt="${title}">` : `<h1 class="detail-title">${title}</h1>`}
