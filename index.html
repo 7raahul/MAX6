@@ -9,220 +9,139 @@
         :root {
             --bg-primary: #0b0c10;
             --bg-secondary: #1f2833;
-            --bg-card: #2a2f45;
+            --bg-card: #1a1d29;
             --text-primary: #ffffff;
-            --text-secondary: #c5c6c7;
-            --accent: #66fcf1; /* Neon Cyan for a modern sci-fi/cinema vibe */
+            --text-secondary: #a0a0a0;
+            --accent: #66fcf1; 
             --accent-hover: #45a29e;
-            --danger: #e50914;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        
+        body { 
+            background-color: var(--bg-primary); 
+            color: var(--text-primary); 
+            min-height: 100vh; 
         }
 
         /* --- NAVIGATION --- */
         .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 1rem 2rem;
             background: rgba(11, 12, 16, 0.85);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(90deg, var(--accent), #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
+            font-size: 1.6rem; font-weight: 800; letter-spacing: -1px;
             text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 0;
-            position: relative;
-            transition: var(--transition);
+            background: linear-gradient(90deg, var(--accent), #ffffff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--text-primary);
+        .nav-links { display: flex; gap: 1.5rem; }
+        
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-weight: 500;
+            padding: 0.5rem 0; position: relative; transition: var(--transition);
         }
-
+        
+        .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+        
         .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
-            border-radius: 2px;
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px;
+            background: var(--accent); border-radius: 2px;
         }
 
         .btn-pick {
             background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-            color: var(--bg-primary);
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(102, 252, 241, 0.2);
+            color: var(--bg-primary); border: none; padding: 0.6rem 1.4rem;
+            border-radius: 50px; font-weight: 700; cursor: pointer;
+            transition: var(--transition); box-shadow: 0 4px 15px rgba(102, 252, 241, 0.2);
+            font-size: 0.9rem;
         }
 
-        .btn-pick:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 252, 241, 0.4);
+        .btn-pick:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(102, 252, 241, 0.4); 
         }
 
         /* --- MAIN CONTENT GRID --- */
-        .main-content {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
+        .main-content { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        
         .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem; 
+            transition: opacity 0.4s ease;
         }
 
         /* --- MEDIA CARDS --- */
         .card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
+            background: var(--bg-card); border-radius: 12px; overflow: hidden;
+            transition: var(--transition); cursor: pointer; position: relative;
+            border: 1px solid rgba(255,255,255,0.03);
         }
 
-        .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        .card:hover { 
+            transform: translateY(-8px) scale(1.03); 
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); 
+            z-index: 10; 
+            border-color: rgba(102, 252, 241, 0.3);
         }
-
+        
         .card-img {
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(45deg, #1f2833, #45a29e); /* Placeholder gradient */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: rgba(255,255,255,0.2);
+            width: 100%; height: 270px; background: var(--bg-secondary);
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.3); font-size: 0.9rem; text-align: center; padding: 1rem;
         }
 
-        .card-info {
-            padding: 1rem;
-        }
-
+        .card-info { padding: 1rem; }
+        
         .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         .card-meta {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
+            font-size: 0.8rem; color: var(--text-secondary);
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .rating {
-            color: #f5c518; /* IMDB Yellow */
-            font-weight: bold;
-        }
+        .rating { color: #f5c518; font-weight: bold; display: flex; align-items: center; gap: 3px; }
 
-        /* --- SKELETON LOADER --- */
+        /* --- LOADER --- */
         .loader-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
-            gap: 1rem;
-            display: none; /* Hidden by default, shown via JS */
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; padding: 3rem; gap: 1rem;
         }
-
-        .loader-container.active {
-            display: flex;
-        }
-
+        .loader-container.active { display: flex; }
+        
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(102, 252, 241, 0.2);
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
+            width: 40px; height: 40px; border: 4px solid rgba(102, 252, 241, 0.2);
+            border-top: 4px solid var(--accent); border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
         .loader-text {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            color: var(--text-secondary); font-size: 0.95rem;
             animation: pulse 1.5s ease-in-out infinite;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            .nav-links {
-                order: 3;
-                width: 100%;
-                justify-content: space-around;
-            }
-            .grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-            .card-img {
-                height: 220px;
-            }
+            .navbar { flex-wrap: wrap; gap: 1rem; padding: 1rem; }
+            .nav-links { order: 3; width: 100%; justify-content: space-around; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; }
+            .card-img { height: 200px; }
+            .btn-pick { padding: 0.5rem 1rem; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -230,7 +149,7 @@
 
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="logo">CineVerse</div>
+        <a href="#all" class="logo">CineVerse</a>
         <div class="nav-links">
             <a href="#all" class="active" data-filter="all">All</a>
             <a href="#movie" data-filter="movie">Movies</a>
@@ -241,9 +160,7 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="grid" id="contentGrid">
-            <!-- Cards will be injected here via JavaScript -->
-        </div>
+        <div class="grid" id="contentGrid"></div>
         
         <!-- Loading State -->
         <div class="loader-container" id="loader">
@@ -253,37 +170,70 @@
     </main>
 
     <script>
-        // --- MOCK DATA ---
-        const mockData = [
-            { id: 1, title: "Neon Horizon", type: "movie", year: 2025, rating: 8.4, emoji: "🌌" },
-            { id: 2, title: "The Last Algorithm", type: "tv", year: 2026, rating: 9.1, emoji: "🤖" },
-            { id: 3, title: "Echoes of Mars", type: "movie", year: 2024, rating: 7.8, emoji: "🔴" },
-            { id: 4, title: "Cyber Detective", type: "tv", year: 2025, rating: 8.9, emoji: "🕵️" },
-            { id: 5, title: "Quantum Break", type: "movie", year: 2026, rating: 8.2, emoji: "⏳" },
-            { id: 6, title: "Starship Nomads", type: "tv", year: 2023, rating: 7.5, emoji: "🚀" }
-        ];
+        // ==========================================
+        // 🔑 YOUR TMDB API KEY
+        // ==========================================
+        const API_KEY = '9c95420163879f1c4726c540b305cbc6'; 
+        // ==========================================
 
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+        
         const grid = document.getElementById('contentGrid');
         const loader = document.getElementById('loader');
         const navLinks = document.querySelectorAll('.nav-links a');
         const pickBtn = document.getElementById('pickForMeBtn');
 
-        // --- RENDER FUNCTIONS ---
-        function renderCards(filter = 'all') {
-            grid.innerHTML = ''; // Clear existing
-            const filtered = filter === 'all' ? mockData : mockData.filter(item => item.type === filter);
+        let currentData = []; 
+
+        // --- FETCH DATA FROM TMDB ---
+        async function fetchContent(type) {
+            let endpoint = '';
+            if (type === 'movie') endpoint = '/trending/movie/week';
+            else if (type === 'tv') endpoint = '/trending/tv/week';
+            else endpoint = '/trending/all/week';
+
+            const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                return data.results;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return null;
+            }
+        }
+
+        // --- RENDER CARDS ---
+        function renderCards(data) {
+            grid.innerHTML = '';
+            currentData = data; 
             
-            filtered.forEach(item => {
+            if (!data || data.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:var(--text-secondary);">No content found.</p>';
+                return;
+            }
+
+            data.forEach(item => {
+                const title = item.title || item.name || 'Unknown Title';
+                const year = (item.release_date || item.first_air_date || '').split('-')[0] || 'N/A';
+                const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+                
+                const posterUrl = item.poster_path 
+                    ? `${IMG_BASE_URL}${item.poster_path}` 
+                    : `https://via.placeholder.com/500x750/1f2833/66fcf1?text=${encodeURIComponent(title)}`;
+
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.dataset.type = item.type;
                 card.innerHTML = `
-                    <div class="card-img">${item.emoji}</div>
+                    <div class="card-img" style="background-image: url('${posterUrl}')"></div>
                     <div class="card-info">
-                        <div class="card-title">${item.title}</div>
+                        <div class="card-title" title="${title}">${title}</div>
                         <div class="card-meta">
-                            <span>${item.year}</span>
-                            <span class="rating">★ ${item.rating}</span>
+                            <span>${year}</span>
+                            <span class="rating">★ ${rating}</span>
                         </div>
                     </div>
                 `;
@@ -293,17 +243,16 @@
 
         // --- NAVIGATION LOGIC ---
         navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+            link.addEventListener('click', async (e) => {
                 e.preventDefault();
                 navLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
                 
-                // Simulate loading
                 showLoader();
-                setTimeout(() => {
-                    renderCards(link.dataset.filter);
-                    hideLoader();
-                }, 800); // Simulate network delay
+                const data = await fetchContent(link.dataset.filter);
+                hideLoader();
+
+                if (data) renderCards(data);
             });
         });
 
@@ -315,15 +264,21 @@
             const randomIndex = Math.floor(Math.random() * cards.length);
             const chosenCard = cards[randomIndex];
             
-            // Scroll to and highlight the chosen card
+            // Smooth scroll to the chosen card
             chosenCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Highlight effect
             chosenCard.style.boxShadow = `0 0 30px var(--accent)`;
-            chosenCard.style.transform = 'scale(1.05)';
+            chosenCard.style.transform = 'scale(1.08)';
+            chosenCard.style.zIndex = '20';
+            chosenCard.style.borderColor = 'var(--accent)';
             
             setTimeout(() => {
                 chosenCard.style.boxShadow = '';
                 chosenCard.style.transform = '';
-            }, 2000);
+                chosenCard.style.zIndex = '';
+                chosenCard.style.borderColor = '';
+            }, 3000);
         });
 
         // --- LOADER HELPERS ---
@@ -338,7 +293,14 @@
         }
 
         // --- INITIAL LOAD ---
-        renderCards();
+        async function init() {
+            showLoader();
+            const data = await fetchContent('all');
+            hideLoader();
+            if (data) renderCards(data);
+        }
+
+        init();
     </script>
 </body>
 </html>
