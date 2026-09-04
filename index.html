@@ -216,7 +216,7 @@
             margin: 0;
         }
 
-        /* Modern Full-Screen Detail View */
+        /* Modern Full-Screen Detail View (Hero Layout) */
         .modal {
             display: none;
             position: fixed;
@@ -227,11 +227,26 @@
             overflow-x: hidden;
         }
 
-        .modal-content-wrapper {
+        .modal-hero {
             position: relative;
             width: 100%;
             min-height: 100vh;
-            background: var(--bg-color);
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .modal-hero-overlay {
+            width: 100%;
+            min-height: 100vh;
+            /* Creates a dark fade from left and bottom to make text readable */
+            background: linear-gradient(to right, #0f0f0f 10%, rgba(15,15,15,0.85) 45%, rgba(15,15,15,0.3) 100%),
+                        linear-gradient(to top, #0f0f0f 0%, rgba(15,15,15,0.6) 20%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            padding: 80px 40px 40px 40px;
+            box-sizing: border-box;
         }
 
         .close-btn {
@@ -254,54 +269,36 @@
             border-color: var(--primary);
         }
 
-        .backdrop-header {
-            position: relative;
-            width: 100%;
-            height: 70vh; /* Taller for better immersion */
-            background-size: cover;
-            background-position: top center; /* Focus on top to prevent head cutoffs */
-            background-repeat: no-repeat;
-        }
-
-        .backdrop-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, var(--bg-color) 0%, rgba(15,15,15,0.7) 40%, rgba(15,15,15,0.2) 100%);
-        }
-
         .details-container {
-            max-width: 1400px; /* Matched with main container width */
+            max-width: 1400px;
             width: 100%;
-            margin: -250px auto 0 auto;
+            margin: 0 auto;
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
             position: relative;
             z-index: 10;
-            padding: 0 20px 60px 20px;
-            display: flex;
-            gap: 40px;
-            align-items: flex-start;
-            box-sizing: border-box;
         }
 
         .detail-poster {
-            width: 300px;
-            height: 450px;
-            border-radius: 12px;
+            width: 240px; /* Reduced size */
+            height: 360px;
+            border-radius: 8px;
             object-fit: cover;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-            border: 2px solid #333;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            border: 1px solid #333;
             flex-shrink: 0;
             background: #222;
         }
 
         .detail-info {
             flex-grow: 1;
-            padding-top: 40px;
-            max-width: 1000px;
+            max-width: 900px;
         }
 
         .detail-logo {
-            max-height: 90px;
-            max-width: 400px;
+            max-height: 80px;
+            max-width: 380px;
             object-fit: contain;
             margin-bottom: 20px;
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.8));
@@ -373,15 +370,17 @@
             grid-column: 1 / -1;
         }
 
+        /* Mobile View Fixes */
         @media(max-width: 900px) {
+            .modal-hero-overlay {
+                background: linear-gradient(to top, #0f0f0f 20%, rgba(15,15,15,0.9) 60%, rgba(15,15,15,0.7) 100%);
+                padding: 60px 20px 20px 20px;
+            }
             .details-container {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                margin-top: -150px;
-            }
-            .detail-info {
-                padding-top: 20px;
+                gap: 25px;
             }
             .detail-meta {
                 justify-content: center;
@@ -418,9 +417,7 @@
 
     <!-- Full-Screen Detail View Modal -->
     <div id="detailModal" class="modal">
-        <div class="modal-content-wrapper" id="modalContentContainer">
-            <!-- Dynamic Details -->
-        </div>
+        <!-- Content will be injected here -->
     </div>
 
     <script>
@@ -562,11 +559,10 @@
 
         async function openDetailModal(id, type) {
             const modal = document.getElementById('detailModal');
-            const container = document.getElementById('modalContentContainer');
             modal.style.display = 'block';
             document.body.classList.add('modal-open');
             window.scrollTo(0, 0);
-            container.innerHTML = '<div class="loader" style="padding:200px;">Loading details...</div>';
+            modal.innerHTML = '<div class="loader" style="padding:200px;">Loading details...</div>';
 
             try {
                 const detailRes = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}`);
@@ -647,32 +643,33 @@
                     }
                 }
 
-                container.innerHTML = `
+                modal.innerHTML = `
                     <button class="close-btn" onclick="closeModal()">×</button>
-                    <div class="backdrop-header" style="background-image: url('${backdrop}');">
-                        <div class="backdrop-overlay"></div>
-                    </div>
-                    <div class="details-container">
-                        <img src="${poster}" class="detail-poster" alt="${title}">
-                        <div class="detail-info">
-                            ${logoPath ? `<img src="${logoPath}" class="detail-logo" alt="${title}">` : `<h1 class="detail-title">${title}</h1>`}
-                            ${logoPath ? `<p style="color:var(--text-muted); margin-top:-10px; margin-bottom:15px; font-size:14px;">Original: ${originalTitle}</p>` : ''}
-                            
-                            <div class="detail-meta">
-                                <div>Rating: <span>★ ${rating}</span></div>
-                                <div>Released: <span>${releaseDateFormatted}</span></div>
-                                <div>Runtime: <span>${data.runtime || (data.episode_run_time && data.episode_run_time.length > 0 ? data.episode_run_time[0] : 'N/A')} mins</span></div>
+                    <div class="modal-hero" style="background-image: url('${backdrop}');">
+                        <div class="modal-hero-overlay">
+                            <div class="details-container">
+                                <img src="${poster}" class="detail-poster" alt="${title}">
+                                <div class="detail-info">
+                                    ${logoPath ? `<img src="${logoPath}" class="detail-logo" alt="${title}">` : `<h1 class="detail-title">${title}</h1>`}
+                                    ${logoPath ? `<p style="color:var(--text-muted); margin-top:-10px; margin-bottom:15px; font-size:14px;">Original: ${originalTitle}</p>` : ''}
+                                    
+                                    <div class="detail-meta">
+                                        <div>Rating: <span>★ ${rating}</span></div>
+                                        <div>Released: <span>${releaseDateFormatted}</span></div>
+                                        <div>Runtime: <span>${data.runtime || (data.episode_run_time && data.episode_run_time.length > 0 ? data.episode_run_time[0] : 'N/A')} mins</span></div>
+                                    </div>
+                                    <p class="overview">${data.overview || 'No overview available.'}</p>
+                                    ${collectionHtml}
+
+                                    <div class="section-title">Where to Watch (OTT)</div>
+                                    <div class="providers-list">${ottHtml}</div>
+
+                                    <div class="section-title">Top Cast</div>
+                                    <div class="cast-list">${castHtml}</div>
+
+                                    ${tvSpecificHtml}
+                                </div>
                             </div>
-                            <p class="overview">${data.overview || 'No overview available.'}</p>
-                            ${collectionHtml}
-
-                            <div class="section-title">Where to Watch (OTT)</div>
-                            <div class="providers-list">${ottHtml}</div>
-
-                            <div class="section-title">Top Cast</div>
-                            <div class="cast-list">${castHtml}</div>
-
-                            ${tvSpecificHtml}
                         </div>
                     </div>
                 `;
@@ -686,7 +683,10 @@
 
             } catch (err) {
                 console.error("Error loading detail modal:", err);
-                container.innerHTML = '<div class="loader" style="padding:150px;">Failed to load details.</div>';
+                modal.innerHTML = `
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                    <div class="loader" style="padding:150px;">Failed to load details.</div>
+                `;
             }
         }
 
