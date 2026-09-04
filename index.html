@@ -22,6 +22,10 @@
             padding: 0;
         }
 
+        body.modal-open {
+            overflow: hidden;
+        }
+
         /* Header Navigation */
         header {
             display: flex;
@@ -188,97 +192,108 @@
             margin: 0;
         }
 
-        /* Modal / Detail View */
+        /* Full Page Detail View */
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-color);
             z-index: 2000;
             overflow-y: auto;
-            padding: 30px 15px;
         }
 
         .modal-content {
-            background: #1a1a1a;
-            max-width: 900px;
-            margin: 0 auto;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+            background: var(--bg-color);
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
             position: relative;
         }
 
         .close-btn {
-            position: absolute;
-            top: 15px; right: 20px;
-            background: rgba(0,0,0,0.6);
+            position: fixed;
+            top: 20px; right: 30px;
+            background: rgba(0,0,0,0.8);
             color: white;
-            border: none;
-            font-size: 24px;
-            width: 40px; height: 40px;
+            border: 2px solid #555;
+            font-size: 28px;
+            width: 50px; height: 50px;
             border-radius: 50%;
             cursor: pointer;
-            z-index: 10;
+            z-index: 3000;
             display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
         }
 
         .modal-backdrop {
             width: 100%;
-            height: 350px;
+            height: 50vh;
             object-fit: cover;
-            filter: brightness(0.7);
+            filter: brightness(0.75);
         }
 
         .modal-body {
-            padding: 25px;
+            max-width: 1200px;
+            margin: -80px auto 0 auto;
+            position: relative;
+            background: var(--bg-color);
+            padding: 40px 30px;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
         }
 
         .modal-title {
-            font-size: 28px;
+            font-size: 36px;
             margin: 0 0 10px 0;
         }
 
         .modal-meta {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .modal-meta span { color: var(--accent); font-weight: bold; }
 
         .section-title {
-            font-size: 18px;
-            margin: 20px 0 10px 0;
+            font-size: 20px;
+            margin: 30px 0 15px 0;
             color: var(--primary);
             border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+            padding-bottom: 8px;
         }
 
-        .cast-list, .providers-list, .related-grid, .episode-grid {
+        .cast-list, .providers-list, .episode-grid {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             overflow-x: auto;
             padding-bottom: 10px;
         }
 
         .cast-card, .provider-item {
-            min-width: 100px;
+            min-width: 110px;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .cast-card img, .provider-item img {
-            width: 80px; height: 80px;
+            width: 90px; height: 90px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
-        .provider-item img { border-radius: 10px; width: 50px; height: 50px; }
+        .provider-item img { border-radius: 12px; width: 60px; height: 60px; }
 
         .loader {
             text-align: center;
@@ -313,7 +328,7 @@
         <div id="loader" class="loader" style="display: none;">Loading more content...</div>
     </div>
 
-    <!-- Modal View -->
+    <!-- Full Page Detail View -->
     <div id="detailModal" class="modal">
         <div class="modal-content" id="modalContentContainer">
             <!-- Dynamic Details -->
@@ -332,11 +347,9 @@
         let totalPages = 100;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Restore tab state
             setActiveTabUI(currentTab);
             loadContent(true);
 
-            // Infinite Scroll Listener
             window.addEventListener('scroll', () => {
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoading) {
                     if (currentPage < totalPages && !currentQuery) {
@@ -443,7 +456,6 @@
             });
         }
 
-        // Pick for me feature (Randomizer)
         async function pickForMe() {
             const randomType = Math.random() > 0.5 ? 'movie' : 'tv';
             const randomPage = Math.floor(Math.random() * 10) + 1;
@@ -460,12 +472,13 @@
             }
         }
 
-        // Modal Details Logic
         async function openDetailModal(id, type) {
             const modal = document.getElementById('detailModal');
             const container = document.getElementById('modalContentContainer');
             modal.style.display = 'block';
-            container.innerHTML = '<div class="loader" style="padding:100px;">Loading details...</div>';
+            document.body.classList.add('modal-open');
+            window.scrollTo(0, 0);
+            container.innerHTML = '<div class="loader" style="padding:150px;">Loading details...</div>';
 
             try {
                 const detailRes = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}`);
@@ -483,7 +496,6 @@
                 const originalTitle = data.original_title || data.original_name || '';
                 const rating = data.vote_average ? data.vote_average.toFixed(1) : 'NR';
                 
-                // Format Month Year release date
                 let releaseDateFormatted = 'N/A';
                 const rawDate = data.release_date || data.first_air_date;
                 if (rawDate) {
@@ -491,10 +503,9 @@
                     releaseDateFormatted = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                 }
 
-                // Cast list
                 let castHtml = '';
                 if (creditsData.cast && creditsData.cast.length > 0) {
-                    castHtml = creditsData.cast.slice(0, 10).map(actor => `
+                    castHtml = creditsData.cast.slice(0, 12).map(actor => `
                         <div class="cast-card">
                             <img src="${actor.profile_path ? IMAGE_BASE_URL + actor.profile_path : 'https://via.placeholder.com/100'}" alt="${actor.name}">
                             <div><strong>${actor.name}</strong></div>
@@ -505,7 +516,6 @@
                     castHtml = '<p style="color:var(--text-muted)">No cast info available.</p>';
                 }
 
-                // OTT Providers
                 let ottHtml = '';
                 if (regionProviders && regionProviders.flatrate && regionProviders.flatrate.length > 0) {
                     ottHtml = regionProviders.flatrate.map(prov => `
@@ -518,20 +528,18 @@
                     ottHtml = '<p style="color:var(--text-muted)">Not streaming currently in your region.</p>';
                 }
 
-                // Franchise / Recommendations logic
                 let collectionHtml = '';
                 if (type === 'movie' && data.belongs_to_collection) {
-                    collectionHtml = `<p style="color:var(--accent);">Part of franchise: ${data.belongs_to_collection.name}</p>`;
+                    collectionHtml = `<p style="color:var(--accent); font-size:16px; margin-bottom:15px;">Part of franchise: ${data.belongs_to_collection.name}</p>`;
                 }
 
-                // TV Show Season Selector & Episode Guide section
                 let tvSpecificHtml = '';
                 if (type === 'tv' && data.seasons) {
                     const seasonsOptions = data.seasons.map(s => `<option value="${s.season_number}">Season ${s.season_number} (${s.episode_count} eps)</option>`).join('');
                     tvSpecificHtml = `
                         <div class="section-title">Episode Guide & Seasons</div>
                         <div style="margin-bottom:15px;">
-                            <select id="seasonSelect" onchange="fetchSeasonEpisodes(${id}, this.value)" style="padding:6px 12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:4px;">
+                            <select id="seasonSelect" onchange="fetchSeasonEpisodes(${id}, this.value)" style="padding:8px 14px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:4px; font-size:14px;">
                                 ${seasonsOptions}
                             </select>
                         </div>
@@ -541,15 +549,15 @@
 
                 container.innerHTML = `
                     <button class="close-btn" onclick="closeModal()">×</button>
-                    ${backdrop ? `<img src="${backdrop}" class="modal-backdrop" alt="${title}">` : ''}
+                    ${backdrop ? `<img src="${backdrop}" class="modal-backdrop" alt="${title}">` : '<div style="height:150px; background:#181818;"></div>'}
                     <div class="modal-body">
-                        <h2 class="modal-title">${title} <span style="font-size:18px; color:var(--text-muted); font-weight:normal;">(${originalTitle})</span></h2>
+                        <h2 class="modal-title">${title} <span style="font-size:20px; color:var(--text-muted); font-weight:normal;">(${originalTitle})</span></h2>
                         <div class="modal-meta">
                             <div>Rating: <span>★ ${rating}</span></div>
                             <div>Released: <span>${releaseDateFormatted}</span></div>
-                            <div>Runtime: <span>${data.runtime || (data.episode_run_time ? data.episode_run_time[0] : 'N/A')} mins</span></div>
+                            <div>Runtime: <span>${data.runtime || (data.episode_run_time && data.episode_run_time.length > 0 ? data.episode_run_time[0] : 'N/A')} mins</span></div>
                         </div>
-                        <p style="line-height:1.6; color:#ddd; margin-bottom:20px;">${data.overview || 'No overview available.'}</p>
+                        <p style="line-height:1.7; color:#ddd; font-size:16px; margin-bottom:25px;">${data.overview || 'No overview available.'}</p>
                         ${collectionHtml}
 
                         <div class="section-title">Where to Watch (OTT)</div>
@@ -568,7 +576,7 @@
 
             } catch (err) {
                 console.error("Error loading detail modal:", err);
-                container.innerHTML = '<div class="loader" style="padding:50px;">Failed to load details.</div>';
+                container.innerHTML = '<div class="loader" style="padding:100px;">Failed to load details.</div>';
             }
         }
 
@@ -580,11 +588,11 @@
                 const data = await res.json();
                 if (data.episodes && data.episodes.length > 0) {
                     container.innerHTML = data.episodes.map(ep => `
-                        <div style="min-width:180px; background:#222; border-radius:6px; overflow:hidden; padding-bottom:8px;">
-                            <img src="${ep.still_path ? IMAGE_BASE_URL + ep.still_path : 'https://via.placeholder.com/300x169?text=No+Image'}" style="width:100%; height:100px; object-fit:cover;">
-                            <div style="padding:8px; font-size:12px;">
-                                <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">E${ep.episode_number}: ${ep.name}</div>
-                                <div style="color:var(--text-muted);">Air Date: ${ep.air_date || 'N/A'}</div>
+                        <div style="min-width:200px; background:#222; border-radius:6px; overflow:hidden; padding-bottom:8px;">
+                            <img src="${ep.still_path ? IMAGE_BASE_URL + ep.still_path : 'https://via.placeholder.com/300x169?text=No+Image'}" style="width:100%; height:110px; object-fit:cover;">
+                            <div style="padding:10px; font-size:13px;">
+                                <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="E${ep.episode_number}: ${ep.name}">E${ep.episode_number}: ${ep.name}</div>
+                                <div style="color:var(--text-muted); margin-top:4px;">Air Date: ${ep.air_date || 'N/A'}</div>
                             </div>
                         </div>
                     `).join('');
@@ -598,6 +606,7 @@
 
         function closeModal() {
             document.getElementById('detailModal').style.display = 'none';
+            document.body.classList.remove('modal-open');
         }
 
         window.onclick = function(event) {
