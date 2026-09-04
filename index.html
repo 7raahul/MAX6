@@ -140,17 +140,53 @@
         }
         .close-btn:hover { background: var(--primary); border-color: var(--primary); transform: translateX(-3px); }
 
-        /* Backdrop Image Fixed (No box, full width cover without stretch) */
-        .backdrop-img {
-            width: 100%; 
-            max-height: 480px;
-            object-fit: cover; 
-            border-radius: 12px; 
+        /* Backdrop Container with Original Image proportions and Logo Overlay */
+        .backdrop-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #222;
             margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
 
-        .detail-logo { max-height: 90px; max-width: 400px; object-fit: contain; margin-bottom: 10px; }
+        .backdrop-img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain; /* Keeps original image completely uncropped & un-stretched */
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Gradient Overlay for Logo Readability */
+        .backdrop-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .backdrop-logo-container {
+            position: absolute;
+            bottom: 20px;
+            left: 25px;
+            z-index: 2;
+            max-width: 60%;
+        }
+
+        .detail-logo {
+            max-height: 100px;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.8));
+        }
+
         .detail-title { font-size: 42px; margin: 0 0 10px 0; font-weight: 800; }
         
         .detail-meta { display: flex; gap: 20px; color: var(--text-muted); font-size: 15px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -173,6 +209,8 @@
         @media(max-width: 1024px) {
             .modal-layout { flex-direction: column; padding: 20px; }
             .modal-right { width: 100%; box-sizing: border-box; }
+            .backdrop-logo-container { bottom: 15px; left: 15px; max-width: 80%; }
+            .detail-logo { max-height: 70px; }
         }
     </style>
 </head>
@@ -454,10 +492,20 @@
                     <div class="modal-layout">
                         <div class="modal-left">
                             <a href="javascript:void(0)" class="close-btn" onclick="closeModal()">←</a>
-                            <img src="${backdrop}" class="backdrop-img" alt="${title} Backdrop">
                             
-                            ${logoPath ? `<img src="${logoPath}" class="detail-logo" alt="${title}">` : `<h1 class="detail-title">${title}</h1>`}
-                            ${logoPath ? `<p style="color:var(--text-muted); margin-top:-5px; margin-bottom:15px; font-size:14px;">Original: ${originalTitle}</p>` : ''}
+                            <!-- Backdrop with Logo Overlay -->
+                            <div class="backdrop-wrapper">
+                                <img src="${backdrop}" class="backdrop-img" alt="${title} Backdrop">
+                                <div class="backdrop-overlay"></div>
+                                ${logoPath ? `
+                                    <div class="backdrop-logo-container">
+                                        <img src="${logoPath}" class="detail-logo" alt="${title}">
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${!logoPath ? `<h1 class="detail-title">${title}</h1>` : ''}
+                            ${logoPath && originalTitle && originalTitle !== title ? `<p style="color:var(--text-muted); margin-top:-10px; margin-bottom:15px; font-size:14px;">Original: ${originalTitle}</p>` : ''}
                             
                             <div class="detail-meta">
                                 <div>Rating: <span>★ ${rating}</span></div>
