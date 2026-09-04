@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMDB AI Assistant</title>
+    <title>CineVerse</title>
     <style>
         :root {
-            --bg-color: #141414;
-            --card-bg: #1f1f1f;
-            --primary: #01b4e4;
-            --accent: #e50914;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary: #e50914;
+            --accent: #f5c518;
             --text-main: #ffffff;
-            --text-muted: #b0b0b0;
+            --text-muted: #aaaaaa;
         }
 
         body {
@@ -19,78 +19,108 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Header Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: #181818;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        h1 {
-            text-align: center;
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
             color: var(--primary);
-            margin-bottom: 20px;
+            letter-spacing: 1px;
+            cursor: pointer;
         }
 
-        .panel {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .header-controls {
             display: flex;
             gap: 10px;
-            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
-        input, button {
-            padding: 10px 15px;
-            border-radius: 5px;
-            border: none;
-            font-size: 15px;
-        }
-
-        input[type="text"], input[type="password"] {
-            background: #2c2c2c;
-            color: var(--text-main);
-            width: 250px;
+        .search-box {
+            padding: 8px 12px;
+            background: #2a2a2a;
             border: 1px solid #444;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            width: 200px;
+            transition: width 0.3s;
         }
 
-        button {
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
+        .search-box:focus {
+            width: 260px;
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 4px;
+            border: none;
             font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
             transition: background 0.2s;
         }
 
-        button:hover {
-            background: #0084a5;
-        }
-
-        .accent-btn {
+        .btn-pick {
             background: var(--accent);
+            color: #000;
         }
+        .btn-pick:hover { background: #d4a912; }
 
-        .accent-btn:hover {
-            background: #b20710;
-        }
-
-        .tabs {
+        /* Sub Navigation Tabs */
+        .sub-nav {
             display: flex;
-            gap: 10px;
             justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
+            gap: 15px;
+            padding: 15px;
+            background: #161616;
+            border-bottom: 1px solid #222;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 16px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Container & Grid */
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
         }
 
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 20px;
         }
 
@@ -98,28 +128,50 @@
             background: var(--card-bg);
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s;
         }
 
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        .poster-container {
+            position: relative;
+            width: 100%;
+            height: 315px;
         }
 
         .card img {
             width: 100%;
-            height: 300px;
+            height: 100%;
             object-fit: cover;
+        }
+
+        .rating-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.75);
+            color: var(--accent);
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            border: 1px solid var(--accent);
         }
 
         .card-content {
             padding: 12px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            flex-grow: 1;
+            justify-content: space-between;
         }
 
         .card h3 {
@@ -136,185 +188,421 @@
             margin: 0;
         }
 
+        /* Modal / Detail View */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 30px 15px;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            font-size: 24px;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-backdrop {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            filter: brightness(0.7);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .modal-meta span { color: var(--accent); font-weight: bold; }
+
+        .section-title {
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            color: var(--primary);
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .cast-list, .providers-list, .related-grid, .episode-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .cast-card, .provider-item {
+            min-width: 100px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .cast-card img, .provider-item img {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
+
+        .provider-item img { border-radius: 10px; width: 50px; height: 50px; }
+
         .loader {
             text-align: center;
-            font-size: 18px;
-            color: var(--primary);
-            grid-column: 1 / -1;
             padding: 40px;
+            font-size: 18px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
         }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
+    <header>
+        <div class="logo" onclick="switchTab('all')">CineVerse</div>
+        <div class="header-controls">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search..." onkeypress="handleSearch(event)">
+            <button class="btn btn-pick" onclick="pickForMe()">Pick for me</button>
+        </div>
+    </header>
+
+    <!-- Sub Navigation -->
+    <div class="sub-nav">
+        <button class="tab-btn active" id="tab-all" onclick="switchTab('all')">All</button>
+        <button class="tab-btn" id="tab-movie" onclick="switchTab('movie')">Movies</button>
+        <button class="tab-btn" id="tab-tv" onclick="switchTab('tv')">TV Shows</button>
+    </div>
+
+    <!-- Main Container -->
     <div class="container">
-        <h1>TMDB AI Assistant</h1>
-        
-        <!-- API Key Setup Panel -->
-        <div class="panel">
-            <label for="apiKey">TMDB API Key:</label>
-            <input type="password" id="apiKey" placeholder="Enter API Key">
-            <button id="saveKeyBtn">Save Key</button>
-        </div>
+        <div id="resultsGrid" class="results-grid"></div>
+        <div id="loader" class="loader" style="display: none;">Loading more content...</div>
+    </div>
 
-        <!-- Search & Surprise Controls -->
-        <div class="panel">
-            <input type="text" id="searchInput" placeholder="Search movies, TV shows, people...">
-            <button id="searchBtn">Search</button>
-            <button id="surpriseBtn" class="accent-btn">Surprise Me! 🎲</button>
-        </div>
-
-        <!-- Category Tabs -->
-        <div class="tabs">
-            <button onclick="fetchCategory('movie', 'popular')">Popular Movies</button>
-            <button onclick="fetchCategory('tv', 'popular')">Popular TV Shows</button>
-            <button onclick="fetchCategory('movie', 'top_rated')">Top Rated Movies</button>
-            <button onclick="fetchCategory('tv', 'top_rated')">Top Rated TV Shows</button>
-        </div>
-
-        <!-- Results Grid -->
-        <div id="results" class="results-grid">
-            <div class="loader">Please enter your TMDB API Key and select a category or search.</div>
+    <!-- Modal View -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content" id="modalContentContainer">
+            <!-- Dynamic Details -->
         </div>
     </div>
 
     <script>
+        const API_KEY = "9c95420163879f1c4726c540b305cbc6";
         const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+        const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
 
-        // Load saved API Key on startup
+        let currentTab = localStorage.getItem('cine_tab') || 'all';
+        let currentPage = 1;
+        let currentQuery = '';
+        let isLoading = false;
+        let totalPages = 100;
+
         window.addEventListener('DOMContentLoaded', () => {
-            const savedKey = localStorage.getItem('tmdb_api_key');
-            if (savedKey) {
-                document.getElementById('apiKey').value = savedKey;
-                fetchCategory('movie', 'popular'); // Auto load popular on start if key exists
-            }
+            // Restore tab state
+            setActiveTabUI(currentTab);
+            loadContent(true);
+
+            // Infinite Scroll Listener
+            window.addEventListener('scroll', () => {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoading) {
+                    if (currentPage < totalPages && !currentQuery) {
+                        currentPage++;
+                        loadContent(false);
+                    }
+                }
+            });
         });
 
-        // Save Key Handler
-        document.getElementById('saveKeyBtn').addEventListener('click', () => {
-            const key = document.getElementById('apiKey').value.trim();
-            if (key) {
-                localStorage.setItem('tmdb_api_key', key);
-                alert('API Key saved locally!');
-                fetchCategory('movie', 'popular');
+        function switchTab(tab) {
+            currentTab = tab;
+            localStorage.setItem('cine_tab', tab);
+            currentPage = 1;
+            currentQuery = '';
+            document.getElementById('searchInput').value = '';
+            setActiveTabUI(tab);
+            loadContent(true);
+        }
+
+        function setActiveTabUI(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function handleSearch(e) {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query) {
+                    currentQuery = query;
+                    currentPage = 1;
+                    loadContent(true);
+                }
+            }
+        }
+
+        async function loadContent(reset = false) {
+            if (isLoading) return;
+            isLoading = true;
+            const loader = document.getElementById('loader');
+            const grid = document.getElementById('resultsGrid');
+
+            if (reset) {
+                grid.innerHTML = '';
+                currentPage = 1;
+            }
+            loader.style.display = 'block';
+
+            let url = '';
+            if (currentQuery) {
+                url = `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(currentQuery)}&page=${currentPage}`;
+            } else if (currentTab === 'all') {
+                url = `https://api.themoviedb.org/3/trending/all/day?api_key=${API_KEY}&page=${currentPage}`;
             } else {
-                alert('Please enter a valid key.');
+                url = `https://api.themoviedb.org/3/${currentTab}/popular?api_key=${API_KEY}&page=${currentPage}`;
             }
-        });
 
-        function getKey() {
-            return document.getElementById('apiKey').value.trim() || localStorage.getItem('tmdb_api_key');
-        }
-
-        // Fetch Categories
-        async function fetchCategory(type, category) {
-            const apiKey = getKey();
-            if (!apiKey) { alert('Please enter and save your TMDB API Key first!'); return; }
-
-            showLoader();
-            const url = `https://api.themoviedb.org/3/${type}/${category}?api_key=${apiKey}&language=en-US&page=1`;
-            
             try {
-                const response = await fetch(url);
-                const data = await response.json();
-                if(data.results) {
-                    displayResults(data.results, type);
-                } else {
-                    showError(data.status_message || 'Failed to fetch data.');
-                }
-            } catch (error) {
-                showError('Network error occurred.');
+                const res = await fetch(url);
+                const data = await res.json();
+                totalPages = data.total_pages || 100;
+                renderCards(data.results, reset);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+            } finally {
+                isLoading = false;
+                loader.style.display = 'none';
             }
         }
 
-        // Search Functionality
-        document.getElementById('searchBtn').addEventListener('click', executeSearch);
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') executeSearch();
-        });
-
-        async function executeSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-            const apiKey = getKey();
-            if (!apiKey) { alert('Please enter your TMDB API Key!'); return; }
-            if (!query) return;
-
-            showLoader();
-            const url = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}`;
-            
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                displayResults(data.results);
-            } catch (error) {
-                showError('Search failed.');
-            }
-        }
-
-        // Surprise Me (Random Picker) Feature (No Trailers)
-        document.getElementById('surpriseBtn').addEventListener('click', async () => {
-            const apiKey = getKey();
-            if (!apiKey) { alert('Please enter your TMDB API Key first!'); return; }
-
-            showLoader();
-            const randomPage = Math.floor(Math.random() * 10) + 1;
-            const randomType = Math.random() > 0.5 ? 'movie' : 'tv';
-            const url = `https://api.themoviedb.org/3/${randomType}/popular?api_key=${apiKey}&page=${randomPage}`;
-            
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data.results && data.results.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * data.results.length);
-                    const randomItem = data.results[randomIndex];
-                    displayResults([randomItem], randomType);
-                }
-            } catch (error) {
-                showError('Could not fetch surprise pick.');
-            }
-        });
-
-        function showLoader() {
-            document.getElementById('results').innerHTML = '<div class="loader">Loading data from TMDB...</div>';
-        }
-
-        function showError(message) {
-            document.getElementById('results').innerHTML = `<div class="loader" style="color: var(--accent);">${message}</div>`;
-        }
-
-        // Display Results Grid
-        function displayResults(items, defaultType = 'movie') {
-            const container = document.getElementById('results');
-            container.innerHTML = '';
+        function renderCards(items, reset) {
+            const grid = document.getElementById('resultsGrid');
+            if (reset) grid.innerHTML = '';
 
             if (!items || items.length === 0) {
-                container.innerHTML = '<div class="loader">No results found.</div>';
+                if (reset) grid.innerHTML = '<div class="loader">No results found.</div>';
                 return;
             }
 
             items.forEach(item => {
-                // Ignore person type if multi-search returns them, or handle gracefully
-                if(item.media_type === 'person') return;
-
+                if (item.media_type === 'person') return;
+                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                 const title = item.title || item.name || 'Untitled';
-                const releaseDate = item.release_date || item.first_air_date || 'N/A';
-                const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-                const poster = item.poster_path ? `${IMAGE_BASE_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
-                const type = (item.media_type || defaultType).toUpperCase();
+                const dateStr = item.release_date || item.first_air_date || '';
+                const year = dateStr ? dateStr.split('-')[0] : 'N/A';
+                const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
+                const poster = item.poster_path ? `${IMAGE_BASE_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image';
 
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.onclick = () => openDetailModal(item.id, type);
                 card.innerHTML = `
-                    <img src="${poster}" alt="${title}" loading="lazy">
+                    <div class="poster-container">
+                        <img src="${poster}" alt="${title}" loading="lazy">
+                        <div class="rating-badge">★ ${rating}</div>
+                    </div>
                     <div class="card-content">
                         <h3 title="${title}">${title}</h3>
-                        <p><strong>Type:</strong> ${type}</p>
-                        <p><strong>Release:</strong> ${releaseDate}</p>
-                        <p><strong>Rating:</strong> ⭐ ${rating}</p>
+                        <p>${type.toUpperCase()} • ${year}</p>
                     </div>
                 `;
-                container.appendChild(card);
+                grid.appendChild(card);
             });
+        }
+
+        // Pick for me feature (Randomizer)
+        async function pickForMe() {
+            const randomType = Math.random() > 0.5 ? 'movie' : 'tv';
+            const randomPage = Math.floor(Math.random() * 10) + 1;
+            const url = `https://api.themoviedb.org/3/${randomType}/popular?api_key=${API_KEY}&page=${randomPage}`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.results && data.results.length > 0) {
+                    const randomItem = data.results[Math.floor(Math.random() * data.results.length)];
+                    openDetailModal(randomItem.id, randomType);
+                }
+            } catch (err) {
+                console.error("Error picking random:", err);
+            }
+        }
+
+        // Modal Details Logic
+        async function openDetailModal(id, type) {
+            const modal = document.getElementById('detailModal');
+            const container = document.getElementById('modalContentContainer');
+            modal.style.display = 'block';
+            container.innerHTML = '<div class="loader" style="padding:100px;">Loading details...</div>';
+
+            try {
+                const detailRes = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}`);
+                const data = await detailRes.json();
+
+                const creditsRes = await fetch(`https://api.themoviedb.org/3/${type}/${id}/credits?api_key=${API_KEY}`);
+                const creditsData = await creditsRes.json();
+
+                const providersRes = await fetch(`https://api.themoviedb.org/3/${type}/${id}/watch/providers?api_key=${API_KEY}`);
+                const providersData = await providersRes.json();
+                const regionProviders = providersData.results && (providersData.results.IN || providersData.results.US);
+
+                const backdrop = data.backdrop_path ? `${BACKDROP_BASE_URL}${data.backdrop_path}` : '';
+                const title = data.title || data.name || '';
+                const originalTitle = data.original_title || data.original_name || '';
+                const rating = data.vote_average ? data.vote_average.toFixed(1) : 'NR';
+                
+                // Format Month Year release date
+                let releaseDateFormatted = 'N/A';
+                const rawDate = data.release_date || data.first_air_date;
+                if (rawDate) {
+                    const d = new Date(rawDate);
+                    releaseDateFormatted = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                }
+
+                // Cast list
+                let castHtml = '';
+                if (creditsData.cast && creditsData.cast.length > 0) {
+                    castHtml = creditsData.cast.slice(0, 10).map(actor => `
+                        <div class="cast-card">
+                            <img src="${actor.profile_path ? IMAGE_BASE_URL + actor.profile_path : 'https://via.placeholder.com/100'}" alt="${actor.name}">
+                            <div><strong>${actor.name}</strong></div>
+                            <div style="color:var(--text-muted); font-size:11px;">${actor.character || ''}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    castHtml = '<p style="color:var(--text-muted)">No cast info available.</p>';
+                }
+
+                // OTT Providers
+                let ottHtml = '';
+                if (regionProviders && regionProviders.flatrate && regionProviders.flatrate.length > 0) {
+                    ottHtml = regionProviders.flatrate.map(prov => `
+                        <div class="provider-item" title="${prov.provider_name}">
+                            <img src="${IMAGE_BASE_URL}${prov.logo_path}" alt="${prov.provider_name}">
+                            <div>${prov.provider_name}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    ottHtml = '<p style="color:var(--text-muted)">Not streaming currently in your region.</p>';
+                }
+
+                // Franchise / Recommendations logic
+                let collectionHtml = '';
+                if (type === 'movie' && data.belongs_to_collection) {
+                    collectionHtml = `<p style="color:var(--accent);">Part of franchise: ${data.belongs_to_collection.name}</p>`;
+                }
+
+                // TV Show Season Selector & Episode Guide section
+                let tvSpecificHtml = '';
+                if (type === 'tv' && data.seasons) {
+                    const seasonsOptions = data.seasons.map(s => `<option value="${s.season_number}">Season ${s.season_number} (${s.episode_count} eps)</option>`).join('');
+                    tvSpecificHtml = `
+                        <div class="section-title">Episode Guide & Seasons</div>
+                        <div style="margin-bottom:15px;">
+                            <select id="seasonSelect" onchange="fetchSeasonEpisodes(${id}, this.value)" style="padding:6px 12px; background:#2a2a2a; color:white; border:1px solid #444; border-radius:4px;">
+                                ${seasonsOptions}
+                            </select>
+                        </div>
+                        <div id="episodesContainer" class="episode-grid">Select a season above</div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                    ${backdrop ? `<img src="${backdrop}" class="modal-backdrop" alt="${title}">` : ''}
+                    <div class="modal-body">
+                        <h2 class="modal-title">${title} <span style="font-size:18px; color:var(--text-muted); font-weight:normal;">(${originalTitle})</span></h2>
+                        <div class="modal-meta">
+                            <div>Rating: <span>★ ${rating}</span></div>
+                            <div>Released: <span>${releaseDateFormatted}</span></div>
+                            <div>Runtime: <span>${data.runtime || (data.episode_run_time ? data.episode_run_time[0] : 'N/A')} mins</span></div>
+                        </div>
+                        <p style="line-height:1.6; color:#ddd; margin-bottom:20px;">${data.overview || 'No overview available.'}</p>
+                        ${collectionHtml}
+
+                        <div class="section-title">Where to Watch (OTT)</div>
+                        <div class="providers-list">${ottHtml}</div>
+
+                        <div class="section-title">Top Cast</div>
+                        <div class="cast-list">${castHtml}</div>
+
+                        ${tvSpecificHtml}
+                    </div>
+                `;
+
+                if (type === 'tv' && data.seasons && data.seasons.length > 0) {
+                    fetchSeasonEpisodes(id, data.seasons[0].season_number);
+                }
+
+            } catch (err) {
+                console.error("Error loading detail modal:", err);
+                container.innerHTML = '<div class="loader" style="padding:50px;">Failed to load details.</div>';
+            }
+        }
+
+        async function fetchSeasonEpisodes(tvId, seasonNumber) {
+            const container = document.getElementById('episodesContainer');
+            container.innerHTML = '<div style="color:var(--text-muted);">Loading episodes...</div>';
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}`);
+                const data = await res.json();
+                if (data.episodes && data.episodes.length > 0) {
+                    container.innerHTML = data.episodes.map(ep => `
+                        <div style="min-width:180px; background:#222; border-radius:6px; overflow:hidden; padding-bottom:8px;">
+                            <img src="${ep.still_path ? IMAGE_BASE_URL + ep.still_path : 'https://via.placeholder.com/300x169?text=No+Image'}" style="width:100%; height:100px; object-fit:cover;">
+                            <div style="padding:8px; font-size:12px;">
+                                <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">E${ep.episode_number}: ${ep.name}</div>
+                                <div style="color:var(--text-muted);">Air Date: ${ep.air_date || 'N/A'}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color:var(--text-muted);">No episodes found.</p>';
+                }
+            } catch (err) {
+                container.innerHTML = '<p style="color:var(--text-muted);">Failed to load episodes.</p>';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target === modal) closeModal();
         }
     </script>
 </body>
