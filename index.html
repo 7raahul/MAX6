@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CineVerse</title>
+    <title>CINEVO</title>
     <style>
         :root {
             --bg-primary: #000000;
@@ -19,42 +19,64 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; padding-bottom: 90px; }
 
-        /* Top Header */
-        .top-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, transparent 100%); padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        /* Top Header - Fixed Overlap */
+        .top-header { 
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000; 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 100%); 
+            padding: 1rem; display: flex; justify-content: space-between; align-items: center; 
+        }
         .logo { font-size: 1.8rem; font-weight: 900; color: var(--yellow); letter-spacing: -1px; text-decoration: none; }
-        .profile-icon { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--text-primary); display: flex; align-items: center; justify-content: center; background: var(--bg-card); }
+        .profile-icon { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--text-primary); display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); }
 
         /* Top Nav */
-        .top-nav { position: fixed; top: 60px; left: 0; right: 0; z-index: 999; background: rgba(0,0,0,0.95); display: flex; justify-content: space-around; padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .top-nav { 
+            position: fixed; top: 65px; left: 0; right: 0; z-index: 999; 
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            display: flex; justify-content: space-around; padding: 0.8rem 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+        }
         .top-nav a { color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; font-weight: 600; position: relative; transition: var(--transition); }
         .top-nav a.active { color: var(--accent); }
         .top-nav a.active::after { content: ''; position: absolute; bottom: -12px; left: 20%; right: 20%; height: 3px; background: var(--accent); border-radius: 2px; }
 
-        /* Hero Banner */
-        .hero-banner { position: relative; width: 100%; height: 400px; margin-top: 110px; overflow: hidden; background: var(--bg-card); }
+        /* Hero Banner - Fixed Positioning */
+        .hero-banner { 
+            position: relative; width: 100%; height: 500px; 
+            overflow: hidden; background: var(--bg-card); 
+        }
         .hero-backdrop { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease-in-out; }
-        .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, var(--bg-primary) 0%, rgba(0,0,0,0.6) 50%, transparent 100%); padding: 3rem 1.5rem 1.5rem; display: flex; flex-direction: column; align-items: flex-start; }
+        .hero-overlay { 
+            position: absolute; bottom: 0; left: 0; right: 0; 
+            background: linear-gradient(to top, var(--bg-primary) 0%, rgba(0,0,0,0.8) 40%, transparent 100%); 
+            padding: 5rem 1.5rem 1.5rem; /* Extra top padding to clear nav */
+            display: flex; flex-direction: column; align-items: flex-start; 
+        }
         .hero-logo { max-width: 250px; max-height: 100px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.8)); }
         .hero-title-fallback { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); display: none; }
-        .hero-meta { display: flex; gap: 1rem; color: var(--text-secondary); font-size: 0.85rem; }
+        .hero-meta { display: flex; gap: 1rem; color: var(--text-secondary); font-size: 0.9rem; }
 
         /* Main Grid (Infinite Scroll) */
         .main-content { padding: 1.5rem 1rem; }
-        .content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; }
+        .content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
         .content-card { cursor: pointer; transition: var(--transition); position: relative; }
-        .content-card:hover { transform: scale(1.05); }
-        .content-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: var(--bg-card); }
-        .content-card .card-title { margin-top: 0.5rem; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
+        .content-card:active { transform: scale(0.95); }
+        .content-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; background: var(--bg-card); }
+        .content-card .card-title { margin-top: 0.5rem; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
 
-        /* Bottom Navigation (Fixed Overlap) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,10,0.98); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; padding: 0.5rem 0; z-index: 1000; }
-        .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 0; cursor: pointer; color: var(--text-secondary); transition: var(--transition); }
+        /* Bottom Navigation - Fixed Overlap */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(10,10,10,0.98); backdrop-filter: blur(10px); 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            display: flex; justify-content: space-around; padding: 0.6rem 0; z-index: 1000; 
+        }
+        .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 0; cursor: pointer; color: var(--text-secondary); transition: var(--transition); }
         .bottom-nav-item.active { color: var(--accent); }
         .bottom-nav-item svg { width: 22px; height: 22px; fill: currentColor; flex-shrink: 0; }
-        .bottom-nav-item span { font-size: 10px; font-weight: 600; white-space: nowrap; text-align: center; line-height: 1.2; }
+        .bottom-nav-item span { font-size: 11px; font-weight: 600; white-space: nowrap; text-align: center; line-height: 1.2; }
 
         /* Loader */
-        .loader { text-align: center; padding: 2rem; color: var(--text-secondary); display: none; }
+        .loader { text-align: center; padding: 2rem; color: var(--text-secondary); display: none; width: 100%; grid-column: 1 / -1; }
         .loader.active { display: block; }
         .spinner { width: 30px; height: 30px; border: 3px solid var(--bg-card); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -66,7 +88,7 @@
         .search-input { flex: 1; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); padding: 0.8rem 1rem; border-radius: 8px; color: var(--text-primary); font-size: 1rem; outline: none; }
         .search-input:focus { border-color: var(--accent); }
         .search-close { background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
-        .search-results { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
+        .search-results { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; align-content: start; }
 
         /* Detail Modal */
         .detail-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); z-index: 3000; display: none; overflow-y: auto; }
@@ -111,7 +133,7 @@
         @media (min-width: 768px) {
             .content-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.5rem; }
             .content-card img { height: 240px; }
-            .hero-banner { height: 500px; }
+            .hero-banner { height: 600px; }
             .hero-logo { max-width: 350px; max-height: 120px; }
         }
     </style>
@@ -245,7 +267,6 @@
         async function loadHeroItems() {
             const data = await fetchTMDB('/trending/all/week');
             if (data && data.results) {
-                // Get top 5 items and fetch their details for logos
                 const top5 = data.results.slice(0, 5);
                 for (let item of top5) {
                     const details = await fetchTMDB(`/${item.media_type}/${item.id}`, '&append_to_response=images');
@@ -269,7 +290,6 @@
             document.getElementById('heroYear').textContent = year;
             document.getElementById('heroRating').textContent = `★ ${rating}`;
 
-            // Check for logo
             const logos = item.images?.logos || [];
             const enLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
             
@@ -295,7 +315,7 @@
                 if (heroItems.length === 0) return;
                 currentHeroIndex = (currentHeroIndex + 1) % heroItems.length;
                 renderHero(heroItems[currentHeroIndex]);
-            }, 3500); // 3.5 seconds
+            }, 3500);
         }
 
         async function loadContent(reset = false) {
@@ -379,7 +399,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Search
         function openSearch() { document.getElementById('searchModal').classList.add('active'); document.getElementById('searchInput').focus(); }
         function closeSearch() { document.getElementById('searchModal').classList.remove('active'); document.getElementById('searchInput').value = ''; document.getElementById('searchResults').innerHTML = ''; }
         
@@ -402,7 +421,6 @@
             }
         });
 
-        // Detail Modal
         async function openDetail(id, type) {
             currentDetail = { id, type };
             document.getElementById('detailModal').classList.add('active');
@@ -436,7 +454,6 @@
             document.getElementById('detailMeta').innerHTML = `<span>${year}</span><span class="detail-rating">★ ${rating}</span><span>${runtime}</span>`;
             document.getElementById('detailOverview').textContent = data.overview || 'No overview available.';
 
-            // Providers
             const providers = data['watch/providers']?.results?.[REGION];
             const pList = document.getElementById('providerList');
             pList.innerHTML = '';
@@ -448,7 +465,6 @@
                 pList.innerHTML = '<p style="color:var(--text-secondary);width:100%;text-align:center;font-size:0.9rem;">Not available on tracked platforms in India</p>';
             }
 
-            // Cast
             const cList = document.getElementById('castList');
             cList.innerHTML = '';
             if (data.credits?.cast) {
@@ -458,7 +474,6 @@
                 });
             }
 
-            // Episodes
             if (type === 'tv') {
                 document.getElementById('episodesSection').style.display = 'block';
                 const sel = document.getElementById('seasonSelector');
@@ -502,7 +517,6 @@
             openDetail(random.id, random._mediaType);
         }
 
-        // Timeline / History
         function saveToHistory(item) {
             let history = JSON.parse(localStorage.getItem('cinevo_history') || '[]');
             history = history.filter(i => i.id !== item.id);
