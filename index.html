@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMDB AI Assistant</title>
+    <style>
+        :root {
+            --bg-color: #141414;
+            --card-bg: #1f1f1f;
+            --primary: #01b4e4;
+            --accent: #e50914;
+            --text-main: #ffffff;
+            --text-muted: #b0b0b0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        input, button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            font-size: 15px;
+        }
+
+        input[type="text"], input[type="password"] {
+            background: #2c2c2c;
+            color: var(--text-main);
+            width: 250px;
+            border: 1px solid #444;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #0084a5;
+        }
+
+        .accent-btn {
+            background: var(--accent);
+        }
+
+        .accent-btn:hover {
+            background: #b20710;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1;
+        }
+
+        .card h3 {
+            font-size: 15px;
+            margin: 0 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .loader {
+            text-align: center;
+            font-size: 18px;
+            color: var(--primary);
+            grid-column: 1 / -1;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>TMDB AI Assistant</h1>
+        
+        <!-- API Key Setup Panel -->
+        <div class="panel">
+            <label for="apiKey">TMDB API Key:</label>
+            <input type="password" id="apiKey" placeholder="Enter API Key">
+            <button id="saveKeyBtn">Save Key</button>
+        </div>
+
+        <!-- Search & Surprise Controls -->
+        <div class="panel">
+            <input type="text" id="searchInput" placeholder="Search movies, TV shows, people...">
+            <button id="searchBtn">Search</button>
+            <button id="surpriseBtn" class="accent-btn">Surprise Me! 🎲</button>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="tabs">
+            <button onclick="fetchCategory('movie', 'popular')">Popular Movies</button>
+            <button onclick="fetchCategory('tv', 'popular')">Popular TV Shows</button>
+            <button onclick="fetchCategory('movie', 'top_rated')">Top Rated Movies</button>
+            <button onclick="fetchCategory('tv', 'top_rated')">Top Rated TV Shows</button>
+        </div>
+
+        <!-- Results Grid -->
+        <div id="results" class="results-grid">
+            <div class="loader">Please enter your TMDB API Key and select a category or search.</div>
+        </div>
+    </div>
+
+    <script>
+        const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+
+        // Load saved API Key on startup
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('tmdb_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                fetchCategory('movie', 'popular'); // Auto load popular on start if key exists
+            }
+        });
+
+        // Save Key Handler
+        document.getElementById('saveKeyBtn').addEventListener('click', () => {
+            const key = document.getElementById('apiKey').value.trim();
+            if (key) {
+                localStorage.setItem('tmdb_api_key', key);
+                alert('API Key saved locally!');
+                fetchCategory('movie', 'popular');
+            } else {
+                alert('Please enter a valid key.');
+            }
+        });
+
+        function getKey() {
+            return document.getElementById('apiKey').value.trim() || localStorage.getItem('tmdb_api_key');
+        }
+
+        // Fetch Categories
+        async function fetchCategory(type, category) {
+            const apiKey = getKey();
+            if (!apiKey) { alert('Please enter and save your TMDB API Key first!'); return; }
+
+            showLoader();
+            const url = `https://api.themoviedb.org/3/${type}/${category}?api_key=${apiKey}&language=en-US&page=1`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if(data.results) {
+                    displayResults(data.results, type);
+                } else {
+                    showError(data.status_message || 'Failed to fetch data.');
+                }
+            } catch (error) {
+                showError('Network error occurred.');
+            }
+        }
+
+        // Search Functionality
+        document.getElementById('searchBtn').addEventListener('click', executeSearch);
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeSearch();
+        });
+
+        async function executeSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            const apiKey = getKey();
+            if (!apiKey) { alert('Please enter your TMDB API Key!'); return; }
+            if (!query) return;
+
+            showLoader();
+            const url = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayResults(data.results);
+            } catch (error) {
+                showError('Search failed.');
+            }
+        }
+
+        // Surprise Me (Random Picker) Feature (No Trailers)
+        document.getElementById('surpriseBtn').addEventListener('click', async () => {
+            const apiKey = getKey();
+            if (!apiKey) { alert('Please enter your TMDB API Key first!'); return; }
+
+            showLoader();
+            const randomPage = Math.floor(Math.random() * 10) + 1;
+            const randomType = Math.random() > 0.5 ? 'movie' : 'tv';
+            const url = `https://api.themoviedb.org/3/${randomType}/popular?api_key=${apiKey}&page=${randomPage}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.results && data.results.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * data.results.length);
+                    const randomItem = data.results[randomIndex];
+                    displayResults([randomItem], randomType);
+                }
+            } catch (error) {
+                showError('Could not fetch surprise pick.');
+            }
+        });
+
+        function showLoader() {
+            document.getElementById('results').innerHTML = '<div class="loader">Loading data from TMDB...</div>';
+        }
+
+        function showError(message) {
+            document.getElementById('results').innerHTML = `<div class="loader" style="color: var(--accent);">${message}</div>`;
+        }
+
+        // Display Results Grid
+        function displayResults(items, defaultType = 'movie') {
+            const container = document.getElementById('results');
+            container.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div class="loader">No results found.</div>';
+                return;
+            }
+
+            items.forEach(item => {
+                // Ignore person type if multi-search returns them, or handle gracefully
+                if(item.media_type === 'person') return;
+
+                const title = item.title || item.name || 'Untitled';
+                const releaseDate = item.release_date || item.first_air_date || 'N/A';
+                const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+                const poster = item.poster_path ? `${IMAGE_BASE_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+                const type = (item.media_type || defaultType).toUpperCase();
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${poster}" alt="${title}" loading="lazy">
+                    <div class="card-content">
+                        <h3 title="${title}">${title}</h3>
+                        <p><strong>Type:</strong> ${type}</p>
+                        <p><strong>Release:</strong> ${releaseDate}</p>
+                        <p><strong>Rating:</strong> ⭐ ${rating}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
