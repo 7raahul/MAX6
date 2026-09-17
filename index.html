@@ -67,38 +67,46 @@
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
+
+        /* Modern slim scrollbar — replaces the default OS scrollbar site-wide.
+           .no-scrollbar rows (providers, cast, genre chips) stay fully hidden as before. */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.16);
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.32);
+            background-clip: padding-box;
+        }
+
+        /* Desktop card lift on hover — subtle, GPU-cheap (no blur), pairs with
+           the existing group-hover image zoom. */
+        .card-solid {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        @media (min-width: 900px) {
+            .card-solid:hover {
+                transform: translateY(-4px);
+                border-color: rgba(255, 255, 255, 0.25);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            }
+        }
     </style>
 </head>
-<body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen pb-24 lg:pb-8 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608] flex">
-    
-    <!-- DESKTOP LEFT SIDEBAR NAV (Hidden on mobile) -->
-    <nav class="hidden lg:flex fixed left-0 top-0 h-screen w-20 flex-col items-center justify-between bg-black/70 backdrop-blur-md border-r border-white/10 py-6 z-40">
-        <!-- Top Icons -->
-        <div class="flex flex-col items-center gap-6">
-            <button onclick="switchTab('home')" title="Home" class="sidebar-nav-btn w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition group">
-                <i class="fa-solid fa-home text-lg group-hover:scale-110 transition"></i>
-            </button>
-            <button onclick="switchTab('search')" title="Search" class="sidebar-nav-btn w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition group">
-                <i class="fa-solid fa-magnifying-glass text-lg group-hover:scale-110 transition"></i>
-            </button>
-            <button onclick="switchTab('random')" title="Discover" class="sidebar-nav-btn w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition group">
-                <i class="fa-solid fa-fire text-lg group-hover:scale-110 transition"></i>
-            </button>
-            <button onclick="switchTab('schedule')" title="My List" class="sidebar-nav-btn w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition group">
-                <i class="fa-solid fa-bookmark text-lg group-hover:scale-110 transition"></i>
-            </button>
-        </div>
-
-        <!-- Bottom Icons -->
-        <div class="flex flex-col items-center gap-6">
-            <button class="sidebar-nav-btn w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition group" title="Settings" onclick="showToast('⚙️ Settings coming soon')">
-                <i class="fa-solid fa-gear text-lg group-hover:scale-110 transition"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- MAIN CONTENT WRAPPER -->
-    <div class="flex-1">
+<body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen pb-24 lg:pb-8 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
 
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
@@ -106,7 +114,7 @@
     <!-- Fixed Header -->
     <header class="sticky top-0 z-40 glass-header px-4 lg:px-8 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="goHomeAndRefresh()">
             <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-stone-200 via-white to-stone-300 flex items-center justify-center shadow-lg shadow-white/20 border border-white/30">
                 <i class="fa-solid fa-play text-slate-950 text-xs font-black"></i>
             </div>
@@ -115,16 +123,37 @@
 
         <!-- Desktop inline nav (hidden on mobile, floating pill nav below is used instead) -->
         <nav class="hidden lg:flex items-center gap-1">
-            <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
-            <button onclick="switchTab('search')" id="dnav-search" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Search</button>
-            <button onclick="switchTab('random')" id="dnav-random" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Random</button>
-            <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">My List</button>
+            <button onclick="goHomeDesktop()" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
+            <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2"><i class="fa-solid fa-film text-xs"></i> Movies</button>
+            <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2"><i class="fa-solid fa-tv text-xs"></i> TV Shows</button>
+
+            <span class="w-px h-5 bg-white/15 mx-1"></span>
+
+            <div class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-earth-americas text-xs"></i>
+                <select id="country-select-desktop" onchange="changeCountryFilter(this.value)" class="bg-transparent text-sm font-semibold focus:outline-none cursor-pointer">
+                    <option value="ALL" class="bg-[#0D0D10] text-white">Country</option>
+                    <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
+                    <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
+                    <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
+                    <option value="JP" class="bg-[#0D0D10] text-white">🇯🇵 Japan</option>
+                    <option value="GB" class="bg-[#0D0D10] text-white">🇬🇧 United Kingdom</option>
+                    <option value="ES" class="bg-[#0D0D10] text-white">🇪🇸 Spain</option>
+                    <option value="FR" class="bg-[#0D0D10] text-white">🇫🇷 France</option>
+                    <option value="DE" class="bg-[#0D0D10] text-white">🇩🇪 Germany</option>
+                    <option value="TR" class="bg-[#0D0D10] text-white">🇹🇷 Turkey</option>
+                    <option value="CN" class="bg-[#0D0D10] text-white">🇨🇳 China</option>
+                    <option value="CA" class="bg-[#0D0D10] text-white">🇨🇦 Canada</option>
+                    <option value="BR" class="bg-[#0D0D10] text-white">🇧🇷 Brazil</option>
+                    <option value="IT" class="bg-[#0D0D10] text-white">🇮🇹 Italy</option>
+                </select>
+            </div>
 
             <div class="relative">
-                <button onclick="toggleGenreMega(event)" id="dnav-genres-btn" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
+                <button onclick="toggleGenreMegaDesktop(event)" id="dnav-genres-btn" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
                     Genres <i class="fa-solid fa-chevron-down text-[9px]"></i>
                 </button>
-                <div id="genre-mega-dropdown" class="hidden absolute top-full left-0 mt-2 w-64 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl grid grid-cols-2 gap-1 z-50">
+                <div id="genre-mega-dropdown-desktop" class="hidden absolute top-full left-0 mt-2 w-64 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl grid grid-cols-2 gap-1 z-50">
                     <button onclick="selectMegaGenre('28')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Action</button>
                     <button onclick="selectMegaGenre('35')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Comedy</button>
                     <button onclick="selectMegaGenre('18')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Drama</button>
@@ -139,11 +168,36 @@
                     <button onclick="selectMegaGenre('10751')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Family</button>
                 </div>
             </div>
+
+            <span class="w-px h-5 bg-white/15 mx-1"></span>
+
+            <button onclick="switchTab('search')" id="dnav-search" title="Search" class="dnav-btn w-10 h-10 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
+            <button onclick="switchTab('random')" id="dnav-random" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Random</button>
+            <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">My List</button>
         </nav>
 
-        <div class="flex items-center gap-2">
-            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 rounded-xl text-xs lg:text-sm font-semibold text-slate-300 hover:text-white transition">Sign In</button>
-            <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 lg:px-5 lg:py-2 rounded-xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">Sign Up</button>
+        <!-- Mobile: single Account icon with Sign In / Sign Up dropdown -->
+        <div class="relative flex lg:hidden">
+            <button onclick="toggleAccountMenuMobile(event)" id="account-menu-btn-mobile" class="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg shadow-indigo-500/25 border border-indigo-400/30">
+                <i class="fa-solid fa-circle-user text-base"></i>
+            </button>
+            <div id="account-menu-dropdown-mobile" class="hidden absolute top-full right-0 mt-2 w-44 card-solid border border-white/15 rounded-2xl p-2 shadow-2xl z-50">
+                <button onclick="closeAccountMenuMobile(); openAuthModal('signin')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-right-to-bracket text-[11px]"></i> Sign In</button>
+                <button onclick="closeAccountMenuMobile(); openAuthModal('signup')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-user-plus text-[11px]"></i> Sign Up</button>
+            </div>
+        </div>
+
+        <!-- Desktop: merged Account dropdown (replaces separate Sign In / Sign Up) -->
+        <div class="hidden lg:block relative">
+            <button onclick="toggleAccountMenu(event)" id="account-menu-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">
+                <i class="fa-solid fa-circle-user"></i> Account <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <div id="account-menu-dropdown" class="hidden absolute top-full right-0 mt-2 w-44 card-solid border border-white/15 rounded-2xl p-2 shadow-2xl z-50">
+                <button onclick="closeAccountMenu(); openAuthModal('signin')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-right-to-bracket text-[11px]"></i> Sign In</button>
+                <button onclick="closeAccountMenu(); openAuthModal('signup')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-user-plus text-[11px]"></i> Sign Up</button>
+            </div>
         </div>
       </div>
     </header>
@@ -154,19 +208,18 @@
         <!-- HOME TAB -->
         <section id="tab-home" class="space-y-4">
             
-            <!-- Category & Country Bar -->
-            <div class="flex items-center gap-2 lg:gap-3 overflow-x-auto no-scrollbar py-0.5">
-                <div class="flex items-center gap-2 lg:gap-1.5 lg:bg-white/5 lg:border lg:border-white/10 lg:rounded-2xl lg:p-1.5">
-                    <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 lg:border-0"><i class="hidden lg:inline-block fa-solid fa-layer-group mr-2 text-[11px]"></i>All</button>
-                    <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card lg:bg-transparent lg:border-0 lg:shadow-none text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10"><i class="hidden lg:inline-block fa-solid fa-film mr-2 text-[11px]"></i>Movies</button>
-                    <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card lg:bg-transparent lg:border-0 lg:shadow-none text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10"><i class="hidden lg:inline-block fa-solid fa-tv mr-2 text-[11px]"></i>TV Shows</button>
+            <!-- Category & Country Bar (MOBILE ONLY — desktop uses the top-nav controls) -->
+            <div class="lg:hidden flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                <div class="flex items-center gap-2">
+                    <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition"><i class="fa-solid fa-film text-[10px]"></i> Movies</button>
+                    <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition"><i class="fa-solid fa-tv text-[10px]"></i> TV Shows</button>
                 </div>
 
                 <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
-                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 lg:px-4 lg:py-2.5 border border-indigo-400/30">
+                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 border border-indigo-400/30">
                     <i class="fa-solid fa-earth-americas text-indigo-400 text-xs mr-2 pointer-events-none"></i>
-                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs lg:text-sm font-semibold focus:outline-none cursor-pointer pr-1">
-                        <option value="ALL" class="bg-[#0D0D10] text-white">All Countries (Global)</option>
+                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs font-semibold focus:outline-none cursor-pointer pr-1">
+                        <option value="ALL" class="bg-[#0D0D10] text-white">Country</option>
                         <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
                         <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
                         <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
@@ -184,20 +237,9 @@
                 </div>
             </div>
 
-            <!-- Genre Quick Filters (mobile only — desktop uses the top-nav Genres dropdown) -->
-            <div class="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                <button onclick="changeGenreFilter('', this)" class="genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap">All Genres</button>
-                <button onclick="changeGenreFilter('28', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Action</button>
-                <button onclick="changeGenreFilter('35', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Comedy</button>
-                <button onclick="changeGenreFilter('18', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Drama</button>
-                <button onclick="changeGenreFilter('878', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Sci-Fi</button>
-                <button onclick="changeGenreFilter('27', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Horror</button>
-                <button onclick="changeGenreFilter('16', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Animation</button>
-            </div>
-
             <!-- HERO SPOTLIGHT -->
             <div class="relative group/hero">
-                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/9] lg:max-h-[480px] w-full flex items-end cursor-pointer group transition duration-500 bg-center bg-contain bg-no-repeat">
+                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/8] lg:max-h-[440px] w-full flex items-end cursor-pointer group transition duration-500">
                     <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                         <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                         <p class="text-xs">Loading Spotlight...</p>
@@ -244,25 +286,6 @@
                     <button onclick="clearRecentSearches()" class="text-xs font-semibold text-slate-400 hover:text-white underline transition">Clear All</button>
                 </div>
                 <div id="recent-searches-row" class="flex gap-2 flex-wrap"></div>
-            </div>
-
-            <!-- SEARCH BY GENRE (Desktop only) -->
-            <div class="hidden lg:block space-y-3">
-                <h2 class="text-base font-bold text-white tracking-wide">Search by Genre</h2>
-                <div class="grid grid-cols-4 xl:grid-cols-6 gap-4">
-                    <button onclick="selectSearchGenre('28')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-red-500/25 to-red-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-explosion text-2xl"></i>Action</button>
-                    <button onclick="selectSearchGenre('35')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-amber-500/25 to-amber-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-face-laugh-beam text-2xl"></i>Comedy</button>
-                    <button onclick="selectSearchGenre('18')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-purple-500/25 to-purple-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-masks-theater text-2xl"></i>Drama</button>
-                    <button onclick="selectSearchGenre('878')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-blue-500/25 to-blue-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-user-astronaut text-2xl"></i>Sci-Fi</button>
-                    <button onclick="selectSearchGenre('27')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-rose-600/25 to-rose-600/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-ghost text-2xl"></i>Horror</button>
-                    <button onclick="selectSearchGenre('16')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-pink-500/25 to-pink-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-palette text-2xl"></i>Animation</button>
-                    <button onclick="selectSearchGenre('10749')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-fuchsia-500/25 to-fuchsia-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-heart text-2xl"></i>Romance</button>
-                    <button onclick="selectSearchGenre('53')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-slate-500/25 to-slate-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-magnifying-glass text-2xl"></i>Thriller</button>
-                    <button onclick="selectSearchGenre('99')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-teal-500/25 to-teal-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-video text-2xl"></i>Documentary</button>
-                    <button onclick="selectSearchGenre('14')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-violet-500/25 to-violet-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-dragon text-2xl"></i>Fantasy</button>
-                    <button onclick="selectSearchGenre('9648')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-question text-2xl"></i>Mystery</button>
-                    <button onclick="selectSearchGenre('10751')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-emerald-500/25 to-emerald-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-users text-2xl"></i>Family</button>
-                </div>
             </div>
 
             <!-- Search Filters Bar -->
@@ -459,7 +482,7 @@
 
     <!-- Bottom Navigation Bar (floating pill) -->
     <nav class="fixed bottom-4 left-4 right-4 z-[60] lg:hidden bg-black/75 backdrop-blur-2xl px-2 py-2 rounded-full flex justify-around items-center border border-white/10 shadow-2xl shadow-black/60">
-        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg">
+        <button onclick="goHomeDesktop()" id="nav-home" class="nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg">
             <i class="fa-solid fa-house text-base"></i>
             <span class="text-[11px]">Home</span>
         </button>
@@ -497,8 +520,10 @@
         let heroItems = [];
         let heroIndex = 0;
         let heroTimer = null;
+        let heroEnrichToken = 0;
         let pendingItem = null;
         let pendingKey = null;
+        let pendingQuickBookmark = false;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHomeTitles(true);
@@ -590,6 +615,7 @@
 
         function switchTabDOM(tabName) {
             currentTab = tabName;
+            if (tabName !== 'search') document.title = 'CineDB';
 
             const inactiveClass = "nav-btn flex flex-col items-center gap-1 px-3 py-1.5 rounded-full text-stone-400 hover:text-white transition-all duration-300";
             const activeClass = "nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg";
@@ -653,19 +679,88 @@
             return null;
         }
 
+        // India + TV Shows should surface OTT web series, not daily-soap TV serials.
+        // TMDB has no "web series only" flag, so we resolve the actual Indian OTT
+        // platform IDs from /watch/providers/tv (name-matched, not hardcoded) and
+        // filter discover/tv to only those with_watch_providers.
+        let indianOttProviderIdsCache = null;
+        const INDIAN_OTT_NAME_PATTERNS = ['netflix', 'prime video', 'amazon', 'hotstar', 'jiocinema', 'jio cinema', 'sonyliv', 'sony liv', 'zee5', 'mx player', 'voot', 'aha', 'hoichoi', 'lionsgate play', 'apple tv', 'mubi', 'erosnow', 'eros now'];
+        async function getIndianOttProviderIds() {
+            if (indianOttProviderIdsCache) return indianOttProviderIdsCache;
+            const data = await fetchTMDB('/watch/providers/tv', '&watch_region=IN');
+            if (data && data.results && data.results.length) {
+                const ids = data.results
+                    .filter(p => INDIAN_OTT_NAME_PATTERNS.some(pat => p.provider_name.toLowerCase().includes(pat)))
+                    .map(p => p.provider_id);
+                indianOttProviderIdsCache = ids.length ? ids : [8, 119, 232];
+            } else {
+                indianOttProviderIdsCache = [8, 119, 232]; // fallback: Netflix, Prime Video, ZEE5
+            }
+            return indianOttProviderIdsCache;
+        }
+
         function changeCategoryFilter(category, btnEl) {
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
+                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition";
             });
-            if (btnEl) btnEl.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
+            document.querySelectorAll('.dnav-cat-btn').forEach(b => {
+                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2";
+            });
+            document.querySelectorAll(`[data-cat="${category}"]`).forEach(b => {
+                if (b.classList.contains('dnav-cat-btn')) {
+                    b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 transition flex items-center gap-2";
+                } else {
+                    b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition";
+                }
+            });
 
             currentCategory = category;
             updateSectionTitle();
             loadHomeTitles(true);
         }
 
+        function goHomeDesktop() {
+            currentCategory = 'all';
+            currentCountry = 'ALL';
+            currentGenre = '';
+
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition";
+            });
+            document.querySelectorAll('.dnav-cat-btn').forEach(b => {
+                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2";
+            });
+            document.querySelectorAll('[data-cat="all"]').forEach(b => {
+                b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition";
+            });
+
+            const mobileSel = document.getElementById('country-select');
+            const desktopSel = document.getElementById('country-select-desktop');
+            if (mobileSel) mobileSel.value = 'ALL';
+            if (desktopSel) desktopSel.value = 'ALL';
+
+            document.querySelectorAll('.genre-btn').forEach(b => {
+                b.className = "genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap";
+            });
+            const allGenreBtn = document.getElementById('genre-all-btn');
+            if (allGenreBtn) allGenreBtn.className = "genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap";
+
+            switchTab('home');
+            updateSectionTitle();
+            loadHomeTitles(true);
+        }
+
+        // Logo click = Home + full refresh (alias, same full-reset behavior)
+        function goHomeAndRefresh() {
+            goHomeDesktop();
+        }
+
         function changeCountryFilter(countryCode) {
             currentCountry = countryCode;
+            const mobileSel = document.getElementById('country-select');
+            const desktopSel = document.getElementById('country-select-desktop');
+            if (mobileSel) mobileSel.value = countryCode;
+            if (desktopSel) desktopSel.value = countryCode;
             updateSectionTitle();
             loadHomeTitles(true);
         }
@@ -677,10 +772,32 @@
         function closeGenreMega() {
             document.getElementById('genre-mega-dropdown')?.classList.add('hidden');
         }
+        function toggleGenreMegaDesktop(e) {
+            e.stopPropagation();
+            document.getElementById('genre-mega-dropdown-desktop').classList.toggle('hidden');
+        }
+        function closeGenreMegaDesktop() {
+            document.getElementById('genre-mega-dropdown-desktop')?.classList.add('hidden');
+        }
         function selectMegaGenre(genreId) {
             closeGenreMega();
+            closeGenreMegaDesktop();
             switchTab('home');
             changeGenreFilter(genreId, null);
+        }
+        function toggleAccountMenu(e) {
+            e.stopPropagation();
+            document.getElementById('account-menu-dropdown').classList.toggle('hidden');
+        }
+        function closeAccountMenu() {
+            document.getElementById('account-menu-dropdown')?.classList.add('hidden');
+        }
+        function toggleAccountMenuMobile(e) {
+            e.stopPropagation();
+            document.getElementById('account-menu-dropdown-mobile').classList.toggle('hidden');
+        }
+        function closeAccountMenuMobile() {
+            document.getElementById('account-menu-dropdown-mobile')?.classList.add('hidden');
         }
         function selectSearchGenre(genreId) {
             document.getElementById('search-genre').value = genreId;
@@ -689,9 +806,24 @@
         }
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('genre-mega-dropdown');
-            const btn = document.getElementById('dnav-genres-btn');
-            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && e.target !== btn) {
+            const btn = document.getElementById('home-genres-btn');
+            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && btn && !btn.contains(e.target)) {
                 closeGenreMega();
+            }
+            const dropdownD = document.getElementById('genre-mega-dropdown-desktop');
+            const btnD = document.getElementById('dnav-genres-btn');
+            if (dropdownD && !dropdownD.classList.contains('hidden') && !dropdownD.contains(e.target) && btnD && !btnD.contains(e.target)) {
+                closeGenreMegaDesktop();
+            }
+            const accountDropdown = document.getElementById('account-menu-dropdown');
+            const accountBtn = document.getElementById('account-menu-btn');
+            if (accountDropdown && !accountDropdown.classList.contains('hidden') && !accountDropdown.contains(e.target) && accountBtn && !accountBtn.contains(e.target)) {
+                closeAccountMenu();
+            }
+            const accountDropdownM = document.getElementById('account-menu-dropdown-mobile');
+            const accountBtnM = document.getElementById('account-menu-btn-mobile');
+            if (accountDropdownM && !accountDropdownM.classList.contains('hidden') && !accountDropdownM.contains(e.target) && accountBtnM && !accountBtnM.contains(e.target)) {
+                closeAccountMenuMobile();
             }
         });
 
@@ -784,7 +916,14 @@
             let endpoint = '/trending/all/day';
             let params = `&page=${currentPage}`;
 
-            if (currentCountry !== 'ALL') {
+            if (currentCountry === 'IN' && currentCategory === 'tv') {
+                // Web-series-only: filter by actual Indian OTT platforms instead of
+                // origin_country (which also returns broadcast TV daily soaps).
+                endpoint = '/discover/tv';
+                const ottIds = await getIndianOttProviderIds();
+                params += `&watch_region=IN&with_watch_providers=${ottIds.join('|')}&sort_by=popularity.desc`;
+                if (currentGenre) params += `&with_genres=${currentGenre}`;
+            } else if (currentCountry !== 'ALL') {
                 endpoint = currentCategory === 'tv' ? '/discover/tv' : '/discover/movie';
                 params += `&with_origin_country=${currentCountry}&sort_by=popularity.desc`;
                 if (currentGenre) params += `&with_genres=${currentGenre}`;
@@ -803,10 +942,22 @@
 
             if (data && data.results && data.results.length > 0) {
                 if (reset) {
+                    // Render grid + basic hero IMMEDIATELY — don't block on extra
+                    // per-item detail fetches (that was causing filter clicks to
+                    // feel broken/unresponsive).
                     heroItems = data.results.slice(0, 5);
                     heroIndex = 0;
                     startHeroAutoSlide();
                     renderTop10(data.results.slice(0, 10));
+                    renderGrid(data.results, 'home-grid', false);
+                    currentPage++;
+                    if (currentPage > data.total_pages) hasMore = false;
+                    isFetching = false;
+
+                    // Enrich hero items (logo, runtime, cert, genres) in the
+                    // background, then re-render just the hero banner.
+                    enrichHeroItems(heroItems);
+                    return;
                 }
                 renderGrid(data.results, 'home-grid', !reset);
                 currentPage++;
@@ -821,6 +972,23 @@
             isFetching = false;
         }
 
+        async function enrichHeroItems(rawHero) {
+            const enrichToken = ++heroEnrichToken;
+            const enriched = await Promise.all(rawHero.map(async raw => {
+                const hType = raw.media_type || (raw.title ? 'movie' : 'tv');
+                const certAppend = hType === 'movie' ? 'release_dates' : 'content_ratings';
+                const [details, logoUrl] = await Promise.all([
+                    fetchTMDB(`/${hType}/${raw.id}`, `&append_to_response=${certAppend}`),
+                    fetchTitleLogo(hType, raw.id)
+                ]);
+                return { ...raw, _type: hType, _details: details, _logoUrl: logoUrl };
+            }));
+            // If the user switched filters again while this was in flight, drop it.
+            if (enrichToken !== heroEnrichToken) return;
+            heroItems = enriched;
+            renderHeroBanner(heroItems[heroIndex]);
+        }
+
         function startHeroAutoSlide() {
             if (heroTimer) clearInterval(heroTimer);
             if (!heroItems.length) return;
@@ -830,42 +998,122 @@
             heroTimer = setInterval(() => {
                 heroIndex = (heroIndex + 1) % heroItems.length;
                 renderHeroBanner(heroItems[heroIndex]);
-            }, 4000);
+            }, 6000);
         }
 
-        async function renderHeroBanner(item) {
+        function extractCertification(type, details) {
+            if (!details) return null;
+            try {
+                if (type === 'movie' && details.release_dates?.results) {
+                    const entry = details.release_dates.results.find(r => r.iso_3166_1 === 'IN')
+                        || details.release_dates.results.find(r => r.iso_3166_1 === 'US');
+                    const found = entry?.release_dates?.find(rd => rd.certification);
+                    return found?.certification || null;
+                }
+                if (type === 'tv' && details.content_ratings?.results) {
+                    const entry = details.content_ratings.results.find(r => r.iso_3166_1 === 'IN')
+                        || details.content_ratings.results.find(r => r.iso_3166_1 === 'US');
+                    return entry?.rating || null;
+                }
+            } catch (e) { /* no-op */ }
+            return null;
+        }
+
+        function renderHeroBanner(item) {
             const container = document.getElementById('hero-container');
-            const type = item.media_type || (item.title ? 'movie' : 'tv');
+            const type = item._type || item.media_type || (item.title ? 'movie' : 'tv');
             const title = item.title || item.name;
             const backdrop = item.backdrop_path ? `${BACKDROP_URL}${item.backdrop_path}` : `${IMG_URL}${item.poster_path}`;
             const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+            const logoUrl = item._logoUrl || null;
+            const details = item._details || null;
+
+            const date = item.release_date || item.first_air_date || (details && (details.release_date || details.first_air_date)) || 'N/A';
+            const releaseYear = date !== 'N/A' ? date.split('-')[0] : null;
+            const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
+            const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
+
+            const runtimeMin = details ? (type === 'movie' ? details.runtime : (details.episode_run_time && details.episode_run_time[0])) : null;
+            const runtimeStr = runtimeMin ? `${Math.floor(runtimeMin / 60)}h ${runtimeMin % 60}m` : null;
+            const cert = extractCertification(type, details);
+            const langCount = details?.spoken_languages?.length || null;
+            const genres = (details?.genres || []).slice(0, 4).map(g => g.name);
+            const overview = (details?.overview || item.overview || '').trim();
 
             container.onclick = () => openDetails(type, item.id);
 
-            const logoUrl = await fetchTitleLogo(type, item.id);
-
             container.innerHTML = `
-                <div class="absolute inset-0 bg-[#060608]">
-                    <img src="${backdrop}" class="w-full h-full object-cover object-center transition-all duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/30 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/80 via-transparent to-transparent"></div>
+                <!-- MOBILE: full backdrop + bottom overlay, Prime-Video style -->
+                <div class="lg:hidden absolute inset-0 bg-[#060608]">
+                    <img src="${backdrop}" class="w-full h-full object-cover object-top transition-all duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/25 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/50 to-transparent"></div>
                 </div>
 
-                <span class="absolute top-3 left-3 lg:top-5 lg:left-5 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-sm font-bold px-2.5 py-1 lg:px-3.5 lg:py-1.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
-                    <i class="fa-solid fa-star text-[9px] lg:text-xs"></i> ${rating}
+                <!-- MOBILE: rating sits over the (full-bleed) image, top-left -->
+                <span class="lg:hidden absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                    <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                 </span>
 
-                <div class="relative z-10 p-4 lg:p-8 w-full flex flex-col gap-2 lg:gap-3">
+                <!-- MOBILE: bottom-left content block (logo/title, badge, small tag) -->
+                <div class="lg:hidden relative z-10 p-4 pr-12 w-full flex flex-col gap-1.5">
                     ${logoUrl ? `
-                        <img src="${logoUrl}" alt="${title}" class="max-h-10 lg:max-h-16 max-w-[220px] lg:max-w-[380px] object-contain drop-shadow-2xl">
+                        <img src="${logoUrl}" alt="${title}" class="max-h-10 max-w-[210px] object-contain drop-shadow-2xl">
                     ` : `
-                        <h1 class="text-lg lg:text-3xl font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
+                        <h1 class="text-lg font-black text-white leading-tight drop-shadow-md truncate max-w-[90%]">${title}</h1>
                     `}
+                    ${isNew ? `<p class="text-[11px] font-black text-white/95 uppercase tracking-wider">${type === 'tv' ? 'New Series' : 'New Movie'}</p>` : ''}
+                    <div class="flex items-center gap-1.5 text-[11px] font-semibold text-amber-300">
+                        <i class="fa-solid fa-bookmark text-[10px]"></i>
+                        <span>${releaseYear ? `${releaseYear} Release` : 'Trending Now'}</span>
+                    </div>
+                </div>
 
-                    <div class="flex gap-1.5 lg:gap-2 pt-1">
-                        ${heroItems.map((_, idx) => `
-                            <span class="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4 lg:w-6' : 'bg-white/30'}"></span>
-                        `).join('')}
+                <!-- MOBILE: small pagination dots, bottom-right -->
+                <div class="lg:hidden absolute bottom-3 right-3 z-10 flex gap-1">
+                    ${heroItems.map((_, idx) => `
+                        <span class="w-1 h-1 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-3' : 'bg-white/40'}"></span>
+                    `).join('')}
+                </div>
+
+                <!-- DESKTOP: true 50/50 split — left solid info panel, right image half -->
+                <div class="hidden lg:flex absolute inset-0">
+                    <div class="w-1/2 h-full bg-[#0a0a0d] relative flex items-center overflow-hidden">
+                        <div class="absolute inset-y-0 -right-20 w-20 bg-gradient-to-r from-[#0a0a0d] to-transparent pointer-events-none z-10"></div>
+                        <div class="relative z-20 pl-8 xl:pl-12 pr-8 space-y-2.5 w-full">
+                            ${logoUrl ? `
+                                <img src="${logoUrl}" alt="${title}" class="max-h-16 xl:max-h-20 max-w-full object-contain drop-shadow-2xl">
+                            ` : `
+                                <h1 class="text-3xl xl:text-4xl font-black text-white leading-tight drop-shadow-2xl">${title}</h1>
+                            `}
+
+                            ${isNew ? `<p class="text-sm font-bold text-blue-400">Newly Added</p>` : ''}
+
+                            <div class="flex items-center gap-2 text-xs xl:text-sm font-bold text-white/90 flex-wrap">
+                                ${releaseYear ? `<span>${releaseYear}</span>` : ''}
+                                ${cert ? `<span class="text-white/50">•</span><span class="border border-white/40 px-1.5 py-0.5 rounded text-[10px] xl:text-xs">${cert}</span>` : ''}
+                                ${runtimeStr ? `<span class="text-white/50">•</span><span>${runtimeStr}</span>` : ''}
+                                ${langCount ? `<span class="text-white/50">•</span><span>${langCount} Language${langCount > 1 ? 's' : ''}</span>` : ''}
+                            </div>
+
+                            ${overview ? `<p class="text-xs xl:text-sm text-slate-200 leading-relaxed line-clamp-3 max-w-md">${overview}</p>` : ''}
+
+                            ${genres.length ? `<p class="text-xs xl:text-sm font-bold text-white/90">${genres.join(' | ')}</p>` : ''}
+
+                            <div class="flex gap-1.5 pt-1.5">
+                                ${heroItems.map((_, idx) => `
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-1/2 h-full relative overflow-hidden">
+                        <img src="${backdrop}" class="w-full h-full object-cover object-center">
+                        <!-- DESKTOP: rating sits over the image half, top -->
+                        <span class="absolute top-4 right-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                            <i class="fa-solid fa-star text-[10px]"></i> ${rating}
+                        </span>
                     </div>
                 </div>
             `;
@@ -954,7 +1202,14 @@
                 const genre = document.getElementById('search-genre').value;
                 const year = document.getElementById('search-year').value;
 
-                if (query) saveRecentSearch(query);
+                if (query) {
+                    saveRecentSearch(query);
+                    document.title = `Search: ${query} — CineDB`;
+                    window.history.replaceState({ modalOpen: false, tab: 'search' }, '', `${window.location.pathname}?q=${encodeURIComponent(query)}`);
+                } else {
+                    document.title = 'CineDB';
+                    window.history.replaceState({ modalOpen: false, tab: 'search' }, '', window.location.pathname);
+                }
 
                 showGridSkeleton('search-grid');
 
@@ -987,26 +1242,31 @@
 
         function toggleQuickBookmark(item) {
             let list = getListData('schedule');
-            const index = list.findIndex(i => i.id === item.id);
+            const index = list.findIndex(i => i.id === item.id && i.media_type === item.media_type);
 
             if (index > -1) {
                 list.splice(index, 1);
                 localStorage.setItem('cinedb_schedule', JSON.stringify(list));
                 showToast(`Removed "${item.title || item.name}" from Schedule`);
+                if (currentTab === 'schedule') renderUserLists();
+                if (currentTab === 'home') renderGrid([], 'home-grid', false, true);
             } else {
-                item.userDate = new Date().toISOString().split('T')[0];
-                list.push(item);
-                localStorage.setItem('cinedb_schedule', JSON.stringify(list));
-                showToast(`Scheduled "${item.title || item.name}" for Today!`);
-            }
+                pendingItem = item;
+                pendingKey = 'schedule';
+                pendingQuickBookmark = true;
+                const dateModal = document.getElementById('date-modal');
+                const dateInput = document.getElementById('custom-date-input');
+                const titleEl = document.getElementById('date-modal-title');
 
-            if (currentTab === 'schedule') renderUserLists();
-            if (currentTab === 'home') renderGrid([], 'home-grid', false, true); 
+                titleEl.innerHTML = `<i class="fa-solid fa-calendar-day text-indigo-400"></i> Schedule Plan Date`;
+                dateInput.value = new Date().toISOString().split('T')[0];
+                dateModal.classList.remove('hidden');
+            }
         }
 
         function handleListAction(item, key) {
             let list = getListData(key);
-            const index = list.findIndex(i => i.id === item.id);
+            const index = list.findIndex(i => i.id === item.id && i.media_type === item.media_type);
 
             if (index > -1) {
                 list.splice(index, 1);
@@ -1017,6 +1277,7 @@
             } else {
                 pendingItem = item;
                 pendingKey = key;
+                pendingQuickBookmark = false;
                 const dateModal = document.getElementById('date-modal');
                 const dateInput = document.getElementById('custom-date-input');
                 const titleEl = document.getElementById('date-modal-title');
@@ -1034,22 +1295,30 @@
             if (!pendingItem || !pendingKey) return;
             const dateVal = document.getElementById('custom-date-input').value;
             let list = getListData(pendingKey);
-            
+
             pendingItem.userDate = dateVal || new Date().toISOString().split('T')[0];
             list.push(pendingItem);
-            
+
             localStorage.setItem(`cinedb_${pendingKey}`, JSON.stringify(list));
             showToast(`Added to ${pendingKey === 'schedule' ? 'Schedule' : 'Watched List'}!`);
+
+            const wasQuickBookmark = pendingQuickBookmark;
+            const confirmedItem = pendingItem;
             closeDateModal();
-            
+
             if (currentTab === 'schedule') renderUserLists();
-            openDetails(pendingItem.media_type, pendingItem.id);
+            if (wasQuickBookmark) {
+                if (currentTab === 'home') renderGrid([], 'home-grid', false, true);
+            } else {
+                openDetails(confirmedItem.media_type, confirmedItem.id);
+            }
         }
 
         function closeDateModal() {
             document.getElementById('date-modal').classList.add('hidden');
             pendingItem = null;
             pendingKey = null;
+            pendingQuickBookmark = false;
         }
 
         function switchListSubTab(sub) {
@@ -1058,10 +1327,10 @@
             const watchedBtn = document.getElementById('subtab-watched');
 
             if (isSched) {
-                schedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 flex items-center justify-center gap-2 transition";
+                schedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-rose-500/15 text-rose-300 shadow-lg shadow-rose-500/10 border border-rose-500/40 flex items-center justify-center gap-2 transition";
                 watchedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-semibold glass-card text-indigo-200 hover:text-white flex items-center justify-center gap-2 transition";
             } else {
-                watchedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-white text-black shadow-lg shadow-white/10 border border-white flex items-center justify-center gap-2 transition";
+                watchedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/10 border border-emerald-500/40 flex items-center justify-center gap-2 transition";
                 schedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-semibold glass-card text-indigo-200 hover:text-white flex items-center justify-center gap-2 transition";
             }
 
@@ -1074,6 +1343,8 @@
             renderGrid(getListData('watched'), 'list-watched-container');
         }
 
+        let renderedCardKeys = {};
+
         function renderGrid(items, targetId, append = false, refreshOnly = false) {
             const container = document.getElementById(targetId);
             if (!items || items.length === 0) {
@@ -1081,25 +1352,46 @@
                 return;
             }
 
+            if (!append) renderedCardKeys[targetId] = new Set();
+            if (!renderedCardKeys[targetId]) renderedCardKeys[targetId] = new Set();
+            const seenKeys = renderedCardKeys[targetId];
+
             const schedList = getListData('schedule');
+            const watchedList = getListData('watched');
 
             const html = items.map(item => {
+                const type = item.media_type || (item.title ? 'movie' : 'tv');
+                const cardKey = `${type}_${item.id}`;
+                if (seenKeys.has(cardKey)) return ''; // duplicate across pages — skip
+                seenKeys.add(cardKey);
+
                 const title = item.title || item.name || 'Untitled';
                 const date = item.release_date || item.first_air_date || 'N/A';
                 const year = date !== 'N/A' ? date.split('-')[0] : 'N/A';
                 const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
                 const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
-                const type = item.media_type || (item.title ? 'movie' : 'tv');
-                const isBookmarked = schedList.some(s => s.id === item.id);
                 const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
                 const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
 
+                // id + media_type together (never id alone — a movie and a TV show can share the same numeric id)
+                const schedEntry = schedList.find(s => s.id === item.id && s.media_type === type);
+                const watchedEntry = watchedList.find(w => w.id === item.id && w.media_type === type);
+                const statusType = watchedEntry ? 'watched' : (schedEntry ? 'schedule' : null);
+                const statusEntry = watchedEntry || schedEntry;
+
                 const itemPayload = JSON.stringify({ id: item.id, title, poster_path: item.poster_path, vote_average: item.vote_average, release_date: date, media_type: type }).replace(/"/g, '&quot;');
+
+                const statusBtnClass = statusType === 'watched'
+                    ? 'text-emerald-400 border-emerald-500/40'
+                    : statusType === 'schedule'
+                        ? 'text-rose-400 border-rose-500/40'
+                        : 'text-slate-200 border-indigo-500/30 hover:text-amber-400';
+                const statusIcon = statusType === 'watched' ? 'fa-solid fa-circle-check' : 'fa-solid fa-bookmark';
 
                 return `
                     <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
-                        <button onclick="event.stopPropagation(); toggleQuickBookmark(${itemPayload})" class="absolute top-2 left-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-amber-400 border border-indigo-500/30 active:scale-95 transition shadow-lg">
-                            <i class="${isBookmarked ? 'fa-solid text-amber-400' : 'fa-regular'} fa-bookmark text-xs"></i>
+                        <button onclick="event.stopPropagation(); toggleQuickBookmark(${itemPayload})" class="absolute top-2 left-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center border active:scale-95 transition shadow-lg ${statusBtnClass}">
+                            <i class="${statusType ? statusIcon : 'fa-regular fa-bookmark'} text-xs"></i>
                         </button>
 
                         <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
@@ -1112,7 +1404,11 @@
                         <div class="p-2.5 flex flex-col justify-between flex-grow">
                             <div>
                                 <h3 class="text-xs font-semibold text-slate-100 line-clamp-1">${title}</h3>
-                                ${item.userDate ? `<span class="text-[9px] text-indigo-400 font-semibold block mt-1"><i class="fa-regular fa-calendar-check text-[8px] mr-1"></i>${item.userDate}</span>` : ''}
+                                ${statusEntry ? `
+                                    <span class="text-[9px] font-bold block mt-1 ${statusType === 'watched' ? 'text-emerald-400' : 'text-rose-400'}">
+                                        <i class="${statusType === 'watched' ? 'fa-solid fa-circle-check' : 'fa-solid fa-calendar-day'} text-[8px] mr-1"></i>${statusEntry.userDate}
+                                    </span>
+                                ` : ''}
                             </div>
                             <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
                                 <span>${year}</span>
@@ -1149,6 +1445,9 @@
             }
 
             const title = data.title || data.name;
+            document.title = `${title} — CineDB`;
+            const titleSlug = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            window.history.replaceState({ modalOpen: true, tab: currentTab, type, id }, '', `${window.location.pathname}?type=${type}&id=${id}&title=${encodeURIComponent(titleSlug)}`);
             const backdrop = data.backdrop_path ? `${BACKDROP_URL}${data.backdrop_path}` : `${IMG_URL}${data.poster_path}`;
             const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
             const releaseDate = data.release_date || data.first_air_date || 'N/A';
@@ -1159,60 +1458,62 @@
             const similarResults = (similarData?.results || []).slice(0, 10).map(r => ({ ...r, media_type: type }));
             const hasEpisodesTab = type === 'tv' && validSeasons.length > 0;
 
-            const schedItem = getListData('schedule').find(i => i.id === data.id);
-            const watchedItem = getListData('watched').find(i => i.id === data.id);
+            const schedItem = getListData('schedule').find(i => i.id === data.id && i.media_type === type);
+            const watchedItem = getListData('watched').find(i => i.id === data.id && i.media_type === type);
+
+            // Upcoming release info — future movie release, or a TV show's next episode to air
+            const todayStr = new Date().toISOString().split('T')[0];
+            const isUpcomingMovie = type === 'movie' && releaseDate !== 'N/A' && releaseDate > todayStr;
+            const nextEp = type === 'tv' ? data.next_episode_to_air : null;
+            const providerName = providers[0]?.provider_name || null;
+            let upcomingHtml = '';
+            if (isUpcomingMovie) {
+                const fmtDate = new Date(releaseDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                upcomingHtml = `
+                    <div class="card-solid rounded-xl py-2.5 px-3 flex items-center gap-2 border border-amber-400/25 bg-amber-400/5">
+                        <i class="fa-solid fa-calendar-days text-amber-400 text-sm"></i>
+                        <p class="text-xs font-semibold text-amber-200">Releasing ${fmtDate}${providerName ? ` on ${providerName}` : ''}</p>
+                    </div>`;
+            } else if (nextEp && nextEp.air_date) {
+                const fmtDate = new Date(nextEp.air_date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                upcomingHtml = `
+                    <div class="card-solid rounded-xl py-2.5 px-3 flex items-center gap-2 border border-amber-400/25 bg-amber-400/5">
+                        <i class="fa-solid fa-calendar-days text-amber-400 text-sm"></i>
+                        <p class="text-xs font-semibold text-amber-200">Next: S${nextEp.season_number}E${nextEp.episode_number} — ${fmtDate}${providerName ? ` on ${providerName}` : ''}</p>
+                    </div>`;
+            }
 
             const itemPayload = JSON.stringify({ id: data.id, title, poster_path: data.poster_path, vote_average: data.vote_average, release_date: releaseDate, media_type: type }).replace(/"/g, '&quot;');
 
             content.innerHTML = `
                 <div class="lg:flex lg:gap-10 lg:items-start">
-                    <!-- Left column: backdrop, poster, title, stats, actions (sticky on desktop) -->
+                    <!-- Left column: backdrop (title/rating overlaid on it), stats, actions (sticky on desktop) -->
                     <div class="lg:w-[38%] lg:flex-shrink-0 lg:sticky lg:top-24">
-                        <div class="relative aspect-video w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden">
+                        <div class="relative aspect-video lg:aspect-[4/3] w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden overflow-hidden">
                             <img src="${backdrop}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 to-transparent lg:hidden"></div>
-                        </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/55 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/50 via-transparent to-transparent hidden lg:block"></div>
 
-                        <div class="px-5 lg:px-0 -mt-20 lg:mt-5 relative z-10 space-y-5">
-                            <div class="flex items-end lg:items-start gap-4">
-                                <img src="${IMG_URL}${data.poster_path}" class="w-28 h-40 lg:w-36 lg:h-52 rounded-2xl border border-white/20 shadow-2xl object-cover flex-shrink-0">
-                                <div class="space-y-2 min-w-0 flex-grow lg:hidden">
-                                    <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
-
-                                    ${logoUrl ? `
-                                        <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-full object-contain my-1">
-                                    ` : `
-                                        <h1 class="text-xl font-bold text-white leading-tight">${title}</h1>
-                                    `}
-
-                                    <div class="flex items-center gap-3 text-xs text-slate-300">
-                                        <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                                            <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                                        </span>
-                                        <span>•</span>
-                                        <span>${releaseDate}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="hidden lg:block space-y-2">
-                                <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10 space-y-2">
+                                <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
 
                                 ${logoUrl ? `
-                                    <img src="${logoUrl}" alt="${title}" class="max-h-14 max-w-full object-contain my-1">
+                                    <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-12 max-w-[80%] object-contain drop-shadow-2xl my-1">
                                 ` : `
-                                    <h1 class="text-2xl font-bold text-white leading-tight">${title}</h1>
+                                    <h1 class="text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
                                 `}
 
-                                <div class="flex items-center gap-3 text-sm text-slate-300">
-                                    <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                                        <i class="fa-solid fa-star text-xs"></i> ${rating}
+                                <div class="flex items-center gap-3 text-xs lg:text-sm text-slate-300">
+                                    <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20 backdrop-blur-sm">
+                                        <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                                     </span>
                                     <span>•</span>
                                     <span>${releaseDate}</span>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-5">
                             <div class="grid grid-cols-2 gap-3 text-center">
                                 <div class="card-solid rounded-xl py-2.5">
                                     <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Release</p>
@@ -1224,11 +1525,13 @@
                                 </div>
                             </div>
 
+                            ${upcomingHtml}
+
                             <div class="grid grid-cols-2 gap-3">
-                                <button onclick="handleListAction(${itemPayload}, 'schedule')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 ${schedItem ? 'bg-white text-black border-white' : 'card-solid text-slate-200'}">
+                                <button onclick="handleListAction(${itemPayload}, 'schedule')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 ${schedItem ? 'bg-rose-500/15 text-rose-300 border-rose-500/40' : 'card-solid text-slate-200'}">
                                     <i class="fa-solid fa-calendar-plus"></i> ${schedItem ? `Scheduled (${schedItem.userDate})` : 'Add to Schedule'}
                                 </button>
-                                <button onclick="handleListAction(${itemPayload}, 'watched')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 ${watchedItem ? 'bg-white text-black border-white' : 'card-solid text-slate-200'}">
+                                <button onclick="handleListAction(${itemPayload}, 'watched')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 ${watchedItem ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' : 'card-solid text-slate-200'}">
                                     <i class="fa-solid fa-check-circle"></i> ${watchedItem ? `Watched (${watchedItem.userDate})` : 'Mark Watched'}
                                 </button>
                             </div>
@@ -1281,7 +1584,7 @@
                                     `).join('')}
                                 </div>
 
-                                <div id="episodes-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2"></div>
+                                <div id="episodes-container" class="grid lg:grid-cols-2 gap-3 pt-2"></div>
                             </div>
                         ` : ''}
 
@@ -1394,37 +1697,57 @@
                 return;
             }
 
-            // Compact 4-column grid (horizontal, like Netflix/Prime episodes view)
-            container.className = "grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 pt-2";
+            container.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2";
             container.innerHTML = data.episodes.map(ep => {
                 const thumbnail = ep.still_path ? `${IMG_URL}${ep.still_path}` : 'https://via.placeholder.com/400x225?text=No+Thumbnail';
                 const rating = ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A';
-                const runtime = ep.runtime ? `${ep.runtime}m` : null;
+                const airDate = ep.air_date || 'TBA';
+                const runtime = ep.runtime ? `${ep.runtime} min` : null;
+                const overview = ep.overview ? ep.overview : 'No description available.';
 
                 return `
-                    <div onclick="openDetails('tv', ${tvId})" class="card-solid rounded-xl overflow-hidden border border-white/10 transition hover:border-white/30 group cursor-pointer flex flex-col">
-                        <!-- Thumbnail with overlays -->
-                        <div class="relative w-full aspect-video bg-[#060608] overflow-hidden flex-shrink-0">
-                            <img src="${thumbnail}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    <div class="card-solid rounded-2xl overflow-hidden border border-white/10 flex flex-col transition hover:border-white/30">
+                        <!-- Thumbnail (Left Side) -->
+                        <div class="relative aspect-video bg-[#060608] overflow-hidden flex-shrink-0">
+                            <img src="${thumbnail}" class="w-full h-full object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
 
-                            <!-- Episode number badge -->
-                            <span class="absolute top-2 left-2 bg-white text-black font-bold text-xs px-2 py-0.5 rounded-md shadow-lg">
+                            <!-- Episode Number Badge (Top-Left) -->
+                            <span class="absolute top-3 left-3 bg-white text-black font-black text-sm px-3 py-1.5 rounded-lg shadow-lg">
                                 ${String(ep.episode_number).padStart(2, '0')}
                             </span>
 
-                            <!-- Rating badge -->
-                            ${rating !== 'N/A' ? `
-                                <span class="absolute bottom-2 right-2 bg-amber-400/90 text-black font-bold text-[10px] px-1.5 py-0.5 rounded-md flex items-center gap-0.5 shadow-lg">
-                                    <i class="fa-solid fa-star text-[8px]"></i> ${rating}
-                                </span>
-                            ` : ''}
+                            <!-- Rating Badge (Top-Right) -->
+                            <span class="absolute top-3 right-3 bg-amber-400 text-black font-bold text-[11px] px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-lg">
+                                <i class="fa-solid fa-star text-[9px]"></i> ${rating}
+                            </span>
                         </div>
 
-                        <!-- Compact info -->
-                        <div class="p-2 flex-grow flex flex-col justify-between">
-                            <h4 class="text-[11px] font-bold text-white line-clamp-2 leading-tight">${ep.name}</h4>
-                            ${runtime ? `<p class="text-[9px] text-slate-400 mt-1">${runtime}</p>` : ''}
+                        <!-- Details (Right Side / Below on mobile) -->
+                        <div class="p-4 flex-grow flex flex-col justify-between space-y-2.5">
+                            <!-- Title -->
+                            <h4 class="text-sm font-bold text-white line-clamp-2">${ep.name}</h4>
+
+                            <!-- Meta Info: Date + Runtime -->
+                            <div class="flex items-center gap-3 text-xs text-slate-400">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-regular fa-calendar text-[10px]"></i> ${airDate}
+                                </span>
+                                ${runtime ? `<span class="text-slate-500">•</span><span class="flex items-center gap-1"><i class="fa-regular fa-clock text-[10px]"></i> ${runtime}</span>` : ''}
+                            </div>
+
+                            <!-- Overview -->
+                            <p class="text-[13px] text-slate-300 leading-relaxed line-clamp-2 flex-grow">${overview}</p>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2 pt-2">
+                                <button onclick="showToast('✓ Marked as watched')" class="flex-1 py-2 rounded-lg bg-white text-black text-xs font-bold hover:bg-slate-100 transition">
+                                    <i class="fa-solid fa-check text-[10px] mr-1.5"></i> Watched
+                                </button>
+                                <button onclick="showToast('+ Added to schedule')" class="flex-1 py-2 rounded-lg border border-white/30 text-white text-xs font-bold hover:bg-white/10 transition">
+                                    <i class="fa-solid fa-calendar-plus text-[10px] mr-1.5"></i> Schedule
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1438,6 +1761,7 @@
         function closeModalDOM() {
             document.getElementById('details-modal').classList.add('hidden');
             document.body.style.overflow = 'auto';
+            document.title = 'CineDB';
             window.history.pushState({ modalOpen: false, tab: currentTab }, '', window.location.pathname);
         }
 
@@ -1447,6 +1771,6 @@
             `).join('');
         }
     </script>
-    </div><!-- End of main wrapper -->
 </body>
 </html>
+
