@@ -295,98 +295,71 @@
                 box-shadow: 0 20px 55px rgba(0,0,0,.55) !important;
             }
 
-            /* Screenshot-inspired cinematic hero: center card + two side cards. */
+            /* DESKTOP HERO: single cinematic backdrop, content-led layout. */
             .desktop-hero-stage {
-                gap: 0;
-                padding: 0;
+                position: relative;
                 overflow: hidden;
                 align-items: stretch;
                 background: #050506;
                 isolation: isolate;
             }
 
-            .desktop-hero-card {
+            .desktop-hero-single {
                 position: absolute;
-                top: 0;
-                height: 100%;
+                inset: 0;
                 overflow: hidden;
-                border: 1px solid rgba(255,255,255,.10);
-                border-radius: 14px;
-                background: #111318;
-                padding: 0;
-                display: block;
-                cursor: pointer;
-                transition: left .45s cubic-bezier(.22,.61,.36,1), width .45s cubic-bezier(.22,.61,.36,1), opacity .35s ease, transform .45s ease, border-color .25s ease;
-                box-shadow: 0 18px 45px rgba(0,0,0,.30);
-            }
-
-            .desktop-hero-card-center {
-                left: 25.5%;
-                width: 49%;
-                z-index: 5;
-                border-color: rgba(255,255,255,.16);
-                box-shadow: 0 24px 55px rgba(0,0,0,.45);
-            }
-
-            .desktop-hero-card-left, .desktop-hero-card-right {
-                width: 24%;
-                z-index: 3;
-                opacity: .72;
-            }
-
-            .desktop-hero-card-left { left: -1.5%; }
-            .desktop-hero-card-right { left: 77.5%; }
-
-            .desktop-hero-card-side:hover {
-                opacity: .9;
-                transform: scale(.995);
-                border-color: rgba(255,255,255,.22);
+                background: #0a0b0f;
             }
 
             .desktop-hero-image {
+                position: absolute;
+                inset: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                object-position: center;
+                object-position: center center;
                 display: block;
+                transform: none;
             }
 
             .desktop-hero-shade {
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(180deg, rgba(0,0,0,.04) 25%, rgba(0,0,0,.16) 58%, rgba(0,0,0,.82) 100%);
                 pointer-events: none;
-            }
-
-            .desktop-hero-card-center .desktop-hero-shade {
-                background: linear-gradient(90deg, rgba(0,0,0,.48), transparent 48%), linear-gradient(180deg, rgba(0,0,0,.02) 42%, rgba(0,0,0,.72) 100%);
+                background:
+                    linear-gradient(90deg, rgba(5,6,8,.96) 0%, rgba(5,6,8,.82) 22%, rgba(5,6,8,.38) 48%, rgba(5,6,8,.05) 78%),
+                    linear-gradient(0deg, rgba(5,6,8,.72) 0%, rgba(5,6,8,.08) 42%, rgba(5,6,8,.02) 72%);
             }
 
             .desktop-hero-info {
                 position: absolute;
-                left: 42px;
-                right: 30px;
-                bottom: 28px;
+                left: clamp(34px, 5vw, 76px);
+                bottom: clamp(42px, 7vw, 72px);
+                width: min(520px, 38vw);
                 text-align: left;
                 z-index: 2;
             }
 
             .desktop-hero-logo {
-                max-width: min(390px, 72%);
-                max-height: 82px;
+                display: block;
+                width: auto;
+                max-width: min(390px, 92%);
+                max-height: 105px;
                 object-fit: contain;
                 object-position: left center;
-                filter: drop-shadow(0 8px 18px rgba(0,0,0,.6));
+                filter: drop-shadow(0 7px 18px rgba(0,0,0,.72));
+                margin-bottom: 14px;
             }
 
             .desktop-hero-title {
                 display: block;
                 color: #fff;
-                font-size: clamp(30px, 3.2vw, 58px);
+                font-size: clamp(32px, 3.6vw, 60px);
                 line-height: .98;
                 font-weight: 950;
                 letter-spacing: -.035em;
-                text-shadow: 0 5px 18px rgba(0,0,0,.65);
+                text-shadow: 0 5px 18px rgba(0,0,0,.72);
+                margin-bottom: 14px;
             }
 
             .desktop-hero-meta {
@@ -394,9 +367,9 @@
                 align-items: center;
                 flex-wrap: wrap;
                 gap: 9px;
-                margin-top: 12px;
-                color: rgba(255,255,255,.88);
-                font-size: 13px;
+                margin-top: 0;
+                color: rgba(255,255,255,.92);
+                font-size: 14px;
                 font-weight: 750;
             }
 
@@ -404,7 +377,6 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 5px;
-                margin-left: 3px;
                 padding: 5px 9px;
                 border-radius: 8px;
                 color: #fbbf24;
@@ -412,34 +384,18 @@
                 border: 1px solid rgba(255,255,255,.13);
             }
 
-            .desktop-side-title {
-                position: absolute;
-                left: 20px;
-                right: 20px;
-                bottom: 17px;
-                z-index: 2;
-                color: #fff;
-                font-size: 15px;
-                font-weight: 800;
-                text-align: left;
-                white-space: nowrap;
+            .desktop-hero-overview {
+                margin-top: 13px;
+                max-width: 500px;
+                color: rgba(255,255,255,.78);
+                font-size: 13px;
+                line-height: 1.48;
+                font-weight: 500;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
                 overflow: hidden;
-                text-overflow: ellipsis;
-                text-shadow: 0 3px 10px rgba(0,0,0,.8);
-            }
-
-            .desktop-side-rating {
-                position: absolute;
-                top: 13px;
-                right: 13px;
-                z-index: 2;
-                padding: 5px 8px;
-                border-radius: 8px;
-                color: #fbbf24;
-                background: rgba(0,0,0,.70);
-                border: 1px solid rgba(255,255,255,.14);
-                font-size: 11px;
-                font-weight: 800;
+                text-shadow: 0 2px 10px rgba(0,0,0,.65);
             }
 
             .desktop-hero-arrow {
@@ -454,8 +410,8 @@
                 align-items: center;
                 justify-content: center;
                 color: #fff;
-                background: rgba(0,0,0,.66);
-                border: 1px solid rgba(255,255,255,.18);
+                background: rgba(0,0,0,.58);
+                border: 1px solid rgba(255,255,255,.20);
                 box-shadow: 0 8px 24px rgba(0,0,0,.35);
                 transition: background .2s ease, transform .2s ease, border-color .2s ease;
             }
@@ -473,7 +429,7 @@
                 position: absolute;
                 z-index: 11;
                 left: 50%;
-                bottom: 10px;
+                bottom: 14px;
                 transform: translateX(-50%);
                 display: flex;
                 align-items: center;
@@ -501,10 +457,8 @@
                 .desktop-nav-item { min-width: 72px; padding: 0 10px !important; font-size: 12px !important; }
                 .desktop-search-label { display: none; }
                 .desktop-country-pill { min-width: 110px; }
-                .desktop-hero-card-center { left: 22%; width: 56%; }
-                .desktop-hero-card-left { left: -8%; width: 29%; }
-                .desktop-hero-card-right { left: 79%; width: 29%; }
-                .desktop-hero-info { left: 28px; bottom: 25px; }
+                .desktop-hero-info { left: 28px; bottom: 34px; width: min(470px, 48vw); }
+                .desktop-hero-logo { max-width: 340px; max-height: 88px; }
             }
         }
 
@@ -1272,44 +1226,22 @@ switchTab('home');
                     `).join('')}
                 </div>
 
-                <!-- DESKTOP: cinematic 3-card carousel — mobile markup above remains untouched -->
+                <!-- DESKTOP: single cinematic backdrop hero; mobile markup above remains untouched -->
                 <div class="hidden lg:flex absolute inset-0 desktop-hero-stage">
-                    ${heroItems.length ? heroItems.map((heroItem, idx) => {
-                        const cardType = heroItem._type || heroItem.media_type || (heroItem.title ? 'movie' : 'tv');
-                        const cardTitle = heroItem.title || heroItem.name || 'Untitled';
-                        const cardBackdrop = heroItem.backdrop_path
-                            ? `${BACKDROP_URL}${heroItem.backdrop_path}`
-                            : (heroItem.poster_path ? `${IMG_URL}${heroItem.poster_path}` : 'https://via.placeholder.com/1280x720/08080a/ffffff?text=CineDB');
-                        const cardRating = heroItem.vote_average ? heroItem.vote_average.toFixed(1) : 'N/A';
-                        let offset = idx - heroIndex;
-                        const total = heroItems.length;
-                        if (total > 2) {
-                            if (offset > Math.floor(total / 2)) offset -= total;
-                            if (offset < -Math.floor(total / 2)) offset += total;
-                        }
-                        if (offset < -1 || offset > 1) return '';
-                        const isCenter = offset === 0;
-                        return `
-                            <button type="button" onclick="selectHeroIndex(${idx}, event)" class="desktop-hero-card ${isCenter ? 'desktop-hero-card-center' : 'desktop-hero-card-side'} ${offset < 0 ? 'desktop-hero-card-left' : 'desktop-hero-card-right'}" aria-label="Open ${cardTitle}">
-                                <img src="${cardBackdrop}" alt="${cardTitle}" class="desktop-hero-image" onerror="this.onerror=null;this.src='https://via.placeholder.com/1280x720/08080a/ffffff?text=CineDB';">
-                                <div class="desktop-hero-shade"></div>
-                                ${isCenter ? `
-                                    <div class="desktop-hero-info">
-                                        ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="desktop-hero-logo">` : `<span class="desktop-hero-title">${title}</span>`}
-                                        <div class="desktop-hero-meta">
-                                            ${releaseYear ? `<span>${releaseYear}</span>` : ''}
-                                            ${cert ? `<span>•</span><span>${cert}</span>` : ''}
-                                            ${runtimeStr ? `<span>•</span><span>${runtimeStr}</span>` : ''}
-                                            <span class="desktop-hero-rating"><i class="fa-solid fa-star"></i> ${rating}</span>
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <span class="desktop-side-rating"><i class="fa-solid fa-star"></i> ${cardRating}</span>
-                                    <span class="desktop-side-title">${cardTitle}</span>
-                                `}
-                            </button>
-                        `;
-                    }).join('') : ''}
+                    <div class="desktop-hero-single">
+                        <img src="${backdrop}" alt="${title}" class="desktop-hero-image" onerror="this.onerror=null;this.src='${item.poster_path ? IMG_URL + item.poster_path : ''}';">
+                        <div class="desktop-hero-shade"></div>
+
+                        <div class="desktop-hero-info">
+                            ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="desktop-hero-logo">` : `<span class="desktop-hero-title">${title}</span>`}
+                            <div class="desktop-hero-meta">
+                                ${releaseYear ? `<span>${releaseYear}</span>` : ''}
+                                ${releaseYear && rating !== 'N/A' ? `<span>•</span>` : ''}
+                                <span class="desktop-hero-rating"><i class="fa-solid fa-star"></i> ${rating}</span>
+                            </div>
+                            ${overview ? `<div class="desktop-hero-overview">${overview}</div>` : ''}
+                        </div>
+                    </div>
 
                     <button type="button" onclick="heroPrev(event)" class="desktop-hero-arrow desktop-hero-arrow-left" aria-label="Previous hero">
                         <i class="fa-solid fa-chevron-left"></i>
