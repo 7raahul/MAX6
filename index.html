@@ -1279,8 +1279,9 @@ switchTab('home');
                 <!-- DESKTOP: single cinematic backdrop hero; mobile markup above remains untouched -->
                 <div class="hidden lg:flex absolute inset-0 desktop-hero-stage">
                     <div class="desktop-hero-single" style="--hero-bg: url('${backdrop.replace("'", "\'")}');">
-                        <img src="${backdrop}" alt="${title}" class="desktop-hero-image" onerror="this.onerror=null;this.src='${item.poster_path ? IMG_URL + item.poster_path : ''}';">
+                        <img src="${backdrop}" alt="${title}" crossorigin="anonymous" class="desktop-hero-image" onerror="this.onerror=null;this.src='${item.poster_path ? IMG_URL + item.poster_path : ''}';">
                         <div class="desktop-hero-shade"></div>
+                        <div class="desktop-hero-color-fade" aria-hidden="true"></div>
 
                         <div class="desktop-hero-info">
                             ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="desktop-hero-logo">` : `<span class="desktop-hero-title">${title}</span>`}
@@ -1307,6 +1308,53 @@ switchTab('home');
                     </div>
                 </div>
             `;
+
+            // Sample the current TMDB hero image and use its dominant color as the
+            // right-side fade. This affects desktop only; mobile markup is untouched.
+            applyHeroAccentColor(backdrop);
+        }
+
+        function applyHeroAccentColor(imageUrl) {
+            const hero = document.querySelector('.desktop-hero-single');
+            if (!hero || !imageUrl) return;
+            const fallback = '28, 30, 34';
+            hero.style.setProperty('--hero-accent-rgb', fallback);
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                    const size = 32;
+                    canvas.width = size; canvas.height = size;
+                    ctx.drawImage(img, 0, 0, size, size);
+                    const data = ctx.getImageData(0, 0, size, size).data;
+                    let r = 0, g = 0, b = 0, count = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const a = data[i + 3];
+                        if (a < 180) continue;
+                        const rr = data[i], gg = data[i + 1], bb = data[i + 2];
+                        // Ignore near-black pixels so the fade reflects the artwork.
+                        if (rr + gg + bb < 55) continue;
+                        r += rr; g += gg; b += bb; count++;
+                    }
+                    if (!count) return;
+                    r = Math.round(r / count);
+                    g = Math.round(g / count);
+                    b = Math.round(b / count);
+                    // Keep the tint cinematic: slightly darker and less saturated.
+                    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+                    const factor = 0.72;
+                    r = Math.round(r * factor);
+                    g = Math.round(g * factor);
+                    b = Math.round(b * factor);
+                    hero.style.setProperty('--hero-accent-rgb', `${r}, ${g}, ${b}`);
+                } catch (e) {
+                    // CORS/canvas restrictions: keep the neutral fallback.
+                }
+            };
+            img.src = imageUrl;
         }
         
 
@@ -1752,3 +1800,45 @@ switchTab('home');
     </script>
 </body>
 </html>
+            /* Dynamic poster-color fade for desktop hero. No blur: the right panel
+               receives a soft tint sampled from the current TMDB hero image. */
+            .desktop-hero-single {
+                --hero-accent-rgb: 28, 30, 34;
+                position: absolute;
+                background: #08090c;
+            }
+            .desktop-hero-single::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: none;
+                filter: none;
+                opacity: 1;
+                transform: none;
+                z-index: 0;
+                pointer-events: none;
+            }
+            .desktop-hero-color-fade {
+                position: absolute;
+                inset: 0;
+                z-index: 2;
+                pointer-events: none;
+                background: linear-gradient(90deg,
+                    rgba(0,0,0,0) 38%,
+                    rgba(var(--hero-accent-rgb), .10) 48%,
+                    rgba(var(--hero-accent-rgb), .34) 63%,
+                    rgba(var(--hero-accent-rgb), .52) 78%,
+                    rgba(var(--hero-accent-rgb), .42) 100%);
+            }
+            .desktop-hero-info {
+                background: linear-gradient(90deg,
+                    rgba(var(--hero-accent-rgb), .10) 0%,
+                    rgba(var(--hero-accent-rgb), .28) 52%,
+                    rgba(var(--hero-accent-rgb), .40) 100%);
+                border-radius: 0;
+                overflow: hidden;
+            }
+            .desktop-hero-image { z-index: 1; }
+            .desktop-hero-shade { z-index: 3; }
+            .desktop-hero-info { z-index: 4; }
+            .desktop-hero-arrow, .desktop-hero-dots { z-index: 5; }
