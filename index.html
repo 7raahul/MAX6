@@ -106,77 +106,74 @@
         }
 
 
-        /* ================= DESKTOP NAV REDESIGN =================
-           Desktop only: mobile header/navigation is intentionally untouched. */
+        /* ================= DESKTOP NAV + HERO REDESIGN =================
+           Desktop only. Mobile header, bottom nav and mobile hero are untouched. */
         @media (min-width: 900px) {
             header.glass-header {
-                background: rgba(5, 5, 7, 0.82);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                box-shadow: 0 10px 35px rgba(0, 0, 0, 0.28);
+                background: rgba(3, 3, 4, 0.94);
+                border-bottom: 1px solid rgba(255,255,255,.10);
+                box-shadow: 0 8px 30px rgba(0,0,0,.28);
             }
 
             header.glass-header > div {
                 min-height: 58px;
+                max-width: 1400px;
             }
 
             header.glass-header > div > div:first-child {
                 gap: 12px;
-                min-width: 205px;
+                min-width: 220px;
             }
 
             header.glass-header > div > div:first-child > div:first-child {
                 width: 42px;
                 height: 42px;
-                border-radius: 14px;
-                box-shadow: 0 8px 24px rgba(255,255,255,.12);
+                border-radius: 50%;
+                box-shadow: 0 7px 24px rgba(255,255,255,.14);
             }
 
             header.glass-header > div > div:first-child > span {
                 font-size: 25px;
-                letter-spacing: -0.035em;
+                letter-spacing: -.04em;
             }
 
             .desktop-main-nav {
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
-                height: 46px;
-                padding: 3px;
-                border: 1px solid rgba(255,255,255,.10);
-                border-radius: 16px;
-                background: rgba(18,18,22,.72);
-                box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 30px rgba(0,0,0,.20);
-                backdrop-filter: blur(18px);
-                -webkit-backdrop-filter: blur(18px);
+                height: 48px;
+                padding: 0;
             }
 
             .desktop-nav-pill {
                 display: flex;
                 align-items: center;
-                gap: 2px;
+                gap: 4px;
                 height: 100%;
+                padding: 0 5px;
             }
 
             .desktop-nav-item {
-                height: 38px !important;
-                min-width: 92px;
-                padding: 0 15px !important;
-                border-radius: 12px !important;
+                position: relative;
+                height: 44px !important;
+                min-width: 88px;
+                padding: 0 14px !important;
+                border-radius: 10px !important;
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 gap: 8px !important;
-                color: rgba(226,232,240,.72) !important;
+                color: rgba(226,232,240,.76) !important;
                 background: transparent !important;
-                font-size: 13px !important;
-                font-weight: 700 !important;
-                letter-spacing: .01em;
-                transition: transform .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease !important;
+                font-size: 14px !important;
+                font-weight: 750 !important;
+                letter-spacing: .005em;
+                transition: color .2s ease, background .2s ease, transform .2s ease !important;
             }
 
             .desktop-nav-item:hover {
                 color: #fff !important;
-                background: rgba(255,255,255,.07) !important;
+                background: rgba(255,255,255,.065) !important;
                 transform: translateY(-1px);
             }
 
@@ -184,36 +181,52 @@
             #dnav-home.bg-white,
             #dnav-search.bg-white,
             #dnav-home[class*="bg-white"] {
-                color: #08080a !important;
-                background: #fff !important;
-                box-shadow: 0 5px 18px rgba(255,255,255,.13) !important;
+                color: #fff !important;
+                background: transparent !important;
+                box-shadow: none !important;
             }
 
-            .desktop-nav-tools {
-                display: flex;
-                align-items: center;
-                gap: 7px;
-                margin-left: 5px;
-                padding-left: 8px;
-                border-left: 1px solid rgba(255,255,255,.09);
+            .desktop-nav-item.active-nav-item::after,
+            #dnav-home.bg-white::after,
+            #dnav-search.bg-white::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 2px;
+                width: 32px;
+                height: 3px;
+                transform: translateX(-50%);
+                border-radius: 999px;
+                background: #fff;
+                box-shadow: 0 0 12px rgba(255,255,255,.28);
+            }
+
+            .desktop-search-nav-item {
+                min-width: 78px;
+            }
+
+            .desktop-search-label {
+                display: inline;
             }
 
             .desktop-country-pill {
-                height: 38px;
+                position: relative;
+                height: 42px;
                 min-width: 128px;
-                padding: 0 12px;
-                border: 1px solid rgba(255,255,255,.08);
-                border-radius: 12px;
-                display: flex;
+                margin-left: 2px;
+                padding: 0 11px;
+                border: 1px solid rgba(255,255,255,.10);
+                border-radius: 11px;
+                display: inline-flex;
                 align-items: center;
                 gap: 8px;
                 color: rgba(226,232,240,.82);
                 background: rgba(255,255,255,.035);
-                transition: .2s ease;
+                transition: border-color .2s ease, background .2s ease, color .2s ease;
             }
 
             .desktop-country-pill:hover {
-                border-color: rgba(255,255,255,.17);
+                border-color: rgba(255,255,255,.20);
                 background: rgba(255,255,255,.07);
                 color: #fff;
             }
@@ -227,38 +240,15 @@
                 outline: 0;
                 background: transparent;
                 color: inherit;
-                font-size: 13px;
-                font-weight: 700;
+                font-size: 14px;
+                font-weight: 750;
                 cursor: pointer;
             }
 
-            #country-select-desktop option {
-                background: #0d0d10;
-                color: #fff;
-            }
-
-            .desktop-search-btn {
-                width: 38px !important;
-                height: 38px !important;
-                padding: 0 !important;
-                border-radius: 12px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                color: rgba(226,232,240,.82) !important;
-                background: rgba(255,255,255,.035) !important;
-                transition: .2s ease !important;
-            }
-
-            .desktop-search-btn:hover,
-            #dnav-search.bg-white {
-                color: #08080a !important;
-                background: #fff !important;
-                box-shadow: 0 5px 18px rgba(255,255,255,.13) !important;
-            }
+            #country-select-desktop option { background: #0d0d10; color: #fff; }
 
             .desktop-account-wrap {
-                min-width: 205px;
+                min-width: 220px;
                 display: flex;
                 justify-content: flex-end;
             }
@@ -266,22 +256,22 @@
             .desktop-account-btn {
                 height: 42px;
                 padding: 0 13px 0 8px;
-                border-radius: 14px;
+                border-radius: 13px;
                 display: inline-flex;
                 align-items: center;
                 gap: 9px;
                 color: #08080a;
                 background: #fff;
-                border: 1px solid rgba(255,255,255,.55);
-                box-shadow: 0 8px 24px rgba(255,255,255,.10);
-                font-size: 13px;
+                border: 1px solid rgba(255,255,255,.62);
+                box-shadow: 0 7px 24px rgba(255,255,255,.10);
+                font-size: 14px;
                 font-weight: 800;
                 transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
             }
 
             .desktop-account-btn:hover {
                 transform: translateY(-1px);
-                box-shadow: 0 11px 28px rgba(255,255,255,.16);
+                box-shadow: 0 10px 28px rgba(255,255,255,.17);
             }
 
             .desktop-account-icon {
@@ -296,16 +286,223 @@
                 font-size: 12px;
             }
 
-            .desktop-account-chevron {
-                margin-left: 2px;
-                opacity: .65;
-            }
+            .desktop-account-chevron { margin-left: 2px; opacity: .65; }
 
             .desktop-account-dropdown {
-                background: rgba(15,15,18,.96) !important;
+                background: rgba(12,12,15,.97) !important;
                 backdrop-filter: blur(18px);
                 -webkit-backdrop-filter: blur(18px);
-                box-shadow: 0 20px 50px rgba(0,0,0,.45) !important;
+                box-shadow: 0 20px 55px rgba(0,0,0,.55) !important;
+            }
+
+            /* Screenshot-inspired cinematic hero: center card + two side cards. */
+            .desktop-hero-stage {
+                gap: 12px;
+                padding: 0;
+                overflow: hidden;
+                align-items: stretch;
+                background: #050506;
+            }
+
+            .desktop-hero-card {
+                position: absolute;
+                top: 0;
+                height: 100%;
+                overflow: hidden;
+                border: 1px solid rgba(255,255,255,.10);
+                border-radius: 14px;
+                background: #0b0b0d;
+                padding: 0;
+                cursor: pointer;
+                transition: left .45s cubic-bezier(.22,.61,.36,1), width .45s cubic-bezier(.22,.61,.36,1), opacity .35s ease, transform .45s ease, border-color .25s ease;
+                box-shadow: 0 18px 45px rgba(0,0,0,.30);
+            }
+
+            .desktop-hero-card-center {
+                left: 25.5%;
+                width: 49%;
+                z-index: 5;
+                border-color: rgba(255,255,255,.16);
+                box-shadow: 0 24px 55px rgba(0,0,0,.45);
+            }
+
+            .desktop-hero-card-left, .desktop-hero-card-right {
+                width: 24%;
+                z-index: 3;
+                opacity: .72;
+            }
+
+            .desktop-hero-card-left { left: -1.5%; }
+            .desktop-hero-card-right { left: 77.5%; }
+
+            .desktop-hero-card-side:hover {
+                opacity: .9;
+                transform: scale(.995);
+                border-color: rgba(255,255,255,.22);
+            }
+
+            .desktop-hero-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+                display: block;
+            }
+
+            .desktop-hero-shade {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(180deg, rgba(0,0,0,.04) 25%, rgba(0,0,0,.16) 58%, rgba(0,0,0,.82) 100%);
+                pointer-events: none;
+            }
+
+            .desktop-hero-card-center .desktop-hero-shade {
+                background: linear-gradient(90deg, rgba(0,0,0,.48), transparent 48%), linear-gradient(180deg, rgba(0,0,0,.02) 42%, rgba(0,0,0,.72) 100%);
+            }
+
+            .desktop-hero-info {
+                position: absolute;
+                left: 42px;
+                right: 30px;
+                bottom: 28px;
+                text-align: left;
+                z-index: 2;
+            }
+
+            .desktop-hero-logo {
+                max-width: min(390px, 72%);
+                max-height: 82px;
+                object-fit: contain;
+                object-position: left center;
+                filter: drop-shadow(0 8px 18px rgba(0,0,0,.6));
+            }
+
+            .desktop-hero-title {
+                display: block;
+                color: #fff;
+                font-size: clamp(30px, 3.2vw, 58px);
+                line-height: .98;
+                font-weight: 950;
+                letter-spacing: -.035em;
+                text-shadow: 0 5px 18px rgba(0,0,0,.65);
+            }
+
+            .desktop-hero-meta {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 9px;
+                margin-top: 12px;
+                color: rgba(255,255,255,.88);
+                font-size: 13px;
+                font-weight: 750;
+            }
+
+            .desktop-hero-rating {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                margin-left: 3px;
+                padding: 5px 9px;
+                border-radius: 8px;
+                color: #fbbf24;
+                background: rgba(0,0,0,.68);
+                border: 1px solid rgba(255,255,255,.13);
+            }
+
+            .desktop-side-title {
+                position: absolute;
+                left: 20px;
+                right: 20px;
+                bottom: 17px;
+                z-index: 2;
+                color: #fff;
+                font-size: 15px;
+                font-weight: 800;
+                text-align: left;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-shadow: 0 3px 10px rgba(0,0,0,.8);
+            }
+
+            .desktop-side-rating {
+                position: absolute;
+                top: 13px;
+                right: 13px;
+                z-index: 2;
+                padding: 5px 8px;
+                border-radius: 8px;
+                color: #fbbf24;
+                background: rgba(0,0,0,.70);
+                border: 1px solid rgba(255,255,255,.14);
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+            .desktop-hero-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                background: rgba(0,0,0,.66);
+                border: 1px solid rgba(255,255,255,.18);
+                box-shadow: 0 8px 24px rgba(0,0,0,.35);
+                transition: background .2s ease, transform .2s ease, border-color .2s ease;
+            }
+
+            .desktop-hero-arrow:hover {
+                background: #fff;
+                color: #08080a;
+                border-color: #fff;
+            }
+
+            .desktop-hero-arrow-left { left: 18px; }
+            .desktop-hero-arrow-right { right: 18px; }
+
+            .desktop-hero-dots {
+                position: absolute;
+                z-index: 11;
+                left: 50%;
+                bottom: 10px;
+                transform: translateX(-50%);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .desktop-hero-dot {
+                width: 8px;
+                height: 8px;
+                padding: 0;
+                border: 0;
+                border-radius: 999px;
+                background: rgba(255,255,255,.38);
+                transition: width .25s ease, background .25s ease, transform .25s ease;
+            }
+
+            .desktop-hero-dot.active {
+                width: 30px;
+                background: #fff;
+            }
+
+            @media (max-width: 1050px) and (min-width: 900px) {
+                header.glass-header > div > div:first-child { min-width: 180px; }
+                .desktop-account-wrap { min-width: 180px; }
+                .desktop-nav-item { min-width: 72px; padding: 0 10px !important; font-size: 12px !important; }
+                .desktop-search-label { display: none; }
+                .desktop-country-pill { min-width: 110px; }
+                .desktop-hero-card-center { left: 22%; width: 56%; }
+                .desktop-hero-card-left { left: -8%; width: 29%; }
+                .desktop-hero-card-right { left: 79%; width: 29%; }
+                .desktop-hero-info { left: 28px; bottom: 25px; }
             }
         }
 
@@ -327,20 +524,20 @@
         </div>
 
         <!-- Desktop inline nav (desktop UI only) -->
-        <nav class="hidden lg:flex items-center gap-2 desktop-main-nav">
+        <nav class="hidden lg:flex items-center desktop-main-nav" aria-label="Desktop navigation">
             <div class="desktop-nav-pill">
-                <button onclick="goHomeDesktop()" id="dnav-home" class="dnav-btn desktop-nav-item active-nav-item">
+                <button onclick="goHomeDesktop()" id="dnav-home" class="dnav-btn desktop-nav-item active-nav-item" aria-label="Home">
                     <i class="fa-solid fa-house text-[11px]"></i><span>Home</span>
                 </button>
-                <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn desktop-nav-item">
+                <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn desktop-nav-item" aria-label="Movies">
                     <i class="fa-solid fa-film text-[11px]"></i><span>Movies</span>
                 </button>
-                <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn desktop-nav-item">
+                <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn desktop-nav-item" aria-label="TV Shows">
                     <i class="fa-solid fa-tv text-[11px]"></i><span>TV Shows</span>
                 </button>
-            </div>
-
-            <div class="desktop-nav-tools">
+                <button onclick="switchTab('search')" id="dnav-search" title="Search" class="dnav-btn desktop-nav-item desktop-search-nav-item" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i><span class="desktop-search-label">Search</span>
+                </button>
                 <div class="desktop-country-pill">
                     <i class="fa-solid fa-earth-americas text-[12px]"></i>
                     <select id="country-select-desktop" onchange="changeCountryFilter(this.value)" aria-label="Country">
@@ -361,10 +558,6 @@
                     </select>
                     <i class="fa-solid fa-chevron-down text-[8px] opacity-60 pointer-events-none"></i>
                 </div>
-
-                <button onclick="switchTab('search')" id="dnav-search" title="Search" class="dnav-btn desktop-search-btn" aria-label="Search">
-                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                </button>
             </div>
         </nav>
 
@@ -838,6 +1031,13 @@ switchTab('home');
             }
         });
 
+        function selectHeroIndex(index, e) {
+            if (e) e.stopPropagation();
+            if (!heroItems.length) return;
+            heroIndex = ((index % heroItems.length) + heroItems.length) % heroItems.length;
+            startHeroAutoSlide();
+        }
+
         function heroPrev(e) {
             e.stopPropagation();
             if (!heroItems.length) return;
@@ -1070,44 +1270,54 @@ switchTab('home');
                     `).join('')}
                 </div>
 
-                <!-- DESKTOP: true 50/50 split — left solid info panel, right image half -->
-                <div class="hidden lg:flex absolute inset-0">
-                    <div class="w-1/2 h-full bg-[#0a0a0d] relative flex items-center overflow-hidden">
-                        <div class="absolute inset-y-0 -right-20 w-20 bg-gradient-to-r from-[#0a0a0d] to-transparent pointer-events-none z-10"></div>
-                        <div class="relative z-20 pl-8 xl:pl-12 pr-8 space-y-2.5 w-full">
-                            ${logoUrl ? `
-                                <img src="${logoUrl}" alt="${title}" class="max-h-16 xl:max-h-20 max-w-full object-contain drop-shadow-2xl">
-                            ` : `
-                                <h1 class="text-3xl xl:text-4xl font-black text-white leading-tight drop-shadow-2xl">${title}</h1>
-                            `}
+                <!-- DESKTOP: cinematic 3-card carousel — mobile markup above remains untouched -->
+                <div class="hidden lg:flex absolute inset-0 desktop-hero-stage">
+                    ${heroItems.length ? heroItems.map((heroItem, idx) => {
+                        const cardType = heroItem._type || heroItem.media_type || (heroItem.title ? 'movie' : 'tv');
+                        const cardTitle = heroItem.title || heroItem.name || 'Untitled';
+                        const cardBackdrop = heroItem.backdrop_path ? `${BACKDROP_URL}${heroItem.backdrop_path}` : `${IMG_URL}${heroItem.poster_path}`;
+                        const cardRating = heroItem.vote_average ? heroItem.vote_average.toFixed(1) : 'N/A';
+                        let offset = idx - heroIndex;
+                        const total = heroItems.length;
+                        if (total > 2) {
+                            if (offset > Math.floor(total / 2)) offset -= total;
+                            if (offset < -Math.floor(total / 2)) offset += total;
+                        }
+                        if (offset < -1 || offset > 1) return '';
+                        const isCenter = offset === 0;
+                        return `
+                            <button type="button" onclick="selectHeroIndex(${idx}, event)" class="desktop-hero-card ${isCenter ? 'desktop-hero-card-center' : 'desktop-hero-card-side'} ${offset < 0 ? 'desktop-hero-card-left' : 'desktop-hero-card-right'}" aria-label="Open ${cardTitle}">
+                                <img src="${cardBackdrop}" alt="${cardTitle}" class="desktop-hero-image">
+                                <div class="desktop-hero-shade"></div>
+                                ${isCenter ? `
+                                    <div class="desktop-hero-info">
+                                        ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="desktop-hero-logo">` : `<span class="desktop-hero-title">${title}</span>`}
+                                        <div class="desktop-hero-meta">
+                                            ${releaseYear ? `<span>${releaseYear}</span>` : ''}
+                                            ${cert ? `<span>•</span><span>${cert}</span>` : ''}
+                                            ${runtimeStr ? `<span>•</span><span>${runtimeStr}</span>` : ''}
+                                            <span class="desktop-hero-rating"><i class="fa-solid fa-star"></i> ${rating}</span>
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <span class="desktop-side-rating"><i class="fa-solid fa-star"></i> ${cardRating}</span>
+                                    <span class="desktop-side-title">${cardTitle}</span>
+                                `}
+                            </button>
+                        `;
+                    }).join('') : ''}
 
-                            ${isNew ? `<p class="text-sm font-bold text-blue-400">Newly Added</p>` : ''}
+                    <button type="button" onclick="heroPrev(event)" class="desktop-hero-arrow desktop-hero-arrow-left" aria-label="Previous hero">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" onclick="heroNext(event)" class="desktop-hero-arrow desktop-hero-arrow-right" aria-label="Next hero">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
 
-                            <div class="flex items-center gap-2 text-xs xl:text-sm font-bold text-white/90 flex-wrap">
-                                ${releaseYear ? `<span>${releaseYear}</span>` : ''}
-                                ${cert ? `<span class="text-white/50">•</span><span class="border border-white/40 px-1.5 py-0.5 rounded text-[10px] xl:text-xs">${cert}</span>` : ''}
-                                ${runtimeStr ? `<span class="text-white/50">•</span><span>${runtimeStr}</span>` : ''}
-                                ${langCount ? `<span class="text-white/50">•</span><span>${langCount} Language${langCount > 1 ? 's' : ''}</span>` : ''}
-                            </div>
-
-                            ${overview ? `<p class="text-xs xl:text-sm text-slate-200 leading-relaxed line-clamp-3 max-w-md">${overview}</p>` : ''}
-
-                            ${genres.length ? `<p class="text-xs xl:text-sm font-bold text-white/90">${genres.join(' | ')}</p>` : ''}
-
-                            <div class="flex gap-1.5 pt-1.5">
-                                ${heroItems.map((_, idx) => `
-                                    <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-1/2 h-full relative overflow-hidden">
-                        <img src="${backdrop}" class="w-full h-full object-cover object-center">
-                        <!-- DESKTOP: rating sits over the image half, top -->
-                        <span class="absolute top-4 right-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
-                            <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                        </span>
+                    <div class="desktop-hero-dots">
+                        ${heroItems.map((_, idx) => `
+                            <button type="button" onclick="selectHeroIndex(${idx}, event)" class="desktop-hero-dot ${idx === heroIndex ? 'active' : ''}" aria-label="Hero ${idx + 1}"></button>
+                        `).join('')}
                     </div>
                 </div>
             `;
