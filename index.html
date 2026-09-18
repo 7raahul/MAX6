@@ -1007,13 +1007,6 @@ select:focus-visible, [tabindex]:focus-visible {
 }
 .detail-tab-btn { border-bottom-color: transparent !important; }
 
-/* Trailer lightbox */
-#trailer-modal { position: fixed; inset: 0; z-index: 120; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(3,3,5,.92); backdrop-filter: blur(10px); }
-#trailer-modal.open { display: flex; animation: cdbFadeIn .25s ease; }
-#trailer-modal .tm-box { width: min(1040px, 100%); aspect-ratio: 16/9; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 80px rgba(0,0,0,.6); background: #000; animation: cdbModalIn .35s cubic-bezier(.2,.8,.25,1); }
-#trailer-modal iframe { width: 100%; height: 100%; border: 0; }
-#trailer-modal .tm-close { position: absolute; top: 18px; right: 20px; width: 42px; height: 42px; border-radius: 13px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; }
-
 /* =========================================================
    DESKTOP ONLY
    ========================================================= */
@@ -1127,6 +1120,17 @@ select:focus-visible, [tabindex]:focus-visible {
     border-radius: 22px; overflow: hidden;
     border: 1px solid rgba(255,255,255,.1);
     box-shadow: 0 30px 70px rgba(0,0,0,.55);
+    aspect-ratio: 4 / 3 !important;
+  }
+  /* Season preview strip (Overview tab) */
+  .dm-season-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; }
+  .dm-ep-card { flex: none; width: 240px; }
+  .dm-ep-thumb { position: relative; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: #0a0a0d; }
+  .dm-ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .dm-ep-num {
+    position: absolute; top: 8px; left: 8px; background: rgba(5,5,7,.85);
+    color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 7px;
+    border: 1px solid rgba(255,255,255,.15);
   }
   .dm-stats { gap: 10px !important; }
   .detail-tab-btn { font-size: 14px !important; padding-bottom: 11px !important; }
@@ -2096,7 +2100,7 @@ switchTab('home');
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
             const [data, logoUrl, similarData] = await Promise.all([
-                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers,videos,release_dates,content_ratings'),
+                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers,release_dates,content_ratings'),
                 fetchTitleLogo(type, id),
                 fetchTMDB(`/${type}/${id}/similar`)
             ]);
@@ -2120,13 +2124,7 @@ switchTab('home');
             const similarResults = (similarData?.results || []).slice(0, 10).map(r => ({ ...r, media_type: type }));
             const hasEpisodesTab = type === 'tv' && validSeasons.length > 0;
 
-            // --- v3 extras: poster, trailer, chips, watchlist state ---
-            const posterImg = data.poster_path ? `${IMG_URL}${data.poster_path}` : backdrop;
-            const vids = data.videos?.results || [];
-            const trailerVid = vids.find(v => v.site === 'YouTube' && v.type === 'Trailer' && v.official)
-                            || vids.find(v => v.site === 'YouTube' && v.type === 'Trailer')
-                            || vids.find(v => v.site === 'YouTube' && v.type === 'Teaser');
-            const trailerKey = trailerVid?.key || '';
+            // --- v3 extras: chips, watchlist state ---
             const certLabel = extractCertification(type, data);
             const genreList = (data.genres || []).slice(0, 3).map(g => g.name);
             const runtimeVal = type === 'movie'
@@ -2165,9 +2163,8 @@ switchTab('home');
                         <span id="dm-bg-src" data-bg="${backdrop}" class="hidden"></span>
                         <span id="dm-title-src" data-title="${attrTitle}" class="hidden"></span>
 
-                        <div class="dm-poster-wrap relative aspect-video lg:aspect-[2/3] w-full bg-[#060608] lg:rounded-3xl overflow-hidden">
-                            <img src="${backdrop}" class="w-full h-full object-cover lg:hidden">
-                            <img src="${posterImg}" class="w-full h-full object-cover hidden lg:block">
+                        <div class="dm-poster-wrap relative aspect-video w-full bg-[#060608] lg:rounded-3xl overflow-hidden">
+                            <img src="${backdrop}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/45 to-transparent"></div>
 
                             <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-10 space-y-2">
@@ -2192,14 +2189,10 @@ switchTab('home');
                         <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-4">
                             <!-- Actions -->
                             <div class="dm-actions">
-                                ${trailerKey ? `
-                                    <button onclick="openTrailer('${trailerKey}')" class="dm-btn primary flex-1 min-w-[150px]">
-                                        <i class="fa-solid fa-play text-xs"></i> Watch Trailer
-                                    </button>` : ''}
                                 <button id="dm-wl-btn" data-t="${attrTitle}"
                                         onclick="toggleWatchlist('${type}', ${id}, this.dataset.t, this)"
-                                        class="dm-btn ${savedWL ? 'saved' : ''}">
-                                    ${savedWL ? '<i class="fa-solid fa-check"></i> In Watchlist' : '<i class="fa-solid fa-plus"></i> Watchlist'}
+                                        class="dm-btn primary flex-1 min-w-[150px] ${savedWL ? 'saved' : ''}">
+                                    ${savedWL ? '<i class="fa-solid fa-check"></i> In Watchlist' : '<i class="fa-solid fa-plus"></i> Add to Watchlist'}
                                 </button>
                                 <button onclick="shareTitle(this.dataset.t)" data-t="${attrTitle}" class="dm-btn icon" title="Share" aria-label="Share">
                                     <i class="fa-solid fa-share-nodes"></i>
@@ -2271,17 +2264,21 @@ switchTab('home');
                                 </div>
                             ` : ''}
 
-                            ${trailerKey ? `
-                                <div onclick="openTrailer('${trailerKey}')" class="card-solid rounded-2xl overflow-hidden cursor-pointer group relative">
-                                    <div class="relative aspect-video">
-                                        <img src="https://img.youtube.com/vi/${trailerKey}/hqdefault.jpg" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-[1.03] transition duration-500">
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <span class="w-14 h-14 rounded-full bg-white/95 text-black flex items-center justify-center shadow-2xl group-hover:scale-110 transition">
-                                                <i class="fa-solid fa-play text-sm ml-0.5"></i>
-                                            </span>
+                            ${hasEpisodesTab ? `
+                                <div class="card-solid p-4 rounded-2xl">
+                                    <div class="flex items-center justify-between mb-3 gap-3">
+                                        <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Episodes</h3>
+                                        <div class="flex items-center gap-2">
+                                            <select id="ov-season-select" onchange="loadOverviewSeason(${id}, this.value)"
+                                                    class="bg-white/5 border border-white/15 text-slate-200 text-[11px] font-semibold rounded-lg px-2 py-1.5 focus:outline-none">
+                                                ${validSeasons.map(sn => `<option value="${sn.season_number}" class="bg-[#0D0D10]">${sn.name}</option>`).join('')}
+                                            </select>
+                                            <button onclick="switchDetailTab('episodes')" class="text-[11px] font-bold text-slate-400 hover:text-white transition whitespace-nowrap">See all <i class="fa-solid fa-chevron-right text-[8px]"></i></button>
                                         </div>
                                     </div>
-                                    <p class="text-[11px] font-bold text-slate-200 px-4 py-3">Play official trailer</p>
+                                    <div id="ov-episodes-strip" class="dm-season-strip no-scrollbar">
+                                        <div class="py-6 text-center text-slate-400 text-xs w-full"><i class="fa-solid fa-circle-notch fa-spin text-lg text-white mb-1"></i></div>
+                                    </div>
                                 </div>
                             ` : ''}
                         </div>
@@ -2339,6 +2336,7 @@ switchTab('home');
 
             if (hasEpisodesTab) {
                 loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
+                loadOverviewSeason(id, validSeasons[0].season_number);
             }
             if (similarResults.length > 0) {
                 renderGrid(similarResults, 'similar-grid');
@@ -2457,6 +2455,33 @@ switchTab('home');
                             <!-- Overview -->
                             <p class="text-[13px] text-slate-300 leading-relaxed line-clamp-2 flex-grow">${overview}</p>
                         </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadOverviewSeason(tvId, seasonNumber) {
+            const strip = document.getElementById('ov-episodes-strip');
+            if (!strip) return;
+            strip.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs w-full"><i class="fa-solid fa-circle-notch fa-spin text-lg text-white mb-1"></i></div>`;
+
+            const data = await fetchTMDB(`/tv/${tvId}/season/${seasonNumber}`);
+            if (!data || !data.episodes || data.episodes.length === 0) {
+                strip.innerHTML = `<p class="text-center text-slate-400 py-4 text-xs w-full">No episodes found.</p>`;
+                return;
+            }
+
+            strip.innerHTML = data.episodes.map(ep => {
+                const thumbnail = ep.still_path ? `${IMG_URL}${ep.still_path}` : 'https://via.placeholder.com/400x225?text=No+Thumbnail';
+                const rating = ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A';
+                return `
+                    <div class="dm-ep-card">
+                        <div class="dm-ep-thumb">
+                            <img src="${thumbnail}" loading="lazy">
+                            <span class="dm-ep-num">E${String(ep.episode_number).padStart(2, '0')}</span>
+                        </div>
+                        <p class="text-[11px] font-bold text-slate-200 mt-1.5 truncate">${ep.name}</p>
+                        <p class="text-[10px] text-slate-500 flex items-center gap-1"><i class="fa-solid fa-star text-amber-400 text-[8px]"></i> ${rating} • ${ep.air_date || 'TBA'}</p>
                     </div>
                 `;
             }).join('');
@@ -2644,10 +2669,8 @@ switchTab('home');
                 e.preventDefault(); window.toggleNavSearch(true);
             }
             if (e.key !== 'Escape') return;
-            const trailer = document.getElementById('trailer-modal');
             const actor = document.getElementById('actor-modal');
             const details = document.getElementById('details-modal');
-            if (trailer && trailer.classList.contains('open')) { window.closeTrailer(); return; }
             if (actor && !actor.classList.contains('hidden')) { closeActorModal(); return; }
             if (details && !details.classList.contains('hidden')) { closeModalManual(); return; }
             closeCountryMenu();
@@ -2770,25 +2793,6 @@ switchTab('home');
                 await navigator.clipboard.writeText(url);
                 showToast('Link copied to clipboard');
             } catch (e) { /* user cancelled */ }
-        };
-
-        // Trailer lightbox
-        const tm = document.createElement('div');
-        tm.id = 'trailer-modal';
-        tm.innerHTML = `<button class="tm-close" onclick="closeTrailer()" aria-label="Close trailer"><i class="fa-solid fa-xmark"></i></button>
-                        <div class="tm-box"><iframe id="trailer-frame" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>`;
-        document.body.appendChild(tm);
-        tm.addEventListener('click', e => { if (e.target === tm) window.closeTrailer(); });
-
-        window.openTrailer = function (key) {
-            if (!key) { showToast('Trailer not available'); return; }
-            document.getElementById('trailer-frame').src =
-                `https://www.youtube.com/embed/${key}?autoplay=1&rel=0`;
-            tm.classList.add('open');
-        };
-        window.closeTrailer = function () {
-            document.getElementById('trailer-frame').src = '';
-            tm.classList.remove('open');
         };
 
         /* ---------------------------------------------------------
