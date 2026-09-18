@@ -297,11 +297,12 @@
 
             /* Screenshot-inspired cinematic hero: center card + two side cards. */
             .desktop-hero-stage {
-                gap: 12px;
+                gap: 0;
                 padding: 0;
                 overflow: hidden;
                 align-items: stretch;
                 background: #050506;
+                isolation: isolate;
             }
 
             .desktop-hero-card {
@@ -311,8 +312,9 @@
                 overflow: hidden;
                 border: 1px solid rgba(255,255,255,.10);
                 border-radius: 14px;
-                background: #0b0b0d;
+                background: #111318;
                 padding: 0;
+                display: block;
                 cursor: pointer;
                 transition: left .45s cubic-bezier(.22,.61,.36,1), width .45s cubic-bezier(.22,.61,.36,1), opacity .35s ease, transform .45s ease, border-color .25s ease;
                 box-shadow: 0 18px 45px rgba(0,0,0,.30);
@@ -1275,7 +1277,9 @@ switchTab('home');
                     ${heroItems.length ? heroItems.map((heroItem, idx) => {
                         const cardType = heroItem._type || heroItem.media_type || (heroItem.title ? 'movie' : 'tv');
                         const cardTitle = heroItem.title || heroItem.name || 'Untitled';
-                        const cardBackdrop = heroItem.backdrop_path ? `${BACKDROP_URL}${heroItem.backdrop_path}` : `${IMG_URL}${heroItem.poster_path}`;
+                        const cardBackdrop = heroItem.backdrop_path
+                            ? `${BACKDROP_URL}${heroItem.backdrop_path}`
+                            : (heroItem.poster_path ? `${IMG_URL}${heroItem.poster_path}` : 'https://via.placeholder.com/1280x720/08080a/ffffff?text=CineDB');
                         const cardRating = heroItem.vote_average ? heroItem.vote_average.toFixed(1) : 'N/A';
                         let offset = idx - heroIndex;
                         const total = heroItems.length;
@@ -1287,7 +1291,7 @@ switchTab('home');
                         const isCenter = offset === 0;
                         return `
                             <button type="button" onclick="selectHeroIndex(${idx}, event)" class="desktop-hero-card ${isCenter ? 'desktop-hero-card-center' : 'desktop-hero-card-side'} ${offset < 0 ? 'desktop-hero-card-left' : 'desktop-hero-card-right'}" aria-label="Open ${cardTitle}">
-                                <img src="${cardBackdrop}" alt="${cardTitle}" class="desktop-hero-image">
+                                <img src="${cardBackdrop}" alt="${cardTitle}" class="desktop-hero-image" onerror="this.onerror=null;this.src='https://via.placeholder.com/1280x720/08080a/ffffff?text=CineDB';">
                                 <div class="desktop-hero-shade"></div>
                                 ${isCenter ? `
                                     <div class="desktop-hero-info">
