@@ -311,9 +311,10 @@
                 position: absolute;
                 inset: 0;
                 display: grid;
-                grid-template-columns: minmax(52%, 58%) minmax(42%, 48%);
+                grid-template-columns: 56% 44%;
                 overflow: hidden;
                 background: #08090c;
+            column-gap: 0;
             }
 
             .desktop-hero-single::before {
@@ -346,7 +347,7 @@
                 left: 0;
                 top: 0;
                 bottom: 0;
-                width: 60%;
+                width: 56%;
                 pointer-events: none;
                 background: linear-gradient(90deg, rgba(5,6,8,.04) 0%, rgba(5,6,8,.08) 62%, rgba(5,6,8,.96) 100%);
             }
@@ -481,13 +482,31 @@
                 .group\/hero > button { display: none !important; }
             }
 
-            @media (max-width: 1050px) and (min-width: 900px) {
+                /* Final desktop hero alignment: image and details touch with no black seam. */
+            .desktop-hero-single {
+                grid-template-columns: 56% 44% !important;
+                column-gap: 0 !important;
+                width: 100% !important;
+            }
+            .desktop-hero-image {
+                grid-column: 1 !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                object-fit: cover !important;
+            }
+            .desktop-hero-info {
+                grid-column: 2 !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+            }
+
+        @media (max-width: 1050px) and (min-width: 900px) {
                 header.glass-header > div > div:first-child { min-width: 180px; }
                 .desktop-account-wrap { min-width: 180px; }
                 .desktop-nav-item { min-width: 72px; padding: 0 10px !important; font-size: 12px !important; }
                 .desktop-search-label { display: none; }
                 .desktop-country-pill { min-width: 110px; }
-                .desktop-hero-single { grid-template-columns: 55% 45%; }
+                .desktop-hero-single { grid-template-columns: 56% 44%; }
                 .desktop-hero-info { padding: 26px 28px; }
                 .desktop-hero-logo { max-width: 300px; max-height: 82px; }
             }
