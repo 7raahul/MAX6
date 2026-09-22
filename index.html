@@ -265,7 +265,7 @@
 
     <!-- Movie/Show Details Modal -->
     <div id="details-modal" class="fixed inset-0 z-50 glass-modal hidden overflow-y-auto">
-        <button onclick="closeModalManual()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-white border border-indigo-500/30 active:scale-95 transition">
+        <button onclick="closeModalManual()" class="hidden lg:flex fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl glass-card items-center justify-center text-white border border-indigo-500/30 active:scale-95 transition">
             <i class="fa-solid fa-xmark"></i>
         </button>
         <div id="modal-content" class="max-w-2xl lg:max-w-5xl mx-auto pb-28 lg:pb-16 lg:pt-10"></div>
@@ -805,11 +805,12 @@
             const content = document.getElementById('modal-content');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            stopDetailBackdropRotation();
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
             const [data, logoUrl, similarData] = await Promise.all([
-                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers'),
+                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers,images&include_image_language=en,null'),
                 fetchTitleLogo(type, id),
                 fetchTMDB(`/${type}/${id}/similar`)
             ]);
@@ -824,6 +825,14 @@
             const titleSlug = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             window.history.replaceState({ modalOpen: true, tab: currentTab, type, id }, '', `${window.location.pathname}?type=${type}&id=${id}&title=${encodeURIComponent(titleSlug)}`);
             const backdrop = data.backdrop_path ? `${BACKDROP_URL}${data.backdrop_path}` : `${IMG_URL}${data.poster_path}`;
+            // 16:9 backdrop slideshow — landscape TMDB backdrops only, best-rated first, capped at 8
+            const backdropList = (data.images?.backdrops || [])
+                .filter(b => b.iso_639_1 === null || b.iso_639_1 === 'en')
+                .sort((a, b) => b.vote_average - a.vote_average)
+                .slice(0, 8)
+                .map(b => `${BACKDROP_URL}${b.file_path}`);
+            if (backdropList.length === 0) backdropList.push(backdrop);
+            if (!backdropList.includes(backdrop)) backdropList.unshift(backdrop);
             const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
             const releaseDate = data.release_date || data.first_air_date || 'N/A';
             const releaseYear = releaseDate !== 'N/A' ? releaseDate.split('-')[0] : 'N/A';
@@ -860,7 +869,8 @@
                     <!-- Left column: backdrop (title overlaid on it), stats (sticky on desktop) -->
                     <div class="lg:w-[38%] lg:flex-shrink-0 lg:sticky lg:top-24">
                         <div class="relative aspect-video lg:aspect-[4/3] w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden overflow-hidden">
-                            <img src="${backdrop}" class="w-full h-full object-cover">
+                            <img id="detail-backdrop-a" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100">
+                            <img id="detail-backdrop-b" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/55 to-transparent"></div>
                             <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/50 via-transparent to-transparent hidden lg:block"></div>
 
@@ -982,6 +992,43 @@
             if (similarResults.length > 0) {
                 renderGrid(similarResults, 'similar-grid');
             }
+
+            startDetailBackdropRotation(backdropList);
+        }
+
+        // Rotates the details-modal backdrop through a title's TMDB 16:9 backdrops
+        // every 3.5s, crossfading between two stacked <img> layers.
+        let detailBackdropTimer = null;
+        function stopDetailBackdropRotation() {
+            if (detailBackdropTimer) {
+                clearInterval(detailBackdropTimer);
+                detailBackdropTimer = null;
+            }
+        }
+        function startDetailBackdropRotation(urls) {
+            stopDetailBackdropRotation();
+            if (!urls || urls.length <= 1) return;
+
+            let idx = 0;
+            let showingA = true;
+            detailBackdropTimer = setInterval(() => {
+                const imgA = document.getElementById('detail-backdrop-a');
+                const imgB = document.getElementById('detail-backdrop-b');
+                if (!imgA || !imgB) { stopDetailBackdropRotation(); return; }
+
+                idx = (idx + 1) % urls.length;
+                const nextUrl = urls[idx];
+                const incoming = showingA ? imgB : imgA;
+                const outgoing = showingA ? imgA : imgB;
+
+                incoming.src = nextUrl;
+                incoming.classList.remove('opacity-0');
+                incoming.classList.add('opacity-100');
+                outgoing.classList.remove('opacity-100');
+                outgoing.classList.add('opacity-0');
+
+                showingA = !showingA;
+            }, 3500);
         }
 
         function switchDetailTab(tab) {
@@ -1109,6 +1156,7 @@
             document.getElementById('details-modal').classList.add('hidden');
             document.body.style.overflow = 'auto';
             document.title = 'MtDv';
+            stopDetailBackdropRotation();
             window.history.pushState({ modalOpen: false, tab: currentTab }, '', window.location.pathname);
         }
 
