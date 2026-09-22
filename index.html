@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CineDB</title>
+    <title>MtDv</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Monochrome palette: remaps remaining indigo tint/border/text tokens to white/gray -->
@@ -69,7 +69,7 @@
         }
 
         /* Modern slim scrollbar — replaces the default OS scrollbar site-wide.
-           .no-scrollbar rows (providers and cast) stay fully hidden as before. */
+           .no-scrollbar rows (providers, cast, genre chips) stay fully hidden as before. */
         html {
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
@@ -104,1122 +104,70 @@
                 box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
             }
         }
-
-
-        /* ================= DESKTOP NAV + HERO REDESIGN =================
-           Desktop only. Mobile header, bottom nav and mobile hero are untouched. */
-        @media (min-width: 900px) {
-            header.glass-header {
-                background: rgba(3, 3, 4, 0.94);
-                border-bottom: 1px solid rgba(255,255,255,.10);
-                box-shadow: 0 8px 30px rgba(0,0,0,.28);
-            }
-
-            header.glass-header > div {
-                min-height: 58px;
-                max-width: 1400px;
-            }
-
-            header.glass-header > div > div:first-child {
-                gap: 12px;
-                min-width: 220px;
-            }
-
-            header.glass-header > div > div:first-child > div:first-child {
-                width: 42px;
-                height: 42px;
-                border-radius: 50%;
-                box-shadow: 0 7px 24px rgba(255,255,255,.14);
-            }
-
-            header.glass-header > div > div:first-child > span {
-                font-size: 25px;
-                letter-spacing: -.04em;
-            }
-
-            .desktop-main-nav {
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                height: 48px;
-                padding: 0;
-            }
-
-            .desktop-nav-pill {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                height: 100%;
-                padding: 0 5px;
-            }
-
-            .desktop-nav-item {
-                position: relative;
-                height: 44px !important;
-                min-width: 88px;
-                padding: 0 14px !important;
-                border-radius: 10px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                gap: 8px !important;
-                color: rgba(226,232,240,.76) !important;
-                background: transparent !important;
-                font-size: 14px !important;
-                font-weight: 750 !important;
-                letter-spacing: .005em;
-                transition: color .2s ease, background .2s ease, transform .2s ease !important;
-            }
-
-            .desktop-nav-item:hover {
-                color: #fff !important;
-                background: rgba(255,255,255,.065) !important;
-                transform: translateY(-1px);
-            }
-
-            .desktop-nav-item.active-nav-item,
-            #dnav-home.bg-white,
-            #dnav-search.bg-white,
-            #dnav-home[class*="bg-white"] {
-                color: #fff !important;
-                background: transparent !important;
-                box-shadow: none !important;
-            }
-
-            .desktop-nav-item.active-nav-item::after,
-            #dnav-home.bg-white::after,
-            #dnav-search.bg-white::after {
-                content: "";
-                position: absolute;
-                left: 50%;
-                bottom: 2px;
-                width: 32px;
-                height: 3px;
-                transform: translateX(-50%);
-                border-radius: 999px;
-                background: #fff;
-                box-shadow: 0 0 12px rgba(255,255,255,.28);
-            }
-
-            .desktop-search-nav-item {
-                min-width: 78px;
-            }
-
-            .desktop-search-label {
-                display: inline;
-            }
-
-            .desktop-country-pill {
-                position: relative;
-                height: 42px;
-                min-width: 128px;
-                margin-left: 2px;
-                padding: 0 11px;
-                border: 1px solid rgba(255,255,255,.10);
-                border-radius: 11px;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                color: rgba(226,232,240,.82);
-                background: rgba(255,255,255,.035);
-                transition: border-color .2s ease, background .2s ease, color .2s ease;
-            }
-
-            .desktop-country-pill:hover {
-                border-color: rgba(255,255,255,.20);
-                background: rgba(255,255,255,.07);
-                color: #fff;
-            }
-
-            #country-select-desktop {
-                appearance: none;
-                -webkit-appearance: none;
-                flex: 1;
-                min-width: 0;
-                border: 0;
-                outline: 0;
-                background: transparent;
-                color: inherit;
-                font-size: 14px;
-                font-weight: 750;
-                cursor: pointer;
-            }
-
-            #country-select-desktop option { background: #0d0d10; color: #fff; }
-
-            .desktop-account-wrap {
-                min-width: 220px;
-                display: flex;
-                justify-content: flex-end;
-            }
-
-            .desktop-account-btn {
-                height: 42px;
-                padding: 0 13px 0 8px;
-                border-radius: 13px;
-                display: inline-flex;
-                align-items: center;
-                gap: 9px;
-                color: #08080a;
-                background: #fff;
-                border: 1px solid rgba(255,255,255,.62);
-                box-shadow: 0 7px 24px rgba(255,255,255,.10);
-                font-size: 14px;
-                font-weight: 800;
-                transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
-            }
-
-            .desktop-account-btn:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 10px 28px rgba(255,255,255,.17);
-            }
-
-            .desktop-account-icon {
-                width: 28px;
-                height: 28px;
-                border-radius: 9px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                background: #08080a;
-                color: #fff;
-                font-size: 12px;
-            }
-
-            .desktop-account-chevron { margin-left: 2px; opacity: .65; }
-
-            .desktop-account-dropdown {
-                background: rgba(12,12,15,.97) !important;
-                backdrop-filter: blur(18px);
-                -webkit-backdrop-filter: blur(18px);
-                box-shadow: 0 20px 55px rgba(0,0,0,.55) !important;
-            }
-
-            /* DESKTOP HERO: image left + details right. Mobile is untouched. */
-            .desktop-hero-stage {
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                align-items: stretch;
-                background: #050506;
-                isolation: isolate;
-                width: 100%;
-                height: 100%;
-            }
-
-            .desktop-hero-single {
-                position: absolute;
-                inset: 0;
-                display: grid;
-                grid-template-columns: 56% 44%;
-                overflow: hidden;
-                background: #08090c;
-            column-gap: 0;
-            }
-
-
-            .desktop-hero-color-fade {
-                position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 48%;
-                z-index: 2;
-                pointer-events: none;
-                background: linear-gradient(90deg,
-                    rgba(0,0,0,0) 0%,
-                    rgba(var(--hero-accent-rgb, 32,28,28), .18) 18%,
-                    rgba(var(--hero-accent-rgb, 32,28,28), .52) 48%,
-                    rgba(var(--hero-accent-rgb, 32,28,28), .82) 76%,
-                    rgba(var(--hero-accent-rgb, 32,28,28), .94) 100%);
-            }
-
-            .desktop-hero-image {
-                position: relative;
-                z-index: 1;
-                grid-column: 1;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: center center;
-                display: block;
-                background: #0a0b0f;
-                min-width: 0;
-            }
-
-            .desktop-hero-shade {
-                position: absolute;
-                z-index: 2;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 56%;
-                pointer-events: none;
-                background: linear-gradient(90deg, rgba(5,6,8,.04) 0%, rgba(5,6,8,.08) 62%, rgba(5,6,8,.96) 100%);
-            }
-
-            .desktop-hero-info {
-                position: relative;
-                z-index: 4;
-                grid-column: 2;
-                grid-row: 1;
-                align-self: center;
-                justify-self: stretch;
-                width: auto;
-                max-width: 620px;
-                padding: clamp(28px, 4vw, 58px) clamp(30px, 4vw, 64px);
-                text-align: left;
-            }
-
-            .desktop-hero-logo {
-                display: block;
-                width: auto;
-                max-width: min(390px, 100%);
-                max-height: 105px;
-                object-fit: contain;
-                object-position: left center;
-                filter: drop-shadow(0 7px 18px rgba(0,0,0,.72));
-                margin: 16px 0 18px;
-            }
-
-            .desktop-hero-title {
-                display: block;
-                color: #fff;
-                font-size: clamp(30px, 3.2vw, 56px);
-                line-height: .98;
-                font-weight: 950;
-                letter-spacing: -.035em;
-                text-shadow: 0 5px 18px rgba(0,0,0,.72);
-                margin-bottom: 16px;
-            }
-
-            .desktop-hero-meta {
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 9px;
-                margin-top: 0;
-                color: rgba(255,255,255,.92);
-                font-size: 14px;
-                font-weight: 750;
-            }
-
-            .desktop-hero-rating {
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
-                padding: 5px 9px;
-                border-radius: 8px;
-                color: #fbbf24;
-                background: rgba(0,0,0,.68);
-                border: 1px solid rgba(255,255,255,.13);
-            }
-
-            .desktop-hero-overview {
-                margin-top: 14px;
-                max-width: 560px;
-                color: rgba(255,255,255,.76);
-                font-size: 13px;
-                line-height: 1.5;
-                font-weight: 500;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 3;
-                overflow: hidden;
-                text-shadow: 0 2px 10px rgba(0,0,0,.65);
-            }
-
-            /* Only this pair is used on desktop. The older outer pair is hidden below. */
-            .desktop-hero-arrow {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 10;
-                width: 46px;
-                height: 46px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #fff;
-                background: rgba(0,0,0,.62);
-                border: 1px solid rgba(255,255,255,.20);
-                box-shadow: 0 8px 24px rgba(0,0,0,.35);
-                transition: background .2s ease, transform .2s ease, border-color .2s ease;
-            }
-
-            .desktop-hero-arrow:hover {
-                background: #fff;
-                color: #08080a;
-                border-color: #fff;
-            }
-
-            .desktop-hero-arrow-left { left: 18px; }
-            .desktop-hero-arrow-right { right: 18px; }
-
-            .desktop-hero-dots {
-                position: absolute;
-                z-index: 11;
-                left: 50%;
-                bottom: 14px;
-                transform: translateX(-50%);
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .desktop-hero-dot {
-                width: 8px;
-                height: 8px;
-                padding: 0;
-                border: 0;
-                border-radius: 999px;
-                background: rgba(255,255,255,.38);
-                transition: width .25s ease, background .25s ease, transform .25s ease;
-            }
-
-            .desktop-hero-dot.active {
-                width: 30px;
-                background: #fff;
-            }
-
-            /* Prevent the legacy buttons outside #hero-container from creating a duplicate pair. */
-            @media (min-width: 900px) {
-                .group\/hero > button { display: none !important; }
-            }
-
-                /* Final desktop hero alignment: image and details touch with no black seam. */
-            .desktop-hero-single {
-                grid-template-columns: 56% 44% !important;
-                column-gap: 0 !important;
-                width: 100% !important;
-            }
-            .desktop-hero-image {
-                grid-column: 1 !important;
-                width: 100% !important;
-                min-width: 0 !important;
-                object-fit: cover !important;
-            }
-            .desktop-hero-info {
-                grid-column: 2 !important;
-                min-width: 0 !important;
-                margin: 0 !important;
-            }
-
-        @media (max-width: 1050px) and (min-width: 900px) {
-                header.glass-header > div > div:first-child { min-width: 180px; }
-                .desktop-account-wrap { min-width: 180px; }
-                .desktop-nav-item { min-width: 72px; padding: 0 10px !important; font-size: 12px !important; }
-                .desktop-search-label { display: none; }
-                .desktop-country-pill { min-width: 110px; }
-                .desktop-hero-single { grid-template-columns: 56% 44%; }
-                .desktop-hero-info { padding: 26px 28px; }
-                .desktop-hero-logo { max-width: 300px; max-height: 82px; }
-            }
-        }
-
-    
-
-        /* =========================================================
-           DESKTOP MOVIES / TV SHOWS MODERN UI
-           Mobile styles are intentionally untouched.
-           ========================================================= */
-        @media (min-width: 900px) {
-            /* Content canvas */
-            main.p-4.lg\:p-8 {
-                max-width: 1500px !important;
-                padding-left: 38px !important;
-                padding-right: 38px !important;
-                padding-top: 30px !important;
-            }
-
-            /* Make the desktop category navigation feel like a premium app. */
-            .desktop-main-nav {
-                flex: 1 1 auto;
-                justify-content: center;
-                min-width: 0;
-            }
-            .desktop-nav-pill {
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
-                padding: 5px;
-                border: 1px solid rgba(255,255,255,.10);
-                border-radius: 18px;
-                background: rgba(255,255,255,.045);
-                box-shadow: 0 12px 40px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05);
-            }
-            .desktop-nav-item {
-                position: relative;
-                min-height: 40px;
-                border-radius: 13px !important;
-                transition: transform .22s ease, background .22s ease, color .22s ease, box-shadow .22s ease !important;
-            }
-            .desktop-nav-item:hover {
-                transform: translateY(-1px);
-                background: rgba(255,255,255,.08) !important;
-            }
-            .desktop-nav-pill .dnav-cat-btn.bg-white,
-            .desktop-nav-pill .dnav-btn.bg-white {
-                background: #fff !important;
-                color: #050506 !important;
-                box-shadow: 0 7px 24px rgba(255,255,255,.10);
-            }
-            .desktop-nav-pill .dnav-cat-btn:not(.bg-white),
-            .desktop-nav-pill .dnav-btn:not(.bg-white) {
-                color: rgba(226,232,240,.78) !important;
-            }
-
-            /* Country control */
-            .desktop-country-pill {
-                min-height: 40px !important;
-                padding: 0 13px !important;
-                border-radius: 13px !important;
-                background: rgba(255,255,255,.045) !important;
-                border: 1px solid rgba(255,255,255,.10) !important;
-                transition: background .2s ease, border-color .2s ease, transform .2s ease;
-            }
-            .desktop-country-pill:hover {
-                background: rgba(255,255,255,.08) !important;
-                border-color: rgba(255,255,255,.18) !important;
-                transform: translateY(-1px);
-            }
-            .desktop-country-pill select {
-                color: rgba(241,245,249,.90) !important;
-                font-weight: 700 !important;
-            }
-
-            /* Search button */
-            .desktop-search-nav-item {
-                width: 42px;
-                justify-content: center;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-
-            /* Section title */
-            #section-title {
-                font-size: 21px !important;
-                line-height: 1.2 !important;
-                letter-spacing: -.02em !important;
-                margin-top: 4px;
-                margin-bottom: 14px;
-            }
-            #section-title > span:first-child {
-                width: 8px !important;
-                height: 8px !important;
-                box-shadow: 0 0 16px rgba(255,255,255,.25);
-                background: #fff !important;
-            }
-
-            /* Modern movie / TV grid */
-            #home-grid,
-            #search-grid {
-                grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-                gap: 20px !important;
-            }
-            #home-grid > div,
-            #search-grid > div {
-                min-width: 0;
-                border: 1px solid rgba(255,255,255,.085) !important;
-                background: linear-gradient(180deg, rgba(24,24,29,.88), rgba(12,12,15,.94)) !important;
-                border-radius: 16px !important;
-                box-shadow: 0 12px 30px rgba(0,0,0,.22);
-                overflow: hidden;
-                transform: translateZ(0);
-                transition: transform .28s cubic-bezier(.2,.75,.2,1), border-color .28s ease, box-shadow .28s ease !important;
-            }
-            #home-grid > div:hover,
-            #search-grid > div:hover {
-                transform: translateY(-7px) !important;
-                border-color: rgba(255,255,255,.22) !important;
-                box-shadow: 0 22px 44px rgba(0,0,0,.42) !important;
-            }
-            #home-grid > div .relative.aspect-\[2\/3\],
-            #search-grid > div .relative.aspect-\[2\/3\] {
-                background: #0a0a0d !important;
-            }
-            #home-grid > div img,
-            #search-grid > div img {
-                transition: transform .5s cubic-bezier(.2,.7,.2,1), filter .3s ease !important;
-            }
-            #home-grid > div:hover img,
-            #search-grid > div:hover img {
-                transform: scale(1.055) !important;
-                filter: brightness(1.06) saturate(1.04);
-            }
-            #home-grid > div h3,
-            #search-grid > div h3 {
-                font-size: 13px !important;
-                font-weight: 750 !important;
-                color: #f8fafc !important;
-                letter-spacing: -.01em;
-            }
-            #home-grid > div > div:last-child,
-            #search-grid > div > div:last-child {
-                padding: 12px 12px 13px !important;
-                background: linear-gradient(180deg, rgba(17,17,21,.25), rgba(10,10,12,.75));
-            }
-            #home-grid > div .absolute.top-2.right-2,
-            #search-grid > div .absolute.top-2.right-2 {
-                padding: 5px 8px !important;
-                border-radius: 8px !important;
-                background: rgba(5,5,7,.84) !important;
-                border-color: rgba(255,255,255,.13) !important;
-                backdrop-filter: blur(7px);
-            }
-
-            /* Trending / Top 10 strip */
-            #top10-section {
-                padding: 2px 0 4px;
-            }
-            #top10-section h2 {
-                font-size: 18px !important;
-                margin-bottom: 9px;
-            }
-            #top10-section h2 span {
-                width: 7px !important;
-                height: 7px !important;
-                background: #fff !important;
-            }
-            #top10-section > div {
-                gap: 18px !important;
-                padding: 3px 2px 10px !important;
-            }
-            #top10-section > div > div {
-                padding-left: 25px !important;
-            }
-            #top10-section > div > div > div {
-                width: 112px !important;
-                border-radius: 14px !important;
-                border-color: rgba(255,255,255,.12) !important;
-                box-shadow: 0 12px 28px rgba(0,0,0,.30) !important;
-                transition: transform .25s ease, border-color .25s ease !important;
-            }
-            #top10-section > div > div:hover > div {
-                transform: translateY(-5px) scale(1.02);
-                border-color: rgba(255,255,255,.26) !important;
-            }
-
-            /* Desktop loading / empty states */
-            #home-grid > .col-span-full,
-            #search-grid > .col-span-full {
-                border: 1px dashed rgba(255,255,255,.12) !important;
-                background: rgba(255,255,255,.025) !important;
-                border-radius: 18px !important;
-            }
-        }
-
-        @media (min-width: 900px) and (max-width: 1180px) {
-            #home-grid,
-            #search-grid { grid-template-columns: repeat(5, minmax(0,1fr)) !important; }
-            main.p-4.lg\:p-8 { padding-left: 24px !important; padding-right: 24px !important; }
-        }
-
-</style>
-
-<style id="desktop-movies-tv-v2">
-/* =========================================================
-   CINE DB — MOVIES / TV SHOWS DESKTOP V2
-   Desktop only. Mobile UI intentionally untouched.
-   ========================================================= */
-@media (min-width: 900px) {
-  /* Clean cinematic page background */
-  body {
-    background-color:#050507 !important;
-    background-image:
-      radial-gradient(circle at 50% -15%, rgba(255,255,255,.075), transparent 38%),
-      linear-gradient(180deg,#050507 0%,#08080b 100%) !important;
-  }
-
-  /* Top navigation: cleaner streaming-service style */
-  header.glass-header {
-    height:72px !important;
-    padding:0 28px !important;
-    background:rgba(5,5,7,.88) !important;
-    border-bottom:1px solid rgba(255,255,255,.08) !important;
-    backdrop-filter:blur(18px) saturate(130%) !important;
-    -webkit-backdrop-filter:blur(18px) saturate(130%) !important;
-  }
-  header.glass-header > div {
-    max-width:1500px !important;
-    min-height:72px !important;
-  }
-  header.glass-header > div > div:first-child > div:first-child {
-    width:40px !important;height:40px !important;border-radius:13px !important;
-    box-shadow:0 8px 28px rgba(255,255,255,.10) !important;
-  }
-  header.glass-header > div > div:first-child > span {
-    font-size:24px !important;font-weight:900 !important;
-  }
-
-  .desktop-main-nav {
-    position:absolute !important;left:50% !important;transform:translateX(-50%) !important;
-    height:72px !important;
-  }
-  .desktop-nav-pill {
-    height:72px !important;padding:0 !important;gap:2px !important;
-    border:0 !important;background:transparent !important;box-shadow:none !important;
-  }
-  .desktop-nav-item {
-    height:72px !important;min-width:96px !important;padding:0 17px !important;
-    border-radius:0 !important;background:transparent !important;
-    color:rgba(203,213,225,.72) !important;
-    font-size:14px !important;font-weight:750 !important;
-    position:relative !important;
-  }
-  .desktop-nav-item::after {
-    content:"";position:absolute;left:50%;bottom:10px;width:0;height:3px;
-    transform:translateX(-50%);border-radius:999px;background:#fff;
-    box-shadow:0 0 14px rgba(255,255,255,.35);
-    transition:width .22s ease,background .22s ease;
-  }
-  .desktop-nav-item:hover { background:rgba(255,255,255,.045) !important;color:#fff !important;transform:none !important; }
-  .desktop-nav-item:hover::after { width:24px; }
-  .desktop-nav-item.active-nav-item::after,
-  .desktop-nav-pill .dnav-cat-btn.bg-white::after,
-  .desktop-nav-pill .dnav-btn.bg-white::after { width:32px !important;background:#fff !important; }
-  .desktop-nav-item.active-nav-item,
-  .desktop-nav-pill .dnav-cat-btn.bg-white,
-  .desktop-nav-pill .dnav-btn.bg-white {
-    color:#fff !important;background:transparent !important;box-shadow:none !important;
-  }
-  .desktop-search-nav-item { min-width:70px !important; }
-  .desktop-search-label { display:none !important; }
-
-  /* Country */
-  .desktop-country-pill {
-    height:42px !important;min-width:126px !important;margin-left:12px !important;
-    border-radius:12px !important;background:rgba(255,255,255,.045) !important;
-    border:1px solid rgba(255,255,255,.10) !important;
-  }
-  .desktop-country-pill:hover { background:rgba(255,255,255,.08) !important; }
-
-  /* Account */
-  .desktop-account-wrap { min-width:220px !important; }
-  .desktop-account-btn {
-    height:42px !important;border-radius:12px !important;padding:0 13px 0 8px !important;
-    box-shadow:0 8px 26px rgba(0,0,0,.22) !important;
-  }
-
-  /* Main content */
-  main.p-4.lg\:p-8 {
-    max-width:1500px !important;padding:30px 38px 48px !important;
-  }
-
-  /* Make Movies / TV page title feel like a real browse page */
-  #section-title {
-    position:relative !important;
-    display:flex !important;align-items:center !important;
-    min-height:44px !important;margin:6px 0 16px !important;
-    padding:0 0 12px !important;
-    font-size:25px !important;font-weight:850 !important;
-    letter-spacing:-.035em !important;
-    border-bottom:1px solid rgba(255,255,255,.08) !important;
-  }
-  #section-title > span:first-child {
-    width:9px !important;height:28px !important;border-radius:5px !important;
-    background:#fff !important;box-shadow:0 0 18px rgba(255,255,255,.18) !important;
-  }
-
-  /* Movie / TV cards: stronger premium hierarchy */
-  #home-grid, #search-grid {
-    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
-    gap:22px 16px !important;
-  }
-  #home-grid > div, #search-grid > div {
-    position:relative !important;overflow:hidden !important;
-    border-radius:17px !important;
-    background:linear-gradient(180deg,#111116,#0a0a0d) !important;
-    border:1px solid rgba(255,255,255,.09) !important;
-    box-shadow:0 10px 26px rgba(0,0,0,.25) !important;
-    transform:translateY(0) !important;
-    transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,border-color .28s ease !important;
-  }
-  #home-grid > div::after, #search-grid > div::after {
-    content:"";position:absolute;inset:0;border-radius:17px;pointer-events:none;
-    background:linear-gradient(180deg,transparent 65%,rgba(0,0,0,.24));opacity:0;transition:opacity .25s ease;
-  }
-  #home-grid > div:hover, #search-grid > div:hover {
-    transform:translateY(-8px) !important;
-    border-color:rgba(255,255,255,.22) !important;
-    box-shadow:0 24px 48px rgba(0,0,0,.46) !important;
-  }
-  #home-grid > div:hover::after, #search-grid > div:hover::after { opacity:1; }
-  #home-grid > div .relative.aspect-\[2\/3\],
-  #search-grid > div .relative.aspect-\[2\/3\] {
-    aspect-ratio:2/3 !important;background:#09090c !important;
-  }
-  #home-grid > div img, #search-grid > div img {
-    transition:transform .45s cubic-bezier(.2,.7,.2,1),filter .35s ease !important;
-  }
-  #home-grid > div:hover img, #search-grid > div:hover img {
-    transform:scale(1.07) !important;filter:brightness(1.08) saturate(1.08) !important;
-  }
-  #home-grid > div > div:last-child, #search-grid > div > div:last-child {
-    min-height:61px !important;padding:11px 12px 12px !important;
-    background:linear-gradient(180deg,rgba(15,15,19,.96),rgba(8,8,11,.99)) !important;
-  }
-  #home-grid > div h3, #search-grid > div h3 {
-    font-size:13px !important;font-weight:800 !important;letter-spacing:-.015em !important;
-  }
-  #home-grid > div .absolute.top-2.right-2,
-  #search-grid > div .absolute.top-2.right-2 {
-    top:9px !important;right:9px !important;padding:5px 8px !important;
-    border-radius:8px !important;background:rgba(5,5,7,.86) !important;
-    border:1px solid rgba(255,255,255,.14) !important;
-  }
-
-  /* Top 10 becomes a compact premium rail */
-  #top10-section { margin:4px 0 26px !important; }
-  #top10-section h2 { font-size:19px !important;font-weight:850 !important; }
-  #top10-section > div { gap:14px !important;padding:4px 2px 12px !important; }
-  #top10-section > div > div { padding-left:24px !important; }
-  #top10-section > div > div > div {
-    width:118px !important;border-radius:15px !important;
-    border:1px solid rgba(255,255,255,.10) !important;
-    box-shadow:0 12px 28px rgba(0,0,0,.30) !important;
-  }
-
-  /* Search page */
-  #tab-search > .relative:first-child { margin-bottom:20px !important; }
-  #search-input {
-    height:54px !important;border-radius:16px !important;
-    background:rgba(255,255,255,.045) !important;
-    border:1px solid rgba(255,255,255,.10) !important;
-    font-size:14px !important;
-  }
-  #search-input:focus { border-color:rgba(255,255,255,.30) !important;box-shadow:0 0 0 4px rgba(255,255,255,.035) !important; }
-
-  /* Desktop hero sits slightly tighter with the browse content */
-  #hero-container { border-color:rgba(255,255,255,.12) !important;box-shadow:0 22px 60px rgba(0,0,0,.34) !important; }
-}
-
-@media (min-width:900px) and (max-width:1180px) {
-  #home-grid,#search-grid { grid-template-columns:repeat(5,minmax(0,1fr)) !important;gap:18px 13px !important; }
-  main.p-4.lg\:p-8 { padding-left:24px !important;padding-right:24px !important; }
-  .desktop-nav-item { min-width:78px !important;padding:0 11px !important;font-size:12px !important; }
-  .desktop-country-pill { min-width:110px !important; }
-}
-</style>
-
-<style id="cinedb-desktop-v3">
-/* =========================================================
-   CINEDB — DESKTOP V3
-   Top navigation + details modal modernisation.
-   Mobile (<900px) layout intentionally untouched.
-   ========================================================= */
-
-/* ---------- Global focus + dropdown animation ---------- */
-button:focus-visible, a:focus-visible, input:focus-visible,
-select:focus-visible, [tabindex]:focus-visible {
-  outline: 2px solid rgba(255,255,255,.75);
-  outline-offset: 2px;
-  border-radius: 10px;
-}
-@keyframes cdbDropIn { from { opacity:0; transform: translateY(-8px) scale(.96); } to { opacity:1; transform:none; } }
-#account-menu-dropdown:not(.hidden),
-#account-menu-dropdown-mobile:not(.hidden),
-.cdb-cc-menu.open { animation: cdbDropIn .2s cubic-bezier(.2,.8,.3,1); transform-origin: top right; }
-
-/* ---------- Details modal (all sizes: motion only) ---------- */
-@keyframes cdbModalIn { from { opacity:0; transform: translateY(18px) scale(.975); } to { opacity:1; transform:none; } }
-@keyframes cdbFadeIn  { from { opacity:0; } to { opacity:1; } }
-@keyframes cdbPanelIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
-#details-modal.dm-open #modal-content { animation: cdbModalIn .42s cubic-bezier(.2,.8,.25,1) both; }
-#details-modal.dm-open .dm-bg,
-#details-modal.dm-open .dm-topbar { animation: cdbFadeIn .5s ease both; }
-#details-modal.dm-closing { opacity:0; transition: opacity .18s ease; }
-.dp-anim { animation: cdbPanelIn .3s ease both; }
-
-/* Cinematic blurred backdrop behind the modal */
-#details-modal .dm-bg {
-  position: fixed; inset: -8%;
-  background-size: cover; background-position: center top;
-  filter: blur(46px) saturate(145%);
-  opacity: 0; transform: scale(1.12);
-  transition: opacity .6s ease;
-  pointer-events: none;
-}
-#details-modal .dm-bg.on { opacity: .30; }
-#details-modal .dm-bg::after {
-  content:""; position:absolute; inset:0;
-  background: radial-gradient(circle at 50% 0%, rgba(0,0,0,.35), rgba(4,4,6,.86) 62%, #040406 100%);
-}
-#details-modal #modal-content { position: relative; z-index: 2; }
-
-/* Sticky top bar inside the modal */
-.dm-topbar {
-  position: sticky; top: 0; z-index: 40;
-  display: flex; align-items: center; gap: 14px;
-  padding: 11px 16px;
-  background: linear-gradient(180deg, rgba(5,5,7,.94) 55%, rgba(5,5,7,0));
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-}
-.dm-topbar .dm-tb-title {
-  font-size: 13px; font-weight: 800; color: #fff;
-  opacity: 0; transform: translateY(6px);
-  transition: opacity .3s ease, transform .3s ease;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-#details-modal.scrolled .dm-topbar .dm-tb-title { opacity: 1; transform: none; }
-.dm-close {
-  margin-left: auto; flex: none;
-  width: 38px; height: 38px; border-radius: 12px;
-  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
-  color: #fff; display: flex; align-items: center; justify-content: center;
-  transition: background .2s ease, transform .2s ease, border-color .2s ease;
-}
-.dm-close:hover { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); transform: rotate(90deg); }
-
-/* Action buttons + meta chips */
-.dm-actions { display: flex; flex-wrap: wrap; gap: 9px; }
-.dm-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 44px; padding: 0 18px; border-radius: 13px;
-  font-size: 13px; font-weight: 800; letter-spacing: -.01em;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06); color: #fff;
-  transition: transform .2s cubic-bezier(.2,.8,.3,1), background .2s ease, border-color .2s ease, box-shadow .2s ease;
-}
-.dm-btn:hover { background: rgba(255,255,255,.13); border-color: rgba(255,255,255,.28); transform: translateY(-2px); }
-.dm-btn:active { transform: translateY(0) scale(.97); }
-.dm-btn.primary { background: #fff; color: #08080b; border-color: #fff; box-shadow: 0 10px 30px rgba(255,255,255,.16); }
-.dm-btn.primary:hover { background: #f1f1f1; box-shadow: 0 16px 38px rgba(255,255,255,.22); }
-.dm-btn.icon { width: 44px; padding: 0; }
-.dm-btn.saved { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.4); }
-.dm-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.dm-chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 11px; border-radius: 999px;
-  font-size: 11px; font-weight: 700; color: rgba(226,232,240,.92);
-  background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.11);
-}
-.dm-chip i { font-size: 9px; opacity: .65; }
-
-/* Detail tabs with sliding indicator */
-.detail-tabs { position: relative; }
-.dtab-indicator {
-  position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
-  background: #fff; border-radius: 999px; box-shadow: 0 0 12px rgba(255,255,255,.45);
-  transition: transform .34s cubic-bezier(.34,1.25,.45,1), width .34s cubic-bezier(.34,1.25,.45,1);
-  pointer-events: none;
-}
-.detail-tab-btn { border-bottom-color: transparent !important; }
-
-/* =========================================================
-   DESKTOP ONLY
-   ========================================================= */
-@media (min-width: 900px) {
-
-  /* ---------- Scroll-aware header ---------- */
-  header.glass-header {
-    transition: height .3s cubic-bezier(.2,.8,.3,1), background .35s ease,
-                border-color .35s ease, box-shadow .35s ease;
-  }
-  header.glass-header.at-top {
-    background: linear-gradient(180deg, rgba(5,5,7,.78), rgba(5,5,7,0)) !important;
-    border-bottom-color: transparent !important;
-    backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important;
-  }
-  header.glass-header.scrolled {
-    height: 62px !important;
-    box-shadow: 0 10px 34px rgba(0,0,0,.45) !important;
-  }
-  header.glass-header.scrolled > div,
-  header.glass-header.scrolled .desktop-main-nav,
-  header.glass-header.scrolled .desktop-nav-pill,
-  header.glass-header.scrolled .desktop-nav-item { height: 62px !important; min-height: 62px !important; }
-  header.glass-header.scrolled .desktop-nav-item { font-size: 13px !important; }
-
-  /* ---------- Sliding nav indicator ---------- */
-  .desktop-nav-pill { position: relative !important; }
-  .desktop-nav-item::after { display: none !important; }
-  .dnav-indicator {
-    position: absolute; left: 0; bottom: 11px;
-    height: 3px; width: 22px; border-radius: 999px;
-    background: #fff; box-shadow: 0 0 16px rgba(255,255,255,.5);
-    opacity: 0; transform: translateX(0);
-    transition: transform .4s cubic-bezier(.34,1.25,.45,1),
-                width .4s cubic-bezier(.34,1.25,.45,1), opacity .25s ease;
-    pointer-events: none;
-  }
-  .dnav-indicator.on { opacity: 1; }
-  header.glass-header.scrolled .dnav-indicator { bottom: 8px; }
-
-  /* ---------- Nav item hover pill ---------- */
-  .desktop-nav-item { isolation: isolate; transition: color .25s ease !important; }
-  .desktop-nav-item::before {
-    content: ""; position: absolute; inset: 15px 5px; z-index: -1;
-    border-radius: 12px; background: rgba(255,255,255,.08);
-    opacity: 0; transform: scale(.9);
-    transition: opacity .22s ease, transform .22s cubic-bezier(.2,.8,.3,1);
-  }
-  .desktop-nav-item:hover::before { opacity: 1; transform: scale(1); }
-  .desktop-nav-item:hover { background: transparent !important; color: #fff !important; }
-  header.glass-header.scrolled .desktop-nav-item::before { inset: 11px 5px; }
-
-  /* ---------- Inline expanding search ---------- */
-  .nav-search-wrap {
-    display: flex; align-items: center; overflow: hidden;
-    width: 0; opacity: 0; margin-left: 0;
-    transition: width .4s cubic-bezier(.2,.8,.25,1), opacity .25s ease, margin-left .3s ease;
-  }
-  .nav-search-wrap.open { width: 232px; opacity: 1; margin-left: 4px; }
-  .nav-search-wrap input {
-    width: 100%; height: 38px; padding: 0 13px;
-    border-radius: 11px; font-size: 13px; color: #fff;
-    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
-    outline: none; transition: border-color .2s ease, box-shadow .2s ease;
-  }
-  .nav-search-wrap input::placeholder { color: rgba(203,213,225,.45); }
-  .nav-search-wrap input:focus { border-color: rgba(255,255,255,.34); box-shadow: 0 0 0 4px rgba(255,255,255,.05); }
-
-  /* ---------- Custom country dropdown ---------- */
-  .desktop-country-pill { position: relative !important; padding: 0 !important; overflow: visible !important; }
-  .desktop-country-pill select { display: none !important; }
-  .cdb-cc-btn {
-    display: flex; align-items: center; gap: 9px;
-    height: 42px; width: 100%; padding: 0 13px;
-    font-size: 13px; font-weight: 700; color: rgba(226,232,240,.92);
-    background: transparent; border: 0; border-radius: 12px;
-    transition: color .2s ease;
-  }
-  .cdb-cc-btn .cdb-cc-chev { margin-left: auto; font-size: 9px; opacity: .6; transition: transform .28s cubic-bezier(.2,.8,.3,1); }
-  .cdb-cc-btn.open .cdb-cc-chev { transform: rotate(180deg); }
-  .cdb-cc-menu {
-    display: none; position: absolute; top: calc(100% + 10px); left: 0;
-    width: 232px; max-height: 336px; overflow-y: auto; z-index: 60;
-    padding: 7px; border-radius: 16px;
-    background: rgba(11,11,14,.97); border: 1px solid rgba(255,255,255,.13);
-    box-shadow: 0 26px 60px rgba(0,0,0,.6);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  }
-  .cdb-cc-menu.open { display: block; transform-origin: top left; }
-  .cdb-cc-opt {
-    display: flex; align-items: center; gap: 10px; width: 100%;
-    padding: 9px 11px; border-radius: 11px;
-    font-size: 12.5px; font-weight: 650; color: rgba(203,213,225,.88);
-    text-align: left; transition: background .18s ease, color .18s ease;
-  }
-  .cdb-cc-opt:hover { background: rgba(255,255,255,.08); color: #fff; }
-  .cdb-cc-opt .tick { margin-left: auto; font-size: 10px; opacity: 0; }
-  .cdb-cc-opt.sel { background: rgba(255,255,255,.1); color: #fff; }
-  .cdb-cc-opt.sel .tick { opacity: 1; }
-
-  /* ---------- Account button ---------- */
-  .desktop-account-btn { transition: background .22s ease, transform .22s cubic-bezier(.2,.8,.3,1), box-shadow .22s ease !important; }
-  .desktop-account-btn:hover { transform: translateY(-1px) !important; box-shadow: 0 12px 30px rgba(0,0,0,.4) !important; }
-  .desktop-account-btn .desktop-account-chevron { transition: transform .28s cubic-bezier(.2,.8,.3,1); }
-  .desktop-account-btn.open .desktop-account-chevron { transform: rotate(180deg); }
-
-  /* ---------- Details modal desktop layout ---------- */
-  .dm-topbar { padding: 14px 8px 14px 4px; }
-  #details-modal #modal-content { max-width: 1180px !important; padding-bottom: 60px !important; padding-top: 0 !important; }
-  .dm-poster-wrap {
-    border-radius: 22px; overflow: hidden;
-    border: 1px solid rgba(255,255,255,.1);
-    box-shadow: 0 30px 70px rgba(0,0,0,.55);
-    aspect-ratio: 4 / 3 !important;
-  }
-  /* Season preview strip (Overview tab) */
-  .dm-season-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; }
-  .dm-ep-card { flex: none; width: 240px; }
-  .dm-ep-thumb { position: relative; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: #0a0a0d; }
-  .dm-ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .dm-ep-num {
-    position: absolute; top: 8px; left: 8px; background: rgba(5,5,7,.85);
-    color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 7px;
-    border: 1px solid rgba(255,255,255,.15);
-  }
-  .dm-stats { gap: 10px !important; }
-  .detail-tab-btn { font-size: 14px !important; padding-bottom: 11px !important; }
-  .detail-tabs { gap: 26px !important; }
-}
-</style>
-
+    </style>
 </head>
-<body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen pb-24 lg:pb-8 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
+<body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
 
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- Fixed Header -->
-    <header id="site-header" class="sticky top-0 z-40 glass-header at-top px-4 lg:px-8 py-3">
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-2.5 cursor-pointer" onclick="goHomeAndRefresh()">
-            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-stone-200 via-white to-stone-300 flex items-center justify-center shadow-lg shadow-white/20 border border-white/30">
-                <i class="fa-solid fa-play text-slate-950 text-xs font-black"></i>
-            </div>
-            <span class="text-2xl font-black tracking-wider text-white leading-none">Cine<span class="text-indigo-400">DB</span></span>
+    <!-- Fixed Header (Lionsgate Play style: brand row + tab row) -->
+    <header class="sticky top-0 z-40 glass-header">
+      <div class="max-w-7xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
+        <div class="flex items-center cursor-pointer" onclick="setTopTab('all')">
+            <span class="text-2xl font-black tracking-wider text-white leading-none">MtDv</span>
         </div>
 
-        <!-- Desktop inline nav (desktop UI only) -->
-        <nav class="hidden lg:flex items-center desktop-main-nav" aria-label="Desktop navigation">
-            <div class="desktop-nav-pill">
-                <span class="dnav-indicator" id="dnav-indicator" aria-hidden="true"></span>
-                <button onclick="goHomeDesktop()" id="dnav-home" class="dnav-btn desktop-nav-item active-nav-item" aria-label="Home">
-                    <i class="fa-solid fa-house text-[11px]"></i><span>Home</span>
+        <div class="flex items-center gap-1">
+            <div class="relative">
+                <button onclick="toggleHamburgerMenu(event)" id="hamburger-btn" class="w-9 h-9 rounded-xl flex items-center justify-center text-white hover:bg-white/10 transition">
+                    <i class="fa-solid fa-bars text-base"></i>
                 </button>
-                <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn desktop-nav-item" aria-label="Movies">
-                    <i class="fa-solid fa-film text-[11px]"></i><span>Movies</span>
-                </button>
-                <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn desktop-nav-item" aria-label="TV Shows">
-                    <i class="fa-solid fa-tv text-[11px]"></i><span>TV Shows</span>
-                </button>
-                <button onclick="navSearchClick(event)" id="dnav-search" title="Search (press /)" class="dnav-btn desktop-nav-item desktop-search-nav-item" aria-label="Search">
-                    <i class="fa-solid fa-magnifying-glass text-sm"></i><span class="desktop-search-label">Search</span>
-                </button>
-                <div class="nav-search-wrap" id="nav-search-wrap">
-                    <input type="text" id="nav-search-input" placeholder="Search movies, shows, cast..."
-                           oninput="navSearchInput(this.value)" onkeydown="navSearchKey(event)" aria-label="Quick search">
-                </div>
-                <div class="desktop-country-pill">
-                    <i class="fa-solid fa-earth-americas text-[12px]"></i>
-                    <select id="country-select-desktop" onchange="changeCountryFilter(this.value)" aria-label="Country">
-                        <option value="ALL" class="bg-[#0D0D10] text-white">Country</option>
-                        <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
-                        <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
-                        <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
-                        <option value="JP" class="bg-[#0D0D10] text-white">🇯🇵 Japan</option>
-                        <option value="GB" class="bg-[#0D0D10] text-white">🇬🇧 United Kingdom</option>
-                        <option value="ES" class="bg-[#0D0D10] text-white">🇪🇸 Spain</option>
-                        <option value="FR" class="bg-[#0D0D10] text-white">🇫🇷 France</option>
-                        <option value="DE" class="bg-[#0D0D10] text-white">🇩🇪 Germany</option>
-                        <option value="TR" class="bg-[#0D0D10] text-white">🇹🇷 Turkey</option>
-                        <option value="CN" class="bg-[#0D0D10] text-white">🇨🇳 China</option>
-                        <option value="CA" class="bg-[#0D0D10] text-white">🇨🇦 Canada</option>
-                        <option value="BR" class="bg-[#0D0D10] text-white">🇧🇷 Brazil</option>
-                        <option value="IT" class="bg-[#0D0D10] text-white">🇮🇹 Italy</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down text-[8px] opacity-60 pointer-events-none"></i>
+                <div id="hamburger-dropdown" class="hidden absolute top-full right-0 mt-2 w-60 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl z-50 space-y-3">
+                    <div>
+                        <label class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mb-1">Release Year</label>
+                        <select id="year-select" onchange="changeYearFilter(this.value)" class="w-full bg-[#0D0D10] border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none cursor-pointer">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mb-1">Country</label>
+                        <select id="country-select" onchange="changeCountryFilter(this.value)" class="w-full bg-[#0D0D10] border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none cursor-pointer">
+                            <option value="ALL">All Countries</option>
+                            <option value="IN">🇮🇳 India</option>
+                            <option value="US">🇺🇸 United States</option>
+                            <option value="GB">🇬🇧 United Kingdom</option>
+                            <option value="KR">🇰🇷 South Korea</option>
+                            <option value="JP">🇯🇵 Japan</option>
+                            <option value="CN">🇨🇳 China</option>
+                            <option value="FR">🇫🇷 France</option>
+                            <option value="DE">🇩🇪 Germany</option>
+                            <option value="ES">🇪🇸 Spain</option>
+                            <option value="IT">🇮🇹 Italy</option>
+                            <option value="TR">🇹🇷 Turkey</option>
+                            <option value="CA">🇨🇦 Canada</option>
+                            <option value="BR">🇧🇷 Brazil</option>
+                            <option value="MX">🇲🇽 Mexico</option>
+                            <option value="AU">🇦🇺 Australia</option>
+                            <option value="RU">🇷🇺 Russia</option>
+                            <option value="TH">🇹🇭 Thailand</option>
+                            <option value="ID">🇮🇩 Indonesia</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </nav>
 
-        <!-- Mobile: single Account icon with Sign In / Sign Up dropdown -->
-        <div class="relative flex lg:hidden">
-            <button onclick="toggleAccountMenuMobile(event)" id="account-menu-btn-mobile" class="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg shadow-indigo-500/25 border border-indigo-400/30">
-                <i class="fa-solid fa-circle-user text-base"></i>
+            <button onclick="switchTab('search')" id="header-search-btn" class="w-9 h-9 rounded-xl flex items-center justify-center text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-magnifying-glass text-base"></i>
             </button>
-            <div id="account-menu-dropdown-mobile" class="hidden absolute top-full right-0 mt-2 w-44 card-solid border border-white/15 rounded-2xl p-2 shadow-2xl z-50">
-                <button onclick="closeAccountMenuMobile(); openAuthModal('signin')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-right-to-bracket text-[11px]"></i> Sign In</button>
-                <button onclick="closeAccountMenuMobile(); openAuthModal('signup')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-user-plus text-[11px]"></i> Sign Up</button>
-            </div>
         </div>
+      </div>
 
-        <!-- Desktop account control (desktop UI only) -->
-        <div class="hidden lg:block relative desktop-account-wrap">
-            <button onclick="toggleAccountMenu(event)" id="account-menu-btn" class="desktop-account-btn">
-                <span class="desktop-account-icon"><i class="fa-solid fa-circle-user"></i></span>
-                <span>Account</span>
-                <i class="fa-solid fa-chevron-down text-[9px] desktop-account-chevron"></i>
-            </button>
-            <div id="account-menu-dropdown" class="hidden absolute top-full right-0 mt-3 w-48 card-solid border border-white/15 rounded-2xl p-2 shadow-2xl z-50 desktop-account-dropdown">
-                <button onclick="closeAccountMenu(); openAuthModal('signin')" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-right-to-bracket text-[11px]"></i> Sign In</button>
-                <button onclick="closeAccountMenu(); openAuthModal('signup')" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-user-plus text-[11px]"></i> Sign Up</button>
-            </div>
-        </div>
+      <!-- Tab Row: Home / Movies / TV Shows -->
+      <div class="max-w-7xl mx-auto flex items-center gap-6 px-4 lg:px-8 border-t border-white/10">
+          <button onclick="setTopTab('all')" id="ttab-all" class="toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-white transition">Home</button>
+          <button onclick="setTopTab('movie')" id="ttab-movie" class="toptab-btn px-1 py-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition">Movies</button>
+          <button onclick="setTopTab('tv')" id="ttab-tv" class="toptab-btn px-1 py-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition">TV Shows</button>
       </div>
     </header>
 
@@ -1228,39 +176,10 @@ select:focus-visible, [tabindex]:focus-visible {
 
         <!-- HOME TAB -->
         <section id="tab-home" class="space-y-4">
-            
-            <!-- Category & Country Bar (MOBILE ONLY — desktop uses the top-nav controls) -->
-            <div class="lg:hidden flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-                <div class="flex items-center gap-2">
-                    <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition"><i class="fa-solid fa-film text-[10px]"></i> Movies</button>
-                    <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition"><i class="fa-solid fa-tv text-[10px]"></i> TV Shows</button>
-                </div>
-
-                <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
-                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 border border-indigo-400/30">
-                    <i class="fa-solid fa-earth-americas text-indigo-400 text-xs mr-2 pointer-events-none"></i>
-                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs font-semibold focus:outline-none cursor-pointer pr-1">
-                        <option value="ALL" class="bg-[#0D0D10] text-white">Country</option>
-                        <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
-                        <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
-                        <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
-                        <option value="JP" class="bg-[#0D0D10] text-white">🇯🇵 Japan</option>
-                        <option value="GB" class="bg-[#0D0D10] text-white">🇬🇧 United Kingdom</option>
-                        <option value="ES" class="bg-[#0D0D10] text-white">🇪🇸 Spain</option>
-                        <option value="FR" class="bg-[#0D0D10] text-white">🇫🇷 France</option>
-                        <option value="DE" class="bg-[#0D0D10] text-white">🇩🇪 Germany</option>
-                        <option value="TR" class="bg-[#0D0D10] text-white">🇹🇷 Turkey</option>
-                        <option value="CN" class="bg-[#0D0D10] text-white">🇨🇳 China</option>
-                        <option value="CA" class="bg-[#0D0D10] text-white">🇨🇦 Canada</option>
-                        <option value="BR" class="bg-[#0D0D10] text-white">🇧🇷 Brazil</option>
-                        <option value="IT" class="bg-[#0D0D10] text-white">🇮🇹 Italy</option>
-                    </select>
-                </div>
-            </div>
 
             <!-- HERO SPOTLIGHT -->
             <div class="relative group/hero">
-                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/8] lg:max-h-[440px] w-full flex items-end cursor-pointer group transition duration-500">
+                <div id="hero-container" class="relative rounded-2xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-video w-full cursor-pointer group">
                     <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                         <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                         <p class="text-xs">Loading Spotlight...</p>
@@ -1293,7 +212,7 @@ select:focus-visible, [tabindex]:focus-visible {
             </div>
         </section>
 
-        <!-- SEARCH TAB -->
+        <!-- SEARCH TAB WITH FILTERS -->
         <section id="tab-search" class="hidden space-y-4">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-indigo-400/70"></i>
@@ -1309,6 +228,34 @@ select:focus-visible, [tabindex]:focus-visible {
                 <div id="recent-searches-row" class="flex gap-2 flex-wrap"></div>
             </div>
 
+            <!-- Search Filters Bar -->
+            <div class="grid grid-cols-3 gap-2">
+                <select id="search-type" onchange="handleSearch()" class="glass-card text-xs text-indigo-200 rounded-xl p-2.5 bg-[#0D0D10] border border-indigo-500/20 focus:outline-none">
+                    <option value="all">All Content</option>
+                    <option value="movie">Movies Only</option>
+                    <option value="tv">TV Shows Only</option>
+                </select>
+                <select id="search-genre" onchange="handleSearch()" class="glass-card text-xs text-indigo-200 rounded-xl p-2.5 bg-[#0D0D10] border border-indigo-500/20 focus:outline-none">
+                    <option value="">All Genres</option>
+                    <option value="28">Action</option>
+                    <option value="35">Comedy</option>
+                    <option value="18">Drama</option>
+                    <option value="878">Sci-Fi</option>
+                    <option value="27">Horror</option>
+                    <option value="16">Animation</option>
+                </select>
+                <select id="search-year" onchange="handleSearch()" class="glass-card text-xs text-indigo-200 rounded-xl p-2.5 bg-[#0D0D10] border border-indigo-500/20 focus:outline-none">
+                    <option value="">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2020">2020s</option>
+                    <option value="2010">2010s</option>
+                </select>
+            </div>
+
             <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 lg:gap-5">
                 <p class="col-span-full text-center text-slate-400 py-12 text-xs">Type query or pick filters to search content...</p>
             </div>
@@ -1316,60 +263,12 @@ select:focus-visible, [tabindex]:focus-visible {
 
     </main>
 
-    <!-- AUTH SIGNIN/SIGNUP MODAL -->
-    <div id="auth-modal" class="fixed inset-0 z-[90] glass-modal hidden flex items-center justify-center p-4">
-        <div class="glass-card p-6 rounded-3xl max-w-sm w-full space-y-5 border border-indigo-500/30 shadow-2xl relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 w-8 h-8 rounded-xl glass-card flex items-center justify-center text-white">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="flex border-b border-slate-700/60 pb-2 gap-4">
-                <button id="auth-tab-signin" onclick="switchAuthMode('signin')" class="text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-1">Sign In</button>
-                <button id="auth-tab-signup" onclick="switchAuthMode('signup')" class="text-sm font-bold text-slate-400 hover:text-white pb-1">Sign Up</button>
-            </div>
-
-            <form id="form-signin" onsubmit="event.preventDefault(); handleAuthSubmit('signin');" class="space-y-3">
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Email Address</label>
-                    <input type="email" required placeholder="yourname@gmail.com" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Password</label>
-                    <input type="password" required placeholder="••••••••" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 mt-2">Sign In</button>
-            </form>
-
-            <form id="form-signup" onsubmit="event.preventDefault(); handleAuthSubmit('signup');" class="hidden space-y-3">
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Full Name</label>
-                    <input type="text" required placeholder="John Doe" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Email Address</label>
-                    <input type="email" required placeholder="yourname@gmail.com" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Create Password</label>
-                    <input type="password" required placeholder="••••••••" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 mt-2">Create Account</button>
-            </form>
-        </div>
-    </div>
-
     <!-- Movie/Show Details Modal -->
     <div id="details-modal" class="fixed inset-0 z-50 glass-modal hidden overflow-y-auto">
-        <div class="dm-bg" aria-hidden="true"></div>
-        <div class="max-w-2xl lg:max-w-[1180px] mx-auto relative z-[45]">
-            <div class="dm-topbar">
-                <span class="dm-tb-title" id="dm-tb-title"></span>
-                <button class="dm-close" onclick="closeModalManual()" aria-label="Close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        </div>
-        <div id="modal-content" class="max-w-2xl lg:max-w-5xl mx-auto pb-28 lg:pb-16"></div>
+        <button onclick="closeModalManual()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-white border border-indigo-500/30 active:scale-95 transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="modal-content" class="max-w-2xl lg:max-w-5xl mx-auto pb-28 lg:pb-16 lg:pt-10"></div>
     </div>
 
     <!-- Actor Profile Modal -->
@@ -1381,19 +280,6 @@ select:focus-visible, [tabindex]:focus-visible {
             <div id="actor-modal-content"></div>
         </div>
     </div>
-    </div>
-
-    <!-- Bottom Navigation Bar (floating pill) -->
-    <nav class="fixed bottom-4 left-4 right-4 z-[60] lg:hidden bg-black/75 backdrop-blur-2xl px-2 py-2 rounded-full flex justify-around items-center border border-white/10 shadow-2xl shadow-black/60">
-        <button onclick="goHomeDesktop()" id="nav-home" class="nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg">
-            <i class="fa-solid fa-house text-base"></i>
-            <span class="text-[11px]">Home</span>
-        </button>
-        <button onclick="switchTab('search')" id="nav-search" class="nav-btn flex flex-col items-center gap-1 px-3 py-1.5 rounded-full text-stone-400 hover:text-white transition-all duration-300">
-            <i class="fa-solid fa-magnifying-glass text-lg"></i>
-            <span class="text-[10px] font-semibold">Search</span>
-        </button>
-    </nav>
 
     <script>
         const API_KEY = '9c95420163879f1c4726c540b305cbc6';
@@ -1414,16 +300,24 @@ select:focus-visible, [tabindex]:focus-visible {
         let heroIndex = 0;
         let heroTimer = null;
         let heroEnrichToken = 0;
-        let pendingItem = null;
-        let pendingKey = null;
-        let pendingQuickBookmark = false;
+        let currentYear = '';
 
         document.addEventListener('DOMContentLoaded', () => {
+            populateYearSelect();
             loadHomeTitles(true);
             setupHistoryState();
             setupInfiniteScroll();
             checkShareableLink();
         });
+
+        function populateYearSelect() {
+            const sel = document.getElementById('year-select');
+            if (!sel) return;
+            const current = new Date().getFullYear();
+            let html = '<option value="">All Years</option>';
+            for (let y = current; y >= 1945; y--) html += `<option value="${y}">${y}</option>`;
+            sel.innerHTML = html;
+        }
 
         function showToast(msg) {
             const container = document.getElementById('toast-container');
@@ -1437,37 +331,6 @@ select:focus-visible, [tabindex]:focus-visible {
                 toast.classList.add('opacity-0', '-translate-y-2');
                 setTimeout(() => toast.remove(), 300);
             }, 2500);
-        }
-
-        function openAuthModal(mode) {
-            switchAuthMode(mode);
-            document.getElementById('auth-modal').classList.remove('hidden');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        }
-
-        function switchAuthMode(mode) {
-            const isSignIn = mode === 'signin';
-            document.getElementById('form-signin').classList.toggle('hidden', !isSignIn);
-            document.getElementById('form-signup').classList.toggle('hidden', isSignIn);
-
-            const tabSignIn = document.getElementById('auth-tab-signin');
-            const tabSignUp = document.getElementById('auth-tab-signup');
-
-            if (isSignIn) {
-                tabSignIn.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-1";
-                tabSignUp.className = "text-sm font-bold text-slate-400 hover:text-white pb-1";
-            } else {
-                tabSignUp.className = "text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-1";
-                tabSignIn.className = "text-sm font-bold text-slate-400 hover:text-white pb-1";
-            }
-        }
-
-        function handleAuthSubmit(type) {
-            closeAuthModal();
-            showToast(type === 'signin' ? 'Signed in successfully!' : 'Account created successfully!');
         }
 
         function checkShareableLink() {
@@ -1508,30 +371,13 @@ select:focus-visible, [tabindex]:focus-visible {
 
         function switchTabDOM(tabName) {
             currentTab = tabName;
-            if (tabName !== 'search') document.title = 'CineDB';
-
-            const inactiveClass = "nav-btn flex flex-col items-center gap-1 px-3 py-1.5 rounded-full text-stone-400 hover:text-white transition-all duration-300";
-            const activeClass = "nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg";
-            const dInactiveClass = "dnav-btn desktop-nav-item px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition";
-            const dActiveClass = "dnav-btn desktop-nav-item px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition";
+            if (tabName !== 'search') document.title = 'MtDv';
 
             ['home', 'search'].forEach(tab => {
                 const tabEl = document.getElementById(`tab-${tab}`);
-                const navEl = document.getElementById(`nav-${tab}`);
-                const dnavEl = document.getElementById(`dnav-${tab}`);
-
-                if (tabEl) tabEl.classList.add('hidden');
-                if (navEl) navEl.className = inactiveClass;
-                if (dnavEl) dnavEl.className = dInactiveClass;
+                if (tabEl) tabEl.classList.toggle('hidden', tab !== tabName);
             });
 
-            const activeTabEl = document.getElementById(`tab-${tabName}`);
-            const activeNavEl = document.getElementById(`nav-${tabName}`);
-            const activeDnavEl = document.getElementById(`dnav-${tabName}`);
-
-            if (activeTabEl) activeTabEl.classList.remove('hidden');
-            if (activeNavEl) activeNavEl.className = activeClass;
-            if (activeDnavEl) activeDnavEl.className = dActiveClass;
             if (tabName === 'search' && !searchInitialized) {
                 searchInitialized = true;
                 renderRecentSearches();
@@ -1541,7 +387,7 @@ select:focus-visible, [tabindex]:focus-visible {
         }
 
         async function fetchTMDB(endpoint, params = '') {
-            const cacheKey = `cinedb_cache_${endpoint}_${params}`;
+            const cacheKey = `mtdv_cache_${endpoint}_${params}`;
             const cached = sessionStorage.getItem(cacheKey);
             if (cached) return JSON.parse(cached);
 
@@ -1587,98 +433,49 @@ select:focus-visible, [tabindex]:focus-visible {
             return indianOttProviderIdsCache;
         }
 
-        function changeCategoryFilter(category, btnEl) {
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition";
+        // Home / Movies / TV Shows top tab row
+        function setTopTab(category) {
+            document.querySelectorAll('.toptab-btn').forEach(b => {
+                b.className = "toptab-btn px-1 py-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition";
             });
-            document.querySelectorAll('.dnav-cat-btn').forEach(b => {
-                b.className = "dnav-cat-btn desktop-nav-item px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2";
-            });
-            document.querySelectorAll(`[data-cat="${category}"]`).forEach(b => {
-                if (b.classList.contains('dnav-cat-btn')) {
-                    b.className = "dnav-cat-btn desktop-nav-item px-4 py-2 rounded-xl text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 transition flex items-center gap-2";
-                } else {
-                    b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition";
-                }
-            });
+            const idMap = { all: 'ttab-all', movie: 'ttab-movie', tv: 'ttab-tv' };
+            const activeEl = document.getElementById(idMap[category]);
+            if (activeEl) activeEl.className = "toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-white transition";
 
             currentCategory = category;
+            switchTab('home');
             updateSectionTitle();
             loadHomeTitles(true);
-        }
-
-        function goHomeDesktop() {
-            currentCategory = 'all';
-            currentCountry = 'ALL';
-
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition";
-            });
-            document.querySelectorAll('.dnav-cat-btn').forEach(b => {
-                b.className = "dnav-cat-btn desktop-nav-item px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2";
-            });
-            document.querySelectorAll('[data-cat="all"]').forEach(b => {
-                b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition";
-            });
-
-            const mobileSel = document.getElementById('country-select');
-            const desktopSel = document.getElementById('country-select-desktop');
-            if (mobileSel) mobileSel.value = 'ALL';
-            if (desktopSel) desktopSel.value = 'ALL';
-switchTab('home');
-            updateSectionTitle();
-            loadHomeTitles(true);
-        }
-
-        // Logo click = Home + full refresh (alias, same full-reset behavior)
-        function goHomeAndRefresh() {
-            goHomeDesktop();
         }
 
         function changeCountryFilter(countryCode) {
             currentCountry = countryCode;
-            const mobileSel = document.getElementById('country-select');
-            const desktopSel = document.getElementById('country-select-desktop');
-            if (mobileSel) mobileSel.value = countryCode;
-            if (desktopSel) desktopSel.value = countryCode;
             updateSectionTitle();
             loadHomeTitles(true);
+            closeHamburgerMenu();
         }
 
-        function toggleAccountMenu(e) {
-            e.stopPropagation();
-            document.getElementById('account-menu-dropdown').classList.toggle('hidden');
-        }
-        function closeAccountMenu() {
-            document.getElementById('account-menu-dropdown')?.classList.add('hidden');
-        }
-        function toggleAccountMenuMobile(e) {
-            e.stopPropagation();
-            document.getElementById('account-menu-dropdown-mobile').classList.toggle('hidden');
-        }
-        function closeAccountMenuMobile() {
-            document.getElementById('account-menu-dropdown-mobile')?.classList.add('hidden');
+        function changeYearFilter(year) {
+            currentYear = year;
+            updateSectionTitle();
+            loadHomeTitles(true);
+            closeHamburgerMenu();
         }
 
+        function toggleHamburgerMenu(e) {
+            e.stopPropagation();
+            document.getElementById('hamburger-dropdown').classList.toggle('hidden');
+        }
+        function closeHamburgerMenu() {
+            document.getElementById('hamburger-dropdown')?.classList.add('hidden');
+        }
         document.addEventListener('click', (e) => {
-            const accountDropdown = document.getElementById('account-menu-dropdown');
-            const accountBtn = document.getElementById('account-menu-btn');
-            if (accountDropdown && !accountDropdown.classList.contains('hidden') && !accountDropdown.contains(e.target) && accountBtn && !accountBtn.contains(e.target)) {
-                closeAccountMenu();
-            }
-            const accountDropdownM = document.getElementById('account-menu-dropdown-mobile');
-            const accountBtnM = document.getElementById('account-menu-btn-mobile');
-            if (accountDropdownM && !accountDropdownM.classList.contains('hidden') && !accountDropdownM.contains(e.target) && accountBtnM && !accountBtnM.contains(e.target)) {
-                closeAccountMenuMobile();
+            const dropdown = document.getElementById('hamburger-dropdown');
+            const btn = document.getElementById('hamburger-btn');
+            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && btn && !btn.contains(e.target)) {
+                closeHamburgerMenu();
             }
         });
-
-        function selectHeroIndex(index, e) {
-            if (e) e.stopPropagation();
-            if (!heroItems.length) return;
-            heroIndex = ((index % heroItems.length) + heroItems.length) % heroItems.length;
-            startHeroAutoSlide();
-        }
 
         function heroPrev(e) {
             e.stopPropagation();
@@ -1719,11 +516,11 @@ switchTab('home');
             `;
         }
 
-
         function updateSectionTitle() {
             const titles = { all: "Trending Movies & Shows", movie: "Popular Movies", tv: "Popular TV Shows" };
             let titleText = titles[currentCategory] || "Trending Titles";
             if (currentCountry !== 'ALL') titleText += ` (${currentCountry})`;
+            if (currentYear) titleText += ` (${currentYear})`;
             document.getElementById('section-title').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> ${titleText}`;
         }
 
@@ -1757,6 +554,7 @@ switchTab('home');
 
             let endpoint = '/trending/all/day';
             let params = `&page=${currentPage}`;
+            const effectiveCategory = currentCategory === 'all' ? 'movie' : currentCategory;
 
             if (currentCountry === 'IN' && currentCategory === 'tv') {
                 // Web-series-only: filter by actual Indian OTT platforms instead of
@@ -1764,13 +562,15 @@ switchTab('home');
                 endpoint = '/discover/tv';
                 const ottIds = await getIndianOttProviderIds();
                 params += `&watch_region=IN&with_watch_providers=${ottIds.join('|')}&sort_by=popularity.desc`;
-            } else if (currentCountry !== 'ALL') {
-                endpoint = currentCategory === 'tv' ? '/discover/tv' : '/discover/movie';
-                params += `&with_origin_country=${currentCountry}&sort_by=popularity.desc`;
+                if (currentYear) params += `&first_air_date_year=${currentYear}`;
+            } else if (currentCountry !== 'ALL' || currentYear) {
+                endpoint = effectiveCategory === 'tv' ? '/discover/tv' : '/discover/movie';
+                params += `&sort_by=popularity.desc`;
+                if (currentCountry !== 'ALL') params += `&with_origin_country=${currentCountry}`;
+                if (currentYear) params += effectiveCategory === 'tv' ? `&first_air_date_year=${currentYear}` : `&primary_release_year=${currentYear}`;
             } else {
                 if (currentCategory === 'movie') endpoint = '/trending/movie/day';
                 else if (currentCategory === 'tv') endpoint = '/trending/tv/day';
-
             }
 
             const data = await fetchTMDB(endpoint, params);
@@ -1837,24 +637,6 @@ switchTab('home');
             }, 6000);
         }
 
-        function extractCertification(type, details) {
-            if (!details) return null;
-            try {
-                if (type === 'movie' && details.release_dates?.results) {
-                    const entry = details.release_dates.results.find(r => r.iso_3166_1 === 'IN')
-                        || details.release_dates.results.find(r => r.iso_3166_1 === 'US');
-                    const found = entry?.release_dates?.find(rd => rd.certification);
-                    return found?.certification || null;
-                }
-                if (type === 'tv' && details.content_ratings?.results) {
-                    const entry = details.content_ratings.results.find(r => r.iso_3166_1 === 'IN')
-                        || details.content_ratings.results.find(r => r.iso_3166_1 === 'US');
-                    return entry?.rating || null;
-                }
-            } catch (e) { /* no-op */ }
-            return null;
-        }
-
         function renderHeroBanner(item) {
             const container = document.getElementById('hero-container');
             const type = item._type || item.media_type || (item.title ? 'movie' : 'tv');
@@ -1862,126 +644,43 @@ switchTab('home');
             const backdrop = item.backdrop_path ? `${BACKDROP_URL}${item.backdrop_path}` : `${IMG_URL}${item.poster_path}`;
             const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
             const logoUrl = item._logoUrl || null;
-            const details = item._details || null;
-
-            const date = item.release_date || item.first_air_date || (details && (details.release_date || details.first_air_date)) || 'N/A';
-            const releaseYear = date !== 'N/A' ? date.split('-')[0] : null;
-            const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
-            const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
-
-            const runtimeMin = details ? (type === 'movie' ? details.runtime : (details.episode_run_time && details.episode_run_time[0])) : null;
-            const runtimeStr = runtimeMin ? `${Math.floor(runtimeMin / 60)}h ${runtimeMin % 60}m` : null;
-            const cert = extractCertification(type, details);
-            const langCount = details?.spoken_languages?.length || null;
-            const genres = (details?.genres || []).slice(0, 4).map(g => g.name);
-            const overview = (details?.overview || item.overview || '').trim();
 
             container.onclick = () => openDetails(type, item.id);
 
+            // True 16:9 TMDB backdrop — object-cover with no zoom/hover-scale so the frame is never stretched or cropped beyond the container.
             container.innerHTML = `
-                <!-- MOBILE: full backdrop + bottom overlay, Prime-Video style -->
-                <div class="lg:hidden absolute inset-0 bg-[#060608]">
-                    <img src="${backdrop}" class="w-full h-full object-cover object-top transition-all duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/25 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/50 to-transparent"></div>
-                </div>
+                <img src="${backdrop}" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/15 to-transparent"></div>
 
-                <!-- MOBILE: rating sits over the (full-bleed) image, top-left -->
-                <span class="lg:hidden absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                <span class="absolute top-3 right-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
                     <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                 </span>
 
-                <!-- MOBILE: bottom-left content block (logo/title, badge, small tag) -->
-                <div class="lg:hidden relative z-10 p-4 pr-12 w-full flex flex-col gap-1.5">
+                <div class="relative z-10 h-full flex items-end p-4 lg:p-8 w-full pr-14">
                     ${logoUrl ? `
-                        <img src="${logoUrl}" alt="${title}" class="max-h-10 max-w-[210px] object-contain drop-shadow-2xl">
+                        <img src="${logoUrl}" alt="${title}" class="max-h-10 lg:max-h-16 max-w-[70%] object-contain drop-shadow-2xl">
                     ` : `
-                        <h1 class="text-lg font-black text-white leading-tight drop-shadow-md truncate max-w-[90%]">${title}</h1>
+                        <h1 class="text-lg lg:text-3xl font-black text-white leading-tight drop-shadow-md max-w-[85%]">${title}</h1>
                     `}
-                    ${isNew ? `<p class="text-[11px] font-black text-white/95 uppercase tracking-wider">${type === 'tv' ? 'New Series' : 'New Movie'}</p>` : ''}
-                    <div class="flex items-center gap-1.5 text-[11px] font-semibold text-amber-300">
-                        <i class="fa-solid fa-bookmark text-[10px]"></i>
-                        <span>${releaseYear ? `${releaseYear} Release` : 'Trending Now'}</span>
-                    </div>
                 </div>
 
-                <!-- MOBILE: small pagination dots, bottom-right -->
-                <div class="lg:hidden absolute bottom-3 right-3 z-10 flex gap-1">
+                <div class="absolute bottom-3 right-3 z-10 flex gap-1">
                     ${heroItems.map((_, idx) => `
                         <span class="w-1 h-1 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-3' : 'bg-white/40'}"></span>
                     `).join('')}
                 </div>
-
-                <!-- DESKTOP: single cinematic backdrop hero; mobile markup above remains untouched -->
-                <div class="hidden lg:flex absolute inset-0 desktop-hero-stage">
-                    <div class="desktop-hero-single" style="--hero-bg: url('${backdrop.replace("'", "\'")}');">
-                        <img src="${backdrop}" alt="${title}" class="desktop-hero-image" onerror="this.onerror=null;${item.poster_path ? `this.src='${IMG_URL + item.poster_path}';` : "this.style.display='none';"}">
-                        <div class="desktop-hero-shade"></div>
-                        <div class="desktop-hero-color-fade" aria-hidden="true"></div>
-
-                        <div class="desktop-hero-info">
-                            <div class="desktop-hero-meta">
-                                ${date !== 'N/A' ? `<span>${new Date(date + 'T00:00:00').toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</span>` : ''}
-                                ${date !== 'N/A' && rating !== 'N/A' ? `<span>•</span>` : ''}
-                                <span class="desktop-hero-rating"><i class="fa-solid fa-star"></i> ${rating}</span>
-                            </div>
-                            ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="desktop-hero-logo">` : `<span class="desktop-hero-title">${title}</span>`}
-                            ${overview ? `<div class="desktop-hero-overview">${overview}</div>` : ''}
-                        </div>
-                    </div>
-
-                    <button type="button" onclick="heroPrev(event)" class="desktop-hero-arrow desktop-hero-arrow-left" aria-label="Previous hero">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <button type="button" onclick="heroNext(event)" class="desktop-hero-arrow desktop-hero-arrow-right" aria-label="Next hero">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-
-                    <div class="desktop-hero-dots">
-                        ${heroItems.map((_, idx) => `
-                            <button type="button" onclick="selectHeroIndex(${idx}, event)" class="desktop-hero-dot ${idx === heroIndex ? 'active' : ''}" aria-label="Hero ${idx + 1}"></button>
-                        `).join('')}
-                    </div>
-                </div>
             `;
-            applyHeroAccentColor(backdrop);
-        }
-        
-
-        function applyHeroAccentColor(imageUrl) {
-            const hero = document.querySelector('.desktop-hero-single');
-            if (!hero || !imageUrl) return;
-            hero.style.setProperty('--hero-accent-rgb', '32, 28, 28');
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                try {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-                    canvas.width = canvas.height = 24;
-                    ctx.drawImage(img, 0, 0, 24, 24);
-                    const data = ctx.getImageData(0, 0, 24, 24).data;
-                    let r=0,g=0,b=0,n=0;
-                    for(let y=0;y<24;y++) for(let x=10;x<24;x++) {
-                        const i=(y*24+x)*4, rr=data[i], gg=data[i+1], bb=data[i+2];
-                        if(data[i+3] < 180 || rr+gg+bb < 45) continue;
-                        r+=rr; g+=gg; b+=bb; n++;
-                    }
-                    if(n) hero.style.setProperty('--hero-accent-rgb', `${Math.round(r/n*.68)}, ${Math.round(g/n*.68)}, ${Math.round(b/n*.68)}`);
-                } catch(e) {}
-            };
-            img.src = imageUrl;
         }
 
         /* ENHANCED SEARCH LOGIC */
         function getRecentSearches() {
-            try { return JSON.parse(localStorage.getItem('cinedb_recent_searches')) || []; } catch (e) { return []; }
+            try { return JSON.parse(localStorage.getItem('mtdv_recent_searches')) || []; } catch (e) { return []; }
         }
         function saveRecentSearch(query) {
             let list = getRecentSearches().filter(q => q.toLowerCase() !== query.toLowerCase());
             list.unshift(query);
             list = list.slice(0, 8);
-            localStorage.setItem('cinedb_recent_searches', JSON.stringify(list));
+            localStorage.setItem('mtdv_recent_searches', JSON.stringify(list));
             renderRecentSearches();
         }
         function renderRecentSearches() {
@@ -2002,7 +701,7 @@ switchTab('home');
             handleSearch();
         }
         function clearRecentSearches() {
-            localStorage.removeItem('cinedb_recent_searches');
+            localStorage.removeItem('mtdv_recent_searches');
             renderRecentSearches();
         }
 
@@ -2010,13 +709,16 @@ switchTab('home');
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(async () => {
                 const query = document.getElementById('search-input').value.trim();
+                const type = document.getElementById('search-type').value;
+                const genre = document.getElementById('search-genre').value;
+                const year = document.getElementById('search-year').value;
 
                 if (query) {
                     saveRecentSearch(query);
-                    document.title = `Search: ${query} — CineDB`;
+                    document.title = `Search: ${query} — MtDv`;
                     window.history.replaceState({ modalOpen: false, tab: 'search' }, '', `${window.location.pathname}?q=${encodeURIComponent(query)}`);
                 } else {
-                    document.title = 'CineDB';
+                    document.title = 'MtDv';
                     window.history.replaceState({ modalOpen: false, tab: 'search' }, '', window.location.pathname);
                 }
 
@@ -2025,27 +727,38 @@ switchTab('home');
                 let endpoint = '/search/multi';
                 let params = `&query=${encodeURIComponent(query)}`;
 
+                if (!query) {
+                    endpoint = type === 'tv' ? '/discover/tv' : '/discover/movie';
+                    params = '&sort_by=popularity.desc';
+                    if (genre) params += `&with_genres=${genre}`;
+                    if (year) {
+                        if (type === 'tv') params += `&first_air_date_year=${year}`;
+                        else params += `&primary_release_year=${year}`;
+                    }
+                }
+
                 const data = await fetchTMDB(endpoint, params);
-                const results = data?.results || [];
+                let results = data?.results || [];
+
+                if (type !== 'all') results = results.filter(i => (i.media_type || (i.title ? 'movie' : 'tv')) === type);
+                if (genre) results = results.filter(i => i.genre_ids && i.genre_ids.includes(parseInt(genre)));
 
                 renderGrid(results, 'search-grid');
             }, 400);
         }
 
-
         let renderedCardKeys = {};
 
-        function renderGrid(items, targetId, append = false, refreshOnly = false) {
+        function renderGrid(items, targetId, append = false) {
             const container = document.getElementById(targetId);
             if (!items || items.length === 0) {
-                if (!append && !refreshOnly) container.innerHTML = `<div class="col-span-full text-center text-slate-400 py-16 text-xs space-y-2"><i class="fa-regular fa-folder-open text-2xl text-slate-500"></i><p>No saved titles found here.</p></div>`;
+                if (!append) container.innerHTML = `<div class="col-span-full text-center text-slate-400 py-16 text-xs space-y-2"><i class="fa-regular fa-folder-open text-2xl text-slate-500"></i><p>No content found.</p></div>`;
                 return;
             }
 
             if (!append) renderedCardKeys[targetId] = new Set();
             if (!renderedCardKeys[targetId]) renderedCardKeys[targetId] = new Set();
             const seenKeys = renderedCardKeys[targetId];
-
 
             const html = items.map(item => {
                 const type = item.media_type || (item.title ? 'movie' : 'tv');
@@ -2060,11 +773,9 @@ switchTab('home');
                 const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
                 const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
                 const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
-                const itemPayload = JSON.stringify({ id: item.id, title, poster_path: item.poster_path, vote_average: item.vote_average, release_date: date, media_type: type }).replace(/"/g, '&quot;');
 
                 return `
                     <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
-
                         <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
                             <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                             <span class="absolute top-2 right-2 bg-[#060608]/90 text-amber-400 font-bold text-[10px] px-2 py-0.5 rounded-lg flex items-center gap-1 border border-indigo-500/20 shadow-md">
@@ -2073,9 +784,7 @@ switchTab('home');
                             ${isNew ? `<span class="hidden lg:flex absolute bottom-2 left-2 bg-white text-black text-[9px] font-black px-2 py-0.5 rounded-md items-center shadow-md">NEW</span>` : ''}
                         </div>
                         <div class="p-2.5 flex flex-col justify-between flex-grow">
-                            <div>
-                                <h3 class="text-xs font-semibold text-slate-100 line-clamp-1">${title}</h3>
-                            </div>
+                            <h3 class="text-xs font-semibold text-slate-100 line-clamp-1">${title}</h3>
                             <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
                                 <span>${year}</span>
                             </div>
@@ -2100,7 +809,7 @@ switchTab('home');
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
             const [data, logoUrl, similarData] = await Promise.all([
-                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers,release_dates,content_ratings'),
+                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers'),
                 fetchTitleLogo(type, id),
                 fetchTMDB(`/${type}/${id}/similar`)
             ]);
@@ -2111,7 +820,7 @@ switchTab('home');
             }
 
             const title = data.title || data.name;
-            document.title = `${title} — CineDB`;
+            document.title = `${title} — MtDv`;
             const titleSlug = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             window.history.replaceState({ modalOpen: true, tab: currentTab, type, id }, '', `${window.location.pathname}?type=${type}&id=${id}&title=${encodeURIComponent(titleSlug)}`);
             const backdrop = data.backdrop_path ? `${BACKDROP_URL}${data.backdrop_path}` : `${IMG_URL}${data.poster_path}`;
@@ -2123,16 +832,6 @@ switchTab('home');
             const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
             const similarResults = (similarData?.results || []).slice(0, 10).map(r => ({ ...r, media_type: type }));
             const hasEpisodesTab = type === 'tv' && validSeasons.length > 0;
-
-            // --- v3 extras: chips, watchlist state ---
-            const certLabel = extractCertification(type, data);
-            const genreList = (data.genres || []).slice(0, 3).map(g => g.name);
-            const runtimeVal = type === 'movie'
-                ? (data.runtime ? data.runtime + ' min' : null)
-                : (data.episode_run_time?.[0] ? data.episode_run_time[0] + ' min/ep' : null);
-            const langVal = (data.spoken_languages?.[0]?.english_name) || (data.original_language || '').toUpperCase();
-            const attrTitle = String(title).replace(/"/g, '&quot;');
-            const savedWL = inWatchlist(type, id);
 
             // Upcoming release info — future movie release, or a TV show's next episode to air
             const todayStr = new Date().toISOString().split('T')[0];
@@ -2158,56 +857,38 @@ switchTab('home');
 
             content.innerHTML = `
                 <div class="lg:flex lg:gap-10 lg:items-start">
-                    <!-- Left column: poster, title, actions, meta (sticky on desktop) -->
-                    <div class="lg:w-[34%] lg:flex-shrink-0 lg:sticky lg:top-24">
-                        <span id="dm-bg-src" data-bg="${backdrop}" class="hidden"></span>
-                        <span id="dm-title-src" data-title="${attrTitle}" class="hidden"></span>
-
-                        <div class="dm-poster-wrap relative aspect-video w-full bg-[#060608] lg:rounded-3xl overflow-hidden">
+                    <!-- Left column: backdrop (title overlaid on it), stats (sticky on desktop) -->
+                    <div class="lg:w-[38%] lg:flex-shrink-0 lg:sticky lg:top-24">
+                        <div class="relative aspect-video lg:aspect-[4/3] w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden overflow-hidden">
                             <img src="${backdrop}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/45 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/55 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/50 via-transparent to-transparent hidden lg:block"></div>
 
-                            <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-10 space-y-2">
+                            <span class="absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-md">
+                                <i class="fa-solid fa-star text-[9px]"></i> ${rating}
+                            </span>
+
+                            <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10 space-y-2">
                                 <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
 
                                 ${logoUrl ? `
-                                    <img src="${logoUrl}" alt="${attrTitle}" class="max-h-9 lg:max-h-14 max-w-[85%] object-contain drop-shadow-2xl my-1">
+                                    <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-12 max-w-[80%] object-contain drop-shadow-2xl my-1">
                                 ` : `
                                     <h1 class="text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
                                 `}
-
-                                <div class="flex items-center gap-3 text-xs lg:text-sm text-slate-300">
-                                    <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20 backdrop-blur-sm">
-                                        <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                                    </span>
-                                    <span>•</span>
-                                    <span>${releaseDate}</span>
-                                </div>
                             </div>
                         </div>
 
-                        <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-4">
-                            <!-- Actions -->
-                            <div class="dm-actions">
-                                <button id="dm-wl-btn" data-t="${attrTitle}"
-                                        onclick="toggleWatchlist('${type}', ${id}, this.dataset.t, this)"
-                                        class="dm-btn primary flex-1 min-w-[150px] ${savedWL ? 'saved' : ''}">
-                                    ${savedWL ? '<i class="fa-solid fa-check"></i> In Watchlist' : '<i class="fa-solid fa-plus"></i> Add to Watchlist'}
-                                </button>
-                                <button onclick="shareTitle(this.dataset.t)" data-t="${attrTitle}" class="dm-btn icon" title="Share" aria-label="Share">
-                                    <i class="fa-solid fa-share-nodes"></i>
-                                </button>
-                            </div>
-
-                            <!-- Meta chips -->
-                            <div class="dm-chips">
-                                <span class="dm-chip"><i class="fa-regular fa-calendar"></i> ${releaseYear}</span>
-                                ${runtimeVal ? `<span class="dm-chip"><i class="fa-regular fa-clock"></i> ${runtimeVal}</span>` : ''}
-                                ${type === 'tv' ? `<span class="dm-chip"><i class="fa-solid fa-layer-group"></i> ${data.number_of_seasons || validSeasons.length} Seasons</span>` : ''}
-                                ${certLabel ? `<span class="dm-chip"><i class="fa-solid fa-shield-halved"></i> ${certLabel}</span>` : ''}
-                                ${data.status ? `<span class="dm-chip"><i class="fa-solid fa-circle-dot"></i> ${data.status}</span>` : ''}
-                                ${langVal ? `<span class="dm-chip"><i class="fa-solid fa-language"></i> ${langVal}</span>` : ''}
-                                ${genreList.map(g => `<span class="dm-chip">${g}</span>`).join('')}
+                        <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-5">
+                            <div class="grid grid-cols-2 gap-3 text-center">
+                                <div class="card-solid rounded-xl py-2.5">
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Release</p>
+                                    <p class="text-sm font-bold text-white">${releaseDate}</p>
+                                </div>
+                                <div class="card-solid rounded-xl py-2.5">
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">${type === 'movie' ? 'Runtime' : 'Seasons'}</p>
+                                    <p class="text-sm font-bold text-white">${type === 'movie' ? (data.runtime ? data.runtime + ' min' : 'N/A') : (data.number_of_seasons || validSeasons.length)}</p>
+                                </div>
                             </div>
 
                             ${upcomingHtml}
@@ -2217,8 +898,7 @@ switchTab('home');
                     <!-- Right column: tabs + content -->
                     <div class="px-5 lg:px-0 lg:flex-1 lg:pt-2 mt-5 lg:mt-0 space-y-5">
                         <!-- Detail Tabs -->
-                        <div class="detail-tabs flex gap-5 border-b border-white/10">
-                            <span class="dtab-indicator" id="dtab-indicator" aria-hidden="true"></span>
+                        <div class="flex gap-5 border-b border-white/10">
                             <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-white transition">Overview</button>
                             ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Episodes</button>` : ''}
                             <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
@@ -2243,44 +923,6 @@ switchTab('home');
                                 <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-1.5">Overview</h3>
                                 <p class="text-xs lg:text-sm text-slate-300 leading-relaxed">${data.overview || 'No overview available.'}</p>
                             </div>
-
-                            ${cast.length > 0 ? `
-                                <div class="card-solid p-4 rounded-2xl">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Cast</h3>
-                                        <button onclick="switchDetailTab('more')" class="text-[11px] font-bold text-slate-400 hover:text-white transition">See all <i class="fa-solid fa-chevron-right text-[8px]"></i></button>
-                                    </div>
-                                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
-                                        ${cast.slice(0, 8).map(c => {
-                                            const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : 'https://via.placeholder.com/150?text=No+Photo';
-                                            return `
-                                                <div onclick="openActorModal(${c.id})" class="flex-none w-[72px] text-center cursor-pointer group">
-                                                    <img src="${photo}" class="w-[60px] h-[60px] mx-auto rounded-full object-cover border border-white/15 group-hover:border-white/40 transition mb-1.5" loading="lazy">
-                                                    <p class="text-[10px] font-semibold text-slate-200 truncate">${c.name}</p>
-                                                    <p class="text-[9px] text-slate-500 truncate">${c.character || ''}</p>
-                                                </div>`;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${hasEpisodesTab ? `
-                                <div class="card-solid p-4 rounded-2xl">
-                                    <div class="flex items-center justify-between mb-3 gap-3">
-                                        <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Episodes</h3>
-                                        <div class="flex items-center gap-2">
-                                            <select id="ov-season-select" onchange="loadOverviewSeason(${id}, this.value)"
-                                                    class="bg-white/5 border border-white/15 text-slate-200 text-[11px] font-semibold rounded-lg px-2 py-1.5 focus:outline-none">
-                                                ${validSeasons.map(sn => `<option value="${sn.season_number}" class="bg-[#0D0D10]">${sn.name}</option>`).join('')}
-                                            </select>
-                                            <button onclick="switchDetailTab('episodes')" class="text-[11px] font-bold text-slate-400 hover:text-white transition whitespace-nowrap">See all <i class="fa-solid fa-chevron-right text-[8px]"></i></button>
-                                        </div>
-                                    </div>
-                                    <div id="ov-episodes-strip" class="dm-season-strip no-scrollbar">
-                                        <div class="py-6 text-center text-slate-400 text-xs w-full"><i class="fa-solid fa-circle-notch fa-spin text-lg text-white mb-1"></i></div>
-                                    </div>
-                                </div>
-                            ` : ''}
                         </div>
 
                         <!-- Episodes Panel -->
@@ -2336,7 +978,6 @@ switchTab('home');
 
             if (hasEpisodesTab) {
                 loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
-                loadOverviewSeason(id, validSeasons[0].season_number);
             }
             if (similarResults.length > 0) {
                 renderGrid(similarResults, 'similar-grid');
@@ -2460,33 +1101,6 @@ switchTab('home');
             }).join('');
         }
 
-        async function loadOverviewSeason(tvId, seasonNumber) {
-            const strip = document.getElementById('ov-episodes-strip');
-            if (!strip) return;
-            strip.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs w-full"><i class="fa-solid fa-circle-notch fa-spin text-lg text-white mb-1"></i></div>`;
-
-            const data = await fetchTMDB(`/tv/${tvId}/season/${seasonNumber}`);
-            if (!data || !data.episodes || data.episodes.length === 0) {
-                strip.innerHTML = `<p class="text-center text-slate-400 py-4 text-xs w-full">No episodes found.</p>`;
-                return;
-            }
-
-            strip.innerHTML = data.episodes.map(ep => {
-                const thumbnail = ep.still_path ? `${IMG_URL}${ep.still_path}` : 'https://via.placeholder.com/400x225?text=No+Thumbnail';
-                const rating = ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A';
-                return `
-                    <div class="dm-ep-card">
-                        <div class="dm-ep-thumb">
-                            <img src="${thumbnail}" loading="lazy">
-                            <span class="dm-ep-num">E${String(ep.episode_number).padStart(2, '0')}</span>
-                        </div>
-                        <p class="text-[11px] font-bold text-slate-200 mt-1.5 truncate">${ep.name}</p>
-                        <p class="text-[10px] text-slate-500 flex items-center gap-1"><i class="fa-solid fa-star text-amber-400 text-[8px]"></i> ${rating} • ${ep.air_date || 'TBA'}</p>
-                    </div>
-                `;
-            }).join('');
-        }
-
         function closeModalManual() {
             window.history.back();
         }
@@ -2494,7 +1108,7 @@ switchTab('home');
         function closeModalDOM() {
             document.getElementById('details-modal').classList.add('hidden');
             document.body.style.overflow = 'auto';
-            document.title = 'CineDB';
+            document.title = 'MtDv';
             window.history.pushState({ modalOpen: false, tab: currentTab }, '', window.location.pathname);
         }
 
@@ -2504,310 +1118,5 @@ switchTab('home');
             `).join('');
         }
     </script>
-    <!-- ===== CINEDB DESKTOP V3 — nav + modal behaviour ===== -->
-    <script id="cinedb-v3-enhance">
-    (function () {
-        const DESKTOP = () => window.innerWidth >= 900;
-
-        /* ---------------------------------------------------------
-           1. Scroll-aware header
-        --------------------------------------------------------- */
-        const header = document.getElementById('site-header');
-        function onHeaderScroll() {
-            if (!header) return;
-            const y = window.scrollY || document.documentElement.scrollTop;
-            header.classList.toggle('scrolled', y > 24);
-            header.classList.toggle('at-top', y <= 8);
-        }
-        window.addEventListener('scroll', onHeaderScroll, { passive: true });
-
-        /* ---------------------------------------------------------
-           2. Sliding nav indicator
-        --------------------------------------------------------- */
-        window.syncNavIndicator = function () {
-            const pill = document.querySelector('.desktop-nav-pill');
-            const ind = document.getElementById('dnav-indicator');
-            if (!pill || !ind) return;
-            if (!DESKTOP()) { ind.classList.remove('on'); return; }
-            const active = pill.querySelector('.active-nav-item') ||
-                           pill.querySelector('.desktop-nav-item.bg-white');
-            if (!active) { ind.classList.remove('on'); return; }
-            const pr = pill.getBoundingClientRect();
-            const ar = active.getBoundingClientRect();
-            const w = 28;
-            ind.style.width = w + 'px';
-            ind.style.transform = `translateX(${(ar.left - pr.left) + ar.width / 2 - w / 2}px)`;
-            ind.classList.add('on');
-        };
-
-        // Re-sync after any function that repaints the nav state
-        ['switchTabDOM', 'changeCategoryFilter', 'goHomeDesktop', 'changeCountryFilter'].forEach(fn => {
-            const orig = window[fn];
-            if (typeof orig !== 'function') return;
-            window[fn] = function (...args) {
-                const r = orig.apply(this, args);
-                requestAnimationFrame(() => { window.syncNavIndicator(); window.syncCountryLabel(); });
-                return r;
-            };
-        });
-        window.addEventListener('resize', () => { window.syncNavIndicator(); });
-
-        /* ---------------------------------------------------------
-           3. Inline expanding search in the nav
-        --------------------------------------------------------- */
-        window.navSearchClick = function (e) {
-            if (!DESKTOP()) { switchTab('search'); return; }
-            if (e) e.stopPropagation();
-            window.toggleNavSearch();
-        };
-        window.toggleNavSearch = function (force) {
-            const wrap = document.getElementById('nav-search-wrap');
-            if (!wrap) return;
-            const open = (force !== undefined) ? force : !wrap.classList.contains('open');
-            wrap.classList.toggle('open', open);
-            const input = document.getElementById('nav-search-input');
-            if (open && input) setTimeout(() => input.focus(), 130);
-            if (!open && input) input.blur();
-        };
-        window.navSearchInput = function (value) {
-            if (typeof currentTab !== 'undefined' && currentTab !== 'search') switchTab('search');
-            const si = document.getElementById('search-input');
-            if (si) { si.value = value; handleSearch(); }
-        };
-        window.navSearchKey = function (e) {
-            if (e.key === 'Escape') { e.target.value = ''; window.toggleNavSearch(false); }
-            if (e.key === 'Enter') { e.target.blur(); window.toggleNavSearch(false); }
-        };
-
-        /* ---------------------------------------------------------
-           4. Custom country dropdown (replaces the native select)
-        --------------------------------------------------------- */
-        window.syncCountryLabel = function () {
-            const sel = document.getElementById('country-select-desktop');
-            const lbl = document.getElementById('cdb-cc-label');
-            if (!sel || !lbl) return;
-            const v = sel.value;
-            lbl.textContent = (v === 'ALL')
-                ? 'Country'
-                : (sel.options[sel.selectedIndex]?.textContent.trim() || 'Country');
-            document.querySelectorAll('.cdb-cc-opt').forEach(b => b.classList.toggle('sel', b.dataset.v === v));
-        };
-
-        function buildCountryDropdown() {
-            const pill = document.querySelector('.desktop-country-pill');
-            const sel = document.getElementById('country-select-desktop');
-            if (!pill || !sel || pill.dataset.built) return;
-            pill.dataset.built = '1';
-
-            Array.from(pill.children).forEach(c => { if (c !== sel) c.remove(); });
-
-            const opts = Array.from(sel.options).map(o => ({ v: o.value, t: o.textContent.trim() }));
-
-            const btn = document.createElement('button');
-            btn.className = 'cdb-cc-btn';
-            btn.setAttribute('aria-label', 'Country filter');
-            btn.innerHTML = `<i class="fa-solid fa-earth-americas"></i>
-                             <span id="cdb-cc-label">Country</span>
-                             <i class="fa-solid fa-chevron-down cdb-cc-chev"></i>`;
-
-            const menu = document.createElement('div');
-            menu.className = 'cdb-cc-menu';
-            menu.id = 'cdb-cc-menu';
-            menu.innerHTML = opts.map(o =>
-                `<button class="cdb-cc-opt" data-v="${o.v}">${o.v === 'ALL' ? '🌐 All Countries' : o.t}<i class="fa-solid fa-check tick"></i></button>`
-            ).join('');
-
-            pill.append(btn, menu);
-
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                const open = !menu.classList.contains('open');
-                menu.classList.toggle('open', open);
-                btn.classList.toggle('open', open);
-            });
-            menu.querySelectorAll('.cdb-cc-opt').forEach(b => {
-                b.addEventListener('click', e => {
-                    e.stopPropagation();
-                    changeCountryFilter(b.dataset.v);
-                    menu.classList.remove('open');
-                    btn.classList.remove('open');
-                });
-            });
-            window.syncCountryLabel();
-        }
-
-        function closeCountryMenu() {
-            document.getElementById('cdb-cc-menu')?.classList.remove('open');
-            document.querySelector('.cdb-cc-btn')?.classList.remove('open');
-        }
-
-        /* ---------------------------------------------------------
-           5. Account chevron state
-        --------------------------------------------------------- */
-        const accBtn = document.getElementById('account-menu-btn');
-        const accDrop = document.getElementById('account-menu-dropdown');
-        if (accBtn && accDrop) {
-            new MutationObserver(() => {
-                accBtn.classList.toggle('open', !accDrop.classList.contains('hidden'));
-            }).observe(accDrop, { attributes: true, attributeFilter: ['class'] });
-        }
-
-        /* ---------------------------------------------------------
-           6. Global click / key handling
-        --------------------------------------------------------- */
-        document.addEventListener('click', e => {
-            if (!e.target.closest('.desktop-country-pill')) closeCountryMenu();
-            const wrap = document.getElementById('nav-search-wrap');
-            if (wrap && wrap.classList.contains('open') &&
-                !e.target.closest('#nav-search-wrap') && !e.target.closest('#dnav-search')) {
-                window.toggleNavSearch(false);
-            }
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && DESKTOP()) {
-                e.preventDefault(); window.toggleNavSearch(true);
-            }
-            if (e.key !== 'Escape') return;
-            const actor = document.getElementById('actor-modal');
-            const details = document.getElementById('details-modal');
-            if (actor && !actor.classList.contains('hidden')) { closeActorModal(); return; }
-            if (details && !details.classList.contains('hidden')) { closeModalManual(); return; }
-            closeCountryMenu();
-        });
-
-        /* ---------------------------------------------------------
-           7. Details modal: animation, backdrop, sticky bar
-        --------------------------------------------------------- */
-        const detailsModal = document.getElementById('details-modal');
-        if (detailsModal) {
-            detailsModal.addEventListener('scroll', () => {
-                detailsModal.classList.toggle('scrolled', detailsModal.scrollTop > 70);
-            }, { passive: true });
-
-            detailsModal.addEventListener('click', e => {
-                if (e.target === detailsModal || e.target.classList.contains('dm-bg')) closeModalManual();
-            });
-        }
-
-        window.afterDetailsRender = function () {
-            const modal = document.getElementById('details-modal');
-            if (!modal) return;
-            const bgEl = modal.querySelector('.dm-bg');
-            const src = document.getElementById('dm-bg-src');
-            if (bgEl && src && src.dataset.bg) {
-                bgEl.style.backgroundImage = `url("${src.dataset.bg}")`;
-                bgEl.classList.add('on');
-            }
-            const tSrc = document.getElementById('dm-title-src');
-            const tb = document.getElementById('dm-tb-title');
-            if (tb) tb.textContent = tSrc ? tSrc.dataset.title : '';
-            requestAnimationFrame(() => window.syncDetailTabIndicator('overview'));
-        };
-
-        // Open animation + post-render hook
-        const _openDetails = window.openDetails;
-        window.openDetails = function (type, id) {
-            const modal = document.getElementById('details-modal');
-            if (modal) {
-                modal.classList.remove('dm-closing', 'scrolled', 'dm-open');
-                modal.scrollTop = 0;
-                const bgEl = modal.querySelector('.dm-bg');
-                if (bgEl) { bgEl.classList.remove('on'); bgEl.style.backgroundImage = ''; }
-                void modal.offsetWidth;
-                modal.classList.add('dm-open');
-            }
-            const p = _openDetails.call(this, type, id);
-            if (p && p.then) p.then(() => window.afterDetailsRender());
-            return p;
-        };
-
-        const _closeModalDOM = window.closeModalDOM;
-        window.closeModalDOM = function () {
-            const modal = document.getElementById('details-modal');
-            const tb = document.getElementById('dm-tb-title');
-            if (tb) tb.textContent = '';
-            if (modal) modal.classList.remove('dm-open', 'scrolled');
-            return _closeModalDOM.apply(this, arguments);
-        };
-
-        /* ---------------------------------------------------------
-           8. Detail tabs — sliding indicator + panel fade
-        --------------------------------------------------------- */
-        window.syncDetailTabIndicator = function (tab) {
-            const ind = document.getElementById('dtab-indicator');
-            const btn = document.getElementById(`dtab-${tab}`);
-            const bar = document.querySelector('.detail-tabs');
-            if (!ind || !btn || !bar) return;
-            const br = bar.getBoundingClientRect(), r = btn.getBoundingClientRect();
-            ind.style.width = r.width + 'px';
-            ind.style.transform = `translateX(${r.left - br.left}px)`;
-        };
-
-        window.switchDetailTab = function (tab) {
-            ['overview', 'episodes', 'more'].forEach(t => {
-                const panel = document.getElementById(`dpanel-${t}`);
-                const btn = document.getElementById(`dtab-${t}`);
-                if (panel) {
-                    panel.classList.toggle('hidden', t !== tab);
-                    panel.classList.remove('dp-anim');
-                    if (t === tab) { void panel.offsetWidth; panel.classList.add('dp-anim'); }
-                }
-                if (btn) {
-                    btn.classList.toggle('text-white', t === tab);
-                    btn.classList.toggle('text-slate-400', t !== tab);
-                }
-            });
-            window.syncDetailTabIndicator(tab);
-        };
-
-        /* ---------------------------------------------------------
-           9. Watchlist / Share / Trailer
-        --------------------------------------------------------- */
-        const WL_KEY = 'cinedb_watchlist';
-        window.getWatchlist = function () {
-            try { return JSON.parse(localStorage.getItem(WL_KEY) || '[]'); } catch (e) { return []; }
-        };
-        window.inWatchlist = function (type, id) {
-            return window.getWatchlist().some(x => x.id == id && x.type === type);
-        };
-        window.toggleWatchlist = function (type, id, title, btn) {
-            let list = window.getWatchlist();
-            const idx = list.findIndex(x => x.id == id && x.type === type);
-            let added;
-            if (idx > -1) { list.splice(idx, 1); added = false; }
-            else { list.push({ type, id, title }); added = true; }
-            try { localStorage.setItem(WL_KEY, JSON.stringify(list)); } catch (e) {}
-            if (btn) {
-                btn.classList.toggle('saved', added);
-                btn.innerHTML = added
-                    ? '<i class="fa-solid fa-check"></i> In Watchlist'
-                    : '<i class="fa-solid fa-plus"></i> Watchlist';
-            }
-            showToast(added ? 'Added to watchlist' : 'Removed from watchlist');
-        };
-        window.shareTitle = async function (title) {
-            const url = window.location.href;
-            try {
-                if (navigator.share) { await navigator.share({ title: title + ' — CineDB', url }); return; }
-                await navigator.clipboard.writeText(url);
-                showToast('Link copied to clipboard');
-            } catch (e) { /* user cancelled */ }
-        };
-
-        /* ---------------------------------------------------------
-           10. Init
-        --------------------------------------------------------- */
-        function init() {
-            onHeaderScroll();
-            buildCountryDropdown();
-            window.syncNavIndicator();
-        }
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-        else init();
-        window.addEventListener('load', () => { window.syncNavIndicator(); });
-    })();
-    </script>
-
 </body>
 </html>
