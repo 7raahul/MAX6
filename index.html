@@ -95,13 +95,13 @@
         /* Desktop card lift on hover — subtle, GPU-cheap (no blur), pairs with
            the existing group-hover image zoom. */
         .card-solid {
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
         }
         @media (min-width: 900px) {
             .card-solid:hover {
-                transform: translateY(-4px);
-                border-color: rgba(255, 255, 255, 0.25);
-                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+                transform: translateY(-5px) scale(1.015);
+                border-color: rgba(251, 191, 36, 0.35);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(251, 191, 36, 0.08);
             }
         }
     </style>
@@ -165,7 +165,7 @@
 
       <!-- Tab Row: Home / Movies / TV Shows -->
       <div class="max-w-7xl mx-auto flex items-center gap-6 px-4 lg:px-8 border-t border-white/10">
-          <button onclick="setTopTab('all')" id="ttab-all" class="toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-white transition">Home</button>
+          <button onclick="setTopTab('all')" id="ttab-all" class="toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-amber-400 transition">Home</button>
           <button onclick="setTopTab('movie')" id="ttab-movie" class="toptab-btn px-1 py-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition">Movies</button>
           <button onclick="setTopTab('tv')" id="ttab-tv" class="toptab-btn px-1 py-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition">TV Shows</button>
       </div>
@@ -179,7 +179,7 @@
 
             <!-- HERO SPOTLIGHT -->
             <div class="relative group/hero">
-                <div id="hero-container" class="relative rounded-2xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-video w-full cursor-pointer group">
+                <div id="hero-container" class="relative overflow-hidden glass-card shadow-2xl aspect-video w-full cursor-pointer group">
                     <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                         <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                         <p class="text-xs">Loading Spotlight...</p>
@@ -195,6 +195,9 @@
 
             <!-- TOP 10 TODAY (Desktop only) -->
             <div id="top10-section" class="hidden lg:block space-y-3"></div>
+
+            <!-- GENRE ROWS (Movies / TV Shows tabs only) -->
+            <div id="genre-rows-section" class="hidden space-y-7"></div>
 
             <div class="flex justify-between items-center pt-2">
                 <h2 id="section-title" class="text-base font-bold text-white tracking-wide flex items-center gap-2">
@@ -440,12 +443,95 @@
             });
             const idMap = { all: 'ttab-all', movie: 'ttab-movie', tv: 'ttab-tv' };
             const activeEl = document.getElementById(idMap[category]);
-            if (activeEl) activeEl.className = "toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-white transition";
+            if (activeEl) activeEl.className = "toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-amber-400 transition";
 
             currentCategory = category;
             switchTab('home');
             updateSectionTitle();
             loadHomeTitles(true);
+
+            const genreSection = document.getElementById('genre-rows-section');
+            if (category === 'movie' || category === 'tv') {
+                loadGenreRows(category);
+            } else {
+                genreSection.classList.add('hidden');
+                genreSection.innerHTML = '';
+            }
+        }
+
+        // Genre id/name lists — movie and tv use different TMDB genre sets
+        // for Action/Sci-Fi, so each type has its own row list.
+        const GENRE_ROWS = {
+            movie: [
+                { id: 28, name: 'Action' },
+                { id: 35, name: 'Comedy' },
+                { id: 18, name: 'Drama' },
+                { id: 878, name: 'Sci-Fi' },
+                { id: 27, name: 'Horror' },
+                { id: 16, name: 'Animation' }
+            ],
+            tv: [
+                { id: 10759, name: 'Action & Adventure' },
+                { id: 35, name: 'Comedy' },
+                { id: 18, name: 'Drama' },
+                { id: 10765, name: 'Sci-Fi & Fantasy' },
+                { id: 80, name: 'Crime' },
+                { id: 16, name: 'Animation' }
+            ]
+        };
+
+        let genreRowToken = 0;
+
+        // Renders one horizontal-scroll poster row per genre on the
+        // Movies / TV Shows tabs, above the main Popular grid.
+        async function loadGenreRows(type) {
+            const section = document.getElementById('genre-rows-section');
+            const token = ++genreRowToken;
+            const genres = GENRE_ROWS[type] || [];
+
+            section.classList.remove('hidden');
+            section.innerHTML = genres.map(g => `
+                <div>
+                    <h2 class="text-sm font-bold text-white tracking-wide mb-2.5 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span> ${g.name}
+                    </h2>
+                    <div id="genre-row-${type}-${g.id}" class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                        ${Array(6).fill(0).map(() => `<div class="skeleton flex-none w-28 lg:w-32 aspect-[2/3] rounded-xl border border-indigo-500/10"></div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            for (const g of genres) {
+                const endpoint = type === 'tv' ? '/discover/tv' : '/discover/movie';
+                const data = await fetchTMDB(endpoint, `&with_genres=${g.id}&sort_by=popularity.desc`);
+                if (token !== genreRowToken) return; // user switched tabs mid-fetch
+
+                const row = document.getElementById(`genre-row-${type}-${g.id}`);
+                if (!row) continue;
+
+                const items = (data?.results || []).slice(0, 12);
+                if (!items.length) {
+                    row.innerHTML = `<p class="text-[11px] text-slate-500 py-2">No titles found.</p>`;
+                    continue;
+                }
+
+                row.innerHTML = items.map(item => {
+                    const title = item.title || item.name || 'Untitled';
+                    const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Poster';
+                    const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+                    return `
+                        <div onclick="openDetails('${type}', ${item.id})" class="card-solid flex-none w-28 lg:w-32 rounded-xl overflow-hidden cursor-pointer group">
+                            <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
+                                <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                                <span class="absolute top-1.5 right-1.5 bg-[#060608]/90 text-amber-400 font-bold text-[9px] px-1.5 py-0.5 rounded-md flex items-center gap-0.5 border border-indigo-500/20">
+                                    <i class="fa-solid fa-star text-[8px]"></i> ${rating}
+                                </span>
+                            </div>
+                            <p class="text-[10px] font-semibold text-slate-100 line-clamp-1 px-1.5 py-1.5">${title}</p>
+                        </div>
+                    `;
+                }).join('');
+            }
         }
 
         function changeCountryFilter(countryCode) {
@@ -908,7 +994,7 @@
                     <div class="px-5 lg:px-0 lg:flex-1 lg:pt-2 mt-5 lg:mt-0 space-y-5">
                         <!-- Detail Tabs -->
                         <div class="flex gap-5 border-b border-white/10">
-                            <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-white transition">Overview</button>
+                            <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-amber-400 transition">Overview</button>
                             ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Season</button>` : ''}
                             <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
                         </div>
@@ -1035,7 +1121,7 @@
                 const panel = document.getElementById(`dpanel-${t}`);
                 const btn = document.getElementById(`dtab-${t}`);
                 if (panel) panel.classList.toggle('hidden', t !== tab);
-                if (btn) btn.className = `detail-tab-btn pb-2 text-xs font-bold whitespace-nowrap transition border-b-2 ${t === tab ? 'text-white border-white' : 'text-slate-400 border-transparent'}`;
+                if (btn) btn.className = `detail-tab-btn pb-2 text-xs font-bold whitespace-nowrap transition border-b-2 ${t === tab ? 'text-white border-amber-400' : 'text-slate-400 border-transparent'}`;
             });
         }
 
@@ -1054,7 +1140,7 @@
 
             content.innerHTML = `
                 <div class="flex items-center gap-4 mb-4">
-                    <img src="${photo}" class="w-20 h-20 rounded-2xl object-cover border border-indigo-500/30 shadow-lg">
+                    <img src="${photo}" class="w-20 h-20 rounded-full object-cover border border-indigo-500/30 shadow-lg">
                     <div>
                         <h2 class="text-base font-bold text-white">${data.name}</h2>
                         <p class="text-[11px] text-indigo-400">${data.known_for_department || 'Acting'}</p>
