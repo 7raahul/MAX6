@@ -868,11 +868,10 @@
                 <div class="lg:flex lg:gap-10 lg:items-start">
                     <!-- Left column: backdrop (title overlaid on it), stats (sticky on desktop) -->
                     <div class="lg:w-[38%] lg:flex-shrink-0 lg:sticky lg:top-24">
-                        <div class="relative aspect-video lg:aspect-[4/3] w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden overflow-hidden">
+                        <div class="relative aspect-video w-full bg-[#060608] overflow-hidden">
                             <img id="detail-backdrop-a" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100">
                             <img id="detail-backdrop-b" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/55 to-transparent"></div>
-                            <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/50 via-transparent to-transparent hidden lg:block"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608]/70 via-transparent to-transparent"></div>
 
                             <span class="absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-md">
                                 <i class="fa-solid fa-star text-[9px]"></i> ${rating}
@@ -910,7 +909,7 @@
                         <!-- Detail Tabs -->
                         <div class="flex gap-5 border-b border-white/10">
                             <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-white transition">Overview</button>
-                            ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Episodes</button>` : ''}
+                            ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Season</button>` : ''}
                             <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
                         </div>
 
@@ -1109,6 +1108,8 @@
                 const runtime = ep.runtime ? `${ep.runtime} min` : null;
                 const overview = ep.overview ? ep.overview : 'No description available.';
 
+                const epCastId = `ep-cast-${tvId}-${seasonNumber}-${ep.episode_number}`;
+
                 return `
                     <div class="card-solid rounded-2xl overflow-hidden border border-white/10 flex flex-col transition hover:border-white/30">
                         <!-- Thumbnail (Left Side) -->
@@ -1142,10 +1143,60 @@
 
                             <!-- Overview -->
                             <p class="text-[13px] text-slate-300 leading-relaxed line-clamp-2 flex-grow">${overview}</p>
+
+                            <!-- Cast toggle -->
+                            <button onclick="toggleEpisodeCast(${tvId}, ${seasonNumber}, ${ep.episode_number}, '${epCastId}', this)" class="ep-cast-btn self-start flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 border border-white/15 rounded-lg px-2.5 py-1 hover:border-white/40 hover:text-white transition">
+                                <i class="fa-solid fa-users text-[10px]"></i> Cast <i class="fa-solid fa-chevron-down text-[9px] ep-cast-chevron transition-transform"></i>
+                            </button>
+                            <div id="${epCastId}" class="hidden pt-1"></div>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // Fetches and toggles the cast list for a single episode inline.
+        async function toggleEpisodeCast(tvId, seasonNumber, episodeNumber, containerId, btnEl) {
+            const container = document.getElementById(containerId);
+            const chevron = btnEl.querySelector('.ep-cast-chevron');
+
+            if (!container.classList.contains('hidden')) {
+                container.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            chevron.classList.add('rotate-180');
+
+            if (container.dataset.loaded === 'true') return;
+
+            container.innerHTML = `<div class="text-[11px] text-slate-400 py-1"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading cast...</div>`;
+
+            const data = await fetchTMDB(`/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}/credits`);
+            const people = [...(data?.cast || []), ...(data?.guest_stars || [])];
+
+            if (!people.length) {
+                container.innerHTML = `<p class="text-[11px] text-slate-500 py-1">No cast info available for this episode.</p>`;
+                container.dataset.loaded = 'true';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="flex gap-2.5 overflow-x-auto no-scrollbar py-1">
+                    ${people.map(c => {
+                        const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : 'https://via.placeholder.com/150?text=No+Photo';
+                        return `
+                            <div onclick="openActorModal(${c.id})" class="flex-none w-16 text-center flex flex-col items-center cursor-pointer">
+                                <img src="${photo}" class="w-11 h-11 rounded-full object-cover border border-white/20 mb-1 shadow-md" loading="lazy">
+                                <p class="text-[9px] font-semibold text-slate-100 truncate w-full">${c.name}</p>
+                                <p class="text-[8px] text-slate-400 truncate w-full">${c.character || ''}</p>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            container.dataset.loaded = 'true';
         }
 
         function closeModalManual() {
