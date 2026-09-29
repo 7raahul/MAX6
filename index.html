@@ -204,10 +204,51 @@
             <!-- TOP 10 TODAY (Desktop only) -->
             <div id="top10-section" class="hidden lg:block space-y-3"></div>
 
+            <!-- CATALOG FILTER BAR (Movies / TV Shows tabs, desktop only) -->
+            <div id="catalog-filter-bar" class="hidden lg:flex items-center gap-2.5 flex-wrap">
+                <button data-sort="trending" onclick="setCatalogSort('trending')" class="sort-pill-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Trending</button>
+                <button data-sort="popular" onclick="setCatalogSort('popular')" class="sort-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30 transition">Popular</button>
+                <button data-sort="new" onclick="setCatalogSort('new')" class="sort-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30 transition">New Releases</button>
+                <button data-sort="top_rated" onclick="setCatalogSort('top_rated')" class="sort-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30 transition">Top Rated</button>
+
+                <div class="relative">
+                    <button onclick="toggleGenreMenu(event)" id="genre-filter-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30 transition">
+                        <span id="genre-filter-label">Genre</span> <i class="fa-solid fa-chevron-down text-[10px] transition-transform" id="genre-filter-chevron"></i>
+                    </button>
+                    <div id="genre-filter-dropdown" class="hidden absolute top-full left-0 mt-2 card-solid border border-white/15 rounded-2xl p-4 shadow-2xl z-50 w-72"></div>
+                </div>
+
+                <select id="catalog-year-select" onchange="changeYearFilter(this.value)" class="bg-white/[0.04] border border-white/10 hover:border-white/30 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-300 focus:outline-none cursor-pointer transition">
+                    <option value="">All Years</option>
+                </select>
+
+                <select id="catalog-country-select" onchange="changeCountryFilter(this.value)" class="bg-white/[0.04] border border-white/10 hover:border-white/30 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-300 focus:outline-none cursor-pointer transition">
+                    <option value="ALL">All Countries</option>
+                    <option value="IN">🇮🇳 India</option>
+                    <option value="US">🇺🇸 United States</option>
+                    <option value="GB">🇬🇧 United Kingdom</option>
+                    <option value="KR">🇰🇷 South Korea</option>
+                    <option value="JP">🇯🇵 Japan</option>
+                    <option value="CN">🇨🇳 China</option>
+                    <option value="FR">🇫🇷 France</option>
+                    <option value="DE">🇩🇪 Germany</option>
+                    <option value="ES">🇪🇸 Spain</option>
+                    <option value="IT">🇮🇹 Italy</option>
+                    <option value="TR">🇹🇷 Turkey</option>
+                    <option value="CA">🇨🇦 Canada</option>
+                    <option value="BR">🇧🇷 Brazil</option>
+                    <option value="MX">🇲🇽 Mexico</option>
+                    <option value="AU">🇦🇺 Australia</option>
+                    <option value="RU">🇷🇺 Russia</option>
+                    <option value="TH">🇹🇭 Thailand</option>
+                    <option value="ID">🇮🇩 Indonesia</option>
+                </select>
+            </div>
+
             <!-- GENRE ROWS (Movies / TV Shows tabs only) -->
             <div id="genre-rows-section" class="hidden space-y-7"></div>
 
-            <div class="flex justify-between items-center pt-2">
+            <div id="section-title-row" class="flex justify-between items-center pt-2">
                 <h2 id="section-title" class="text-base font-bold text-white tracking-wide flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
                     Trending Movies & Shows
@@ -316,6 +357,8 @@
         let currentTab = 'home';
         let currentCategory = 'all'; 
         let currentCountry = 'ALL';
+        let currentSort = 'trending';
+        let currentGenre = '';
         let currentPage = 1;
         let isFetching = false;
         let hasMore = true;
@@ -337,12 +380,13 @@
         });
 
         function populateYearSelect() {
-            const sel = document.getElementById('year-select');
-            if (!sel) return;
             const current = new Date().getFullYear();
             let html = '<option value="">All Years</option>';
             for (let y = current; y >= 1945; y--) html += `<option value="${y}">${y}</option>`;
-            sel.innerHTML = html;
+            ['year-select', 'catalog-year-select'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) sel.innerHTML = html;
+            });
         }
 
         function showToast(msg) {
@@ -476,14 +520,28 @@
             if (dActive) dActive.className = "dtoptab-btn px-1 py-2 text-sm font-bold text-white border-b-2 border-amber-400 transition";
 
             currentCategory = category;
+            currentSort = 'trending';
+            currentGenre = '';
             switchTab('home');
             updateSectionTitle();
             loadHomeTitles(true);
 
+            const filterBar = document.getElementById('catalog-filter-bar');
             const genreSection = document.getElementById('genre-rows-section');
             if (category === 'movie' || category === 'tv') {
+                filterBar.classList.remove('hidden');
+                filterBar.classList.add('lg:flex');
+                document.querySelectorAll('.sort-pill-btn').forEach(b => {
+                    const on = b.dataset.sort === 'trending';
+                    b.className = `sort-pill-btn px-4 py-2 rounded-xl text-sm font-bold transition ${on ? 'bg-white text-black' : 'font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30'}`;
+                });
+                const genreLabel = document.getElementById('genre-filter-label');
+                if (genreLabel) genreLabel.textContent = 'Genre';
+                closeGenreMenu();
                 loadGenreRows(category);
             } else {
+                filterBar.classList.add('hidden');
+                filterBar.classList.remove('lg:flex');
                 genreSection.classList.add('hidden');
                 genreSection.innerHTML = '';
             }
@@ -509,6 +567,78 @@
                 { id: 16, name: 'Animation' }
             ]
         };
+
+        // Full genre catalog used by the Genre filter dropdown (catalog bar)
+        const GENRE_FULL = {
+            movie: [
+                { id: 28, name: 'Action' }, { id: 12, name: 'Adventure' },
+                { id: 16, name: 'Animation' }, { id: 35, name: 'Comedy' },
+                { id: 80, name: 'Crime' }, { id: 99, name: 'Documentary' },
+                { id: 18, name: 'Drama' }, { id: 10751, name: 'Family' },
+                { id: 14, name: 'Fantasy' }, { id: 36, name: 'History' },
+                { id: 27, name: 'Horror' }, { id: 10402, name: 'Music' },
+                { id: 9648, name: 'Mystery' }, { id: 10749, name: 'Romance' },
+                { id: 878, name: 'Science Fiction' }, { id: 53, name: 'Thriller' },
+                { id: 10752, name: 'War' }, { id: 37, name: 'Western' }
+            ],
+            tv: [
+                { id: 10759, name: 'Action & Adventure' }, { id: 16, name: 'Animation' },
+                { id: 35, name: 'Comedy' }, { id: 80, name: 'Crime' },
+                { id: 99, name: 'Documentary' }, { id: 18, name: 'Drama' },
+                { id: 10751, name: 'Family' }, { id: 10762, name: 'Kids' },
+                { id: 9648, name: 'Mystery' }, { id: 10764, name: 'Reality' },
+                { id: 10765, name: 'Sci-Fi & Fantasy' }, { id: 10766, name: 'Soap' },
+                { id: 10767, name: 'Talk' }, { id: 10768, name: 'War & Politics' },
+                { id: 37, name: 'Western' }
+            ]
+        };
+
+        function setCatalogSort(sort) {
+            currentSort = sort;
+            document.querySelectorAll('.sort-pill-btn').forEach(b => {
+                const on = b.dataset.sort === sort;
+                b.className = `sort-pill-btn px-4 py-2 rounded-xl text-sm font-bold transition ${on ? 'bg-white text-black' : 'font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30'}`;
+            });
+            updateSectionTitle();
+            loadHomeTitles(true);
+        }
+
+        function toggleGenreMenu(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('genre-filter-dropdown');
+            const chevron = document.getElementById('genre-filter-chevron');
+            const opening = dropdown.classList.contains('hidden');
+            if (opening) {
+                const list = GENRE_FULL[currentCategory] || [];
+                dropdown.innerHTML = `
+                    <button onclick="selectGenre('', 'Genre')" class="col-span-2 text-left text-sm font-semibold ${currentGenre === '' ? 'text-white' : 'text-slate-400 hover:text-white'} pb-2 mb-2 border-b border-white/10 transition">All Genres</button>
+                    <div class="grid grid-cols-2 gap-x-6 gap-y-2 max-h-80 overflow-y-auto">
+                        ${list.map(g => `<button onclick="selectGenre(${g.id}, '${g.name.replace(/'/g, "\\'")}')" class="text-left text-sm ${currentGenre == g.id ? 'text-amber-400 font-bold' : 'text-slate-300 hover:text-white'} transition">${g.name}</button>`).join('')}
+                    </div>
+                `;
+            }
+            dropdown.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180', !dropdown.classList.contains('hidden'));
+        }
+        function closeGenreMenu() {
+            document.getElementById('genre-filter-dropdown')?.classList.add('hidden');
+            document.getElementById('genre-filter-chevron')?.classList.remove('rotate-180');
+        }
+        function selectGenre(genreId, genreName) {
+            currentGenre = genreId;
+            const label = document.getElementById('genre-filter-label');
+            if (label) label.textContent = genreName;
+            closeGenreMenu();
+            updateSectionTitle();
+            loadHomeTitles(true);
+        }
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('genre-filter-dropdown');
+            const btn = document.getElementById('genre-filter-btn');
+            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && btn && !btn.contains(e.target)) {
+                closeGenreMenu();
+            }
+        });
 
         let genreRowToken = 0;
 
@@ -564,8 +694,20 @@
             }
         }
 
+        function syncFilterControls() {
+            ['year-select', 'catalog-year-select'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = currentYear;
+            });
+            ['country-select', 'catalog-country-select'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = currentCountry;
+            });
+        }
+
         function changeCountryFilter(countryCode) {
             currentCountry = countryCode;
+            syncFilterControls();
             updateSectionTitle();
             loadHomeTitles(true);
             closeHamburgerMenu();
@@ -573,6 +715,7 @@
 
         function changeYearFilter(year) {
             currentYear = year;
+            syncFilterControls();
             updateSectionTitle();
             loadHomeTitles(true);
             closeHamburgerMenu();
@@ -633,11 +776,17 @@
         }
 
         function updateSectionTitle() {
-            const titles = { all: "Trending Movies & Shows", movie: "Popular Movies", tv: "Popular TV Shows" };
-            let titleText = titles[currentCategory] || "Trending Titles";
+            const sortLabels = { trending: 'Trending', popular: 'Popular', new: 'New Releases', top_rated: 'Top Rated' };
+            const titles = { all: "Trending Movies & Shows", movie: "Movies", tv: "TV Shows" };
+            let titleText = currentCategory === 'all' ? titles.all : `${sortLabels[currentSort] || 'Trending'} ${titles[currentCategory]}`;
+            if (currentGenre) {
+                const g = (GENRE_FULL[currentCategory] || []).find(x => x.id == currentGenre);
+                if (g) titleText += ` • ${g.name}`;
+            }
             if (currentCountry !== 'ALL') titleText += ` (${currentCountry})`;
             if (currentYear) titleText += ` (${currentYear})`;
             document.getElementById('section-title').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> ${titleText}`;
+            document.getElementById('section-title-row').classList.toggle('lg:hidden', currentCategory === 'movie' || currentCategory === 'tv');
         }
 
         function setupInfiniteScroll() {
@@ -671,17 +820,30 @@
             let endpoint = '/trending/all/day';
             let params = `&page=${currentPage}`;
             const effectiveCategory = currentCategory === 'all' ? 'movie' : currentCategory;
+            const hasCatalogFilters = currentCategory !== 'all' && (currentSort !== 'trending' || currentGenre);
 
-            if (currentCountry === 'IN' && currentCategory === 'tv') {
+            if (currentCountry === 'IN' && currentCategory === 'tv' && currentSort === 'trending' && !currentGenre) {
                 // Web-series-only: filter by actual Indian OTT platforms instead of
                 // origin_country (which also returns broadcast TV daily soaps).
                 endpoint = '/discover/tv';
                 const ottIds = await getIndianOttProviderIds();
                 params += `&watch_region=IN&with_watch_providers=${ottIds.join('|')}&sort_by=popularity.desc`;
                 if (currentYear) params += `&first_air_date_year=${currentYear}`;
-            } else if (currentCountry !== 'ALL' || currentYear) {
+            } else if (hasCatalogFilters || currentCountry !== 'ALL' || currentYear) {
                 endpoint = effectiveCategory === 'tv' ? '/discover/tv' : '/discover/movie';
-                params += `&sort_by=popularity.desc`;
+                const sortMap = {
+                    trending: 'popularity.desc',
+                    popular: 'popularity.desc',
+                    new: effectiveCategory === 'tv' ? 'first_air_date.desc' : 'primary_release_date.desc',
+                    top_rated: 'vote_average.desc'
+                };
+                params += `&sort_by=${sortMap[currentSort] || 'popularity.desc'}`;
+                if (currentSort === 'top_rated') params += '&vote_count.gte=200';
+                if (currentSort === 'new') {
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    params += effectiveCategory === 'tv' ? `&first_air_date.lte=${todayStr}` : `&primary_release_date.lte=${todayStr}`;
+                }
+                if (currentGenre) params += `&with_genres=${currentGenre}`;
                 if (currentCountry !== 'ALL') params += `&with_origin_country=${currentCountry}`;
                 if (currentYear) params += effectiveCategory === 'tv' ? `&first_air_date_year=${currentYear}` : `&primary_release_year=${currentYear}`;
             } else {
