@@ -1349,6 +1349,9 @@
                             <span class="absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-md">
                                 <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                             </span>
+                            <button onclick="copyDetailLink()" class="absolute top-3 right-14 z-20 w-7 h-7 rounded-lg bg-black/70 border border-white/15 text-white flex items-center justify-center backdrop-blur-md">
+                                <i class="fa-solid fa-link text-[10px]"></i>
+                            </button>
 
                             <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10 space-y-2">
                                 <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
@@ -1362,16 +1365,9 @@
                         </div>
 
                         <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-5">
-                            <div class="grid grid-cols-2 gap-3 text-center">
-                                <div class="card-solid rounded-xl py-2.5">
-                                    <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Release</p>
-                                    <p class="text-sm font-bold text-white">${releaseDate}</p>
-                                </div>
-                                <div class="card-solid rounded-xl py-2.5">
-                                    <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">${type === 'movie' ? 'Runtime' : 'Seasons'}</p>
-                                    <p class="text-sm font-bold text-white">${type === 'movie' ? (data.runtime ? data.runtime + ' min' : 'N/A') : (data.number_of_seasons || validSeasons.length)}</p>
-                                </div>
-                            </div>
+                            ${chipGenres.length ? `<div class="flex flex-wrap gap-2">${chipGenres.map(g => `<span class="text-[11px] font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-full">${g}</span>`).join('')}</div>` : ''}
+                            ${crewLineHtml}
+                            <div class="grid grid-cols-2 gap-3">${statBoxesHtml}</div>
 
                             ${upcomingHtml}
                         </div>
@@ -1384,7 +1380,7 @@
                             <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-amber-400 transition">Overview</button>
                             ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Season</button>` : ''}
                             <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
-                            ${hasMedia ? `<button onclick="switchDetailTab('media')" id="dtab-media" class="hidden lg:inline-block detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Media</button>` : ''}
+                            ${hasMedia ? `<button onclick="switchDetailTab('media')" id="dtab-media" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Media</button>` : ''}
                         </div>
 
                         <!-- Overview Panel -->
@@ -1408,7 +1404,7 @@
                             </div>
 
                             ${detailRows.length > 0 ? `
-                                <div class="hidden lg:block card-solid p-4 rounded-2xl">
+                                <div class="card-solid p-4 rounded-2xl">
                                     <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">Details</h3>
                                     <div class="grid grid-cols-2 gap-x-6 gap-y-3">
                                         ${detailRows.map(([l, v]) => `
@@ -1421,15 +1417,15 @@
                                 </div>` : ''}
 
                             ${(budgetText || revenueText) ? `
-                                <div class="hidden lg:grid grid-cols-2 gap-3">
+                                <div class="grid grid-cols-2 gap-3">
                                     ${budgetText ? `<div class="card-solid rounded-2xl p-4"><p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Budget</p><p class="text-xl font-bold text-white">${budgetText}</p></div>` : ''}
                                     ${revenueText ? `<div class="card-solid rounded-2xl p-4"><p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Revenue</p><p class="text-xl font-bold text-amber-400">${revenueText}</p></div>` : ''}
                                 </div>` : ''}
 
                             ${collection ? `
-                                <div id="collection-wrap" data-cid="${collection.id}" class="hidden lg:block">
+                                <div id="collection-wrap" data-cid="${collection.id}" class="">
                                     <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">${collection.name}</h3>
-                                    <div id="collection-grid" class="grid grid-cols-5 gap-3"></div>
+                                    <div id="collection-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
                                 </div>` : ''}
                         </div>
 
@@ -1512,7 +1508,7 @@
                             ` : ''}
 
                             ${crewRow.length > 0 ? `
-                                <div class="hidden lg:block">
+                                <div>
                                     <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-4">Crew</h3>
                                     <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                         ${crewRow.map(c => {
@@ -1542,9 +1538,9 @@
                             ` : ''}
 
                             ${recommendedResults.length > 0 ? `
-                                <div class="hidden lg:block">
+                                <div>
                                     <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Recommended</h3>
-                                    <div id="recommended-grid" class="grid grid-cols-5 gap-3"></div>
+                                    <div id="recommended-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
                                 </div>
                             ` : ''}
                         </div>
@@ -1619,7 +1615,7 @@
                 const panel = document.getElementById(`dpanel-${t}`);
                 const btn = document.getElementById(`dtab-${t}`);
                 if (panel) panel.classList.toggle('hidden', t !== tab);
-                if (btn) btn.className = `${t === 'media' ? 'hidden lg:inline-block ' : ''}detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap transition border-b-2 ${t === tab ? 'text-white border-amber-400' : 'text-slate-400 border-transparent'}`;
+                if (btn) btn.className = `detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap transition border-b-2 ${t === tab ? 'text-white border-amber-400' : 'text-slate-400 border-transparent'}`;
             });
         }
 
@@ -1822,7 +1818,7 @@
                                 ${String(ep.episode_number).padStart(2, '0')}
                             </span>
 
-                            ${isUpcomingEp ? `<span class="hidden lg:flex absolute bottom-2 left-2 bg-amber-400/15 text-amber-300 border border-amber-400/40 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">UPCOMING</span>` : ''}
+                            ${isUpcomingEp ? `<span class="flex absolute bottom-2 left-2 bg-amber-400/15 text-amber-300 border border-amber-400/40 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">UPCOMING</span>` : ''}
 
                             <!-- Rating Badge (Top-Right) -->
                             <span class="absolute top-3 right-3 lg:top-2 lg:right-2 bg-amber-400 text-black font-bold text-[11px] lg:text-[10px] px-2.5 lg:px-2 py-1 lg:py-0.5 rounded-lg flex items-center gap-1 shadow-lg">
