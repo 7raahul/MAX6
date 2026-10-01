@@ -50,7 +50,7 @@ a{
 }
 
 /* ============================================================
-   NEW FLOATING PILL NAVIGATION (TOP CENTER)
+   TOP FLOATING PILL NAVIGATION
 ============================================================ */
 
 .top-pill-wrapper{
@@ -213,7 +213,7 @@ a{
 }
 
 /* ============================================================
-   MAIN CONTAINER & MINIMAL CARDS UI
+   MAIN CONTAINER & GRID
 ============================================================ */
 
 .container{
@@ -289,7 +289,7 @@ a{
 }
 
 /* ============================================================
-   DETAILS OVERLAY
+   DETAILS OVERLAY & BACKDROP DEPTH
 ============================================================ */
 
 .detail-overlay{
@@ -300,28 +300,13 @@ a{
   overflow-y:auto;
 }
 
-.detail-back{
-  position:fixed;
-  z-index:20;
-  top:20px;
-  left:20px;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(8,10,15,.75);
-  color:#fff;
-  backdrop-filter:blur(10px);
-  border-radius:10px;
-  padding:10px 16px;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-}
-
 .detail-hero{
   position:relative;
-  min-height:450px;
+  min-height:480px;
   display:flex;
   align-items:flex-end;
   background:#11151e;
+  overflow:hidden;
 }
 
 .detail-bg{
@@ -330,13 +315,15 @@ a{
   width:100%;
   height:100%;
   object-fit:cover;
-  opacity:.35;
+  opacity:.65;
+  filter:brightness(0.85);
 }
 
 .detail-bg-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(0deg,#080a0f 0%,rgba(8,10,15,.6) 60%,rgba(8,10,15,.8) 100%);
+  background:linear-gradient(90deg, rgba(8,10,15,0.98) 0%, rgba(8,10,15,0.75) 45%, rgba(8,10,15,0.3) 100%),
+             linear-gradient(0deg, #080a0f 0%, transparent 60%);
 }
 
 .detail-content{
@@ -345,15 +332,15 @@ a{
   max-width:1450px;
   width:100%;
   margin:auto;
-  padding:80px 22px 30px;
+  padding:50px 22px 30px;
   display:flex;
   gap:32px;
 }
 
 .detail-poster{
-  width:240px;
+  width:230px;
   border-radius:16px;
-  border:1px solid var(--border);
+  border:1px solid rgba(255,255,255,.15);
   box-shadow:var(--shadow);
   flex-shrink:0;
   object-fit:cover;
@@ -385,22 +372,26 @@ a{
   display:inline-flex;
   align-items:center;
   gap:5px;
-  background:#1a202c;
+  background:rgba(26,32,44,0.8);
   border:1px solid var(--border);
   padding:5px 12px;
   border-radius:8px;
   color:var(--gold);
   font-weight:800;
   font-size:13px;
+  backdrop-filter:blur(10px);
 }
 
 .detail-overview{
-  color:#9ca3af;
+  color:#d1d5db;
   line-height:1.6;
   font-size:14px;
   max-width:900px;
   margin-bottom:24px;
+  text-shadow:0 2px 4px rgba(0,0,0,0.8);
 }
+
+/* MERGED INFO GRID WITH OTT CARD */
 
 .info-grid{
   display:grid;
@@ -410,10 +401,11 @@ a{
 }
 
 .info-card{
-  background:#111520;
+  background:rgba(17, 21, 32, 0.85);
   border:1px solid var(--border);
   border-radius:12px;
   padding:14px;
+  backdrop-filter:blur(12px);
 }
 
 .info-card label{
@@ -423,13 +415,28 @@ a{
   color:var(--muted);
   text-transform:uppercase;
   letter-spacing:.05em;
-  margin-bottom:4px;
+  margin-bottom:6px;
 }
 
 .info-card span{
   font-size:14px;
   font-weight:800;
   color:#fff;
+}
+
+.ott-card-logos{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:4px;
+}
+
+.ott-card-logo{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  object-fit:cover;
+  border:1px solid var(--border);
 }
 
 .badge-status{
@@ -445,30 +452,43 @@ a{
 .status-avg{background:#d97706;color:#fff}
 .status-flop{background:#dc2626;color:#fff}
 
-.ott-section{
-  margin-bottom:30px;
-}
+/* ACTION BUTTONS BAR */
 
-.ott-title{
-  font-size:14px;
-  font-weight:800;
-  margin-bottom:10px;
-  color:#e5e7eb;
-}
-
-.ott-logos{
+.section-actions-bar{
+  max-width:1450px;
+  margin:0 auto 25px;
+  padding:0 22px;
   display:flex;
+  gap:12px;
   flex-wrap:wrap;
-  gap:10px;
 }
 
-.ott-logo{
-  width:42px;
-  height:42px;
-  border-radius:10px;
-  object-fit:cover;
+.action-btn{
+  background:var(--panel2);
   border:1px solid var(--border);
+  color:#fff;
+  padding:12px 22px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:all .2s;
 }
+
+.action-btn:hover{
+  background:#262d3e;
+  border-color:#4b5563;
+}
+
+.action-btn.active{
+  background:#2e3444;
+  border-color:rgba(255,255,255,0.3);
+  color:#fff;
+}
+
+/* SECTIONS BUILDER */
 
 .section-block{
   max-width:1450px;
@@ -480,44 +500,50 @@ a{
   font-size:20px;
   font-weight:800;
   margin:0 0 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-.cast-row{
-  display:flex;
-  gap:14px;
-  overflow-x:auto;
-  padding-bottom:10px;
+.cast-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:16px;
 }
 
 .cast-card{
-  flex:0 0 110px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
   text-align:center;
 }
 
 .cast-img{
-  width:110px;
-  height:130px;
+  width:100%;
+  aspect-ratio:1/1;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:10px;
   background:#1a202c;
-  margin-bottom:6px;
-  border:1px solid var(--border);
+  margin-bottom:8px;
 }
 
 .cast-name{
-  font-size:12px;
-  font-weight:700;
+  font-size:13px;
+  font-weight:800;
+  color:#fff;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
 .cast-character{
-  font-size:10px;
+  font-size:11px;
   color:var(--muted);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+  margin-top:2px;
 }
 
 .season-select-wrap{
@@ -547,6 +573,13 @@ a{
   border:1px solid var(--border);
   border-radius:12px;
   padding:12px;
+  cursor:pointer;
+  transition:transform .2s, border-color .2s;
+}
+
+.ep-card:hover{
+  transform:translateX(4px);
+  border-color:#374151;
 }
 
 .ep-still{
@@ -633,6 +666,54 @@ a{
   object-fit:contain;
   padding:10px;
   background:#111520;
+}
+
+/* ============================================================
+   EPISODE SUB-PAGE OVERLAY (CLICK TO VIEW EPISODE DETAILS)
+============================================================ */
+
+.episode-overlay{
+  position:fixed;
+  inset:0;
+  z-index:7000;
+  background:#080a0f;
+  overflow-y:auto;
+}
+
+.ep-details-container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:40px 20px;
+}
+
+.ep-hero-img{
+  width:100%;
+  max-height:450px;
+  object-fit:cover;
+  border-radius:18px;
+  border:1px solid var(--border);
+  margin-bottom:24px;
+}
+
+.ep-detail-title{
+  font-size:28px;
+  font-weight:900;
+  margin:0 0 10px;
+}
+
+.ep-detail-meta{
+  display:flex;
+  gap:14px;
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:16px;
+}
+
+.ep-detail-overview{
+  font-size:15px;
+  line-height:1.6;
+  color:#d1d5db;
+  margin-bottom:30px;
 }
 
 .lightbox{
@@ -724,10 +805,14 @@ a{
   <div id="scrollSentinel" style="height:40px; margin-top:20px;"></div>
 </main>
 
-<!-- DETAILS OVERLAY -->
+<!-- DETAILS OVERLAY (NO BACK BUTTON - BROWSER NATIVE NAVIGATION) -->
 <div id="detailOverlay" class="detail-overlay hidden">
-  <button class="detail-back" onclick="closeDetails()">← Back</button>
   <div id="detailBody"></div>
+</div>
+
+<!-- DEDICATED EPISODE SUB-PAGE OVERLAY -->
+<div id="episodeOverlay" class="episode-overlay hidden">
+  <div id="episodeBody"></div>
 </div>
 
 <!-- LIGHTBOX -->
@@ -747,14 +832,15 @@ const IMG_BASE = "https://image.tmdb.org/t/p/";
 const state = {
   page: 1,
   totalPages: 1,
-  tab: "home", // home, movie, tv
+  tab: "home",
   isLoading: false,
   results: [],
-  currentMedia: { posters: [], backdrops: [], logos: [] }
+  currentMedia: { posters: [], backdrops: [], logos: [] },
+  currentShowId: null
 };
 
 /* ============================================================
-   HELPERS & CONVERTERS
+   HELPERS & FORMATTERS
 ============================================================ */
 
 async function api(path, params = {}) {
@@ -809,7 +895,28 @@ function getBoxOfficeStatus(budget, revenue) {
 }
 
 /* ============================================================
-   PILL NAVIGATION LOGIC
+   BROWSER NATIVE NAVIGATION (< / >) HISTORY API LOGIC
+============================================================ */
+
+window.addEventListener('popstate', (e) => {
+  const currentState = e.state;
+
+  if (!currentState || currentState.view === 'home') {
+    document.getElementById("detailOverlay").classList.add("hidden");
+    document.getElementById("episodeOverlay").classList.add("hidden");
+    document.body.style.overflow = "";
+  } else if (currentState.view === 'details') {
+    document.getElementById("detailOverlay").classList.remove("hidden");
+    document.getElementById("episodeOverlay").classList.add("hidden");
+    document.body.style.overflow = "hidden";
+  } else if (currentState.view === 'episode') {
+    document.getElementById("episodeOverlay").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+});
+
+/* ============================================================
+   NAVIGATION & BROWSE
 ============================================================ */
 
 function setActiveTab(tab) {
@@ -833,10 +940,6 @@ function openSearchModal() {
 function closeSearchModal() {
   document.getElementById("searchModal").classList.add("hidden");
 }
-
-/* ============================================================
-   BROWSE & INFINITE SCROLL
-============================================================ */
 
 async function loadBrowse(append = false) {
   if (state.isLoading) return;
@@ -918,6 +1021,11 @@ function setupInfiniteScroll() {
 
 async function openDetails(id, type) {
   closeSearchModal();
+  state.currentShowId = id;
+
+  // Push History State for Browser Navigation
+  history.pushState({ view: 'details', id, type }, '', `#details-${type}-${id}`);
+
   const overlay = document.getElementById("detailOverlay");
   const body = document.getElementById("detailBody");
   overlay.classList.remove("hidden");
@@ -958,6 +1066,18 @@ async function openDetails(id, type) {
 
     const inProviders = providers.results?.IN?.flatrate || providers.results?.IN?.buy || [];
 
+    // OTT LOGOS BOX INSIDE INFO GRID
+    const ottBoxHTML = `
+      <div class="info-card">
+        <label>Available On (India)</label>
+        ${inProviders.length ? `
+          <div class="ott-card-logos">
+            ${inProviders.map(p => `<img class="ott-card-logo" src="${IMG_BASE + 'w92' + p.logo_path}" title="${esc(p.provider_name)}">`).join('')}
+          </div>
+        ` : '<span>Not Available</span>'}
+      </div>
+    `;
+
     let metricsHTML = '';
     if (type === 'movie') {
       const status = getBoxOfficeStatus(data.budget, data.revenue);
@@ -971,16 +1091,13 @@ async function openDetails(id, type) {
           <span>${formatRuntime(data.runtime)}</span>
         </div>
         <div class="info-card">
-          <label>Budget</label>
-          <span>${formatINR(data.budget)}</span>
-        </div>
-        <div class="info-card">
-          <label>Revenue</label>
+          <label>Box Office Revenue</label>
           <span>
             ${formatINR(data.revenue)}
             ${status ? `<span class="badge-status ${status.class}">${status.text}</span>` : ''}
           </span>
         </div>
+        ${ottBoxHTML}
       `;
     } else {
       metricsHTML = `
@@ -989,17 +1106,14 @@ async function openDetails(id, type) {
           <span>${esc(director)}</span>
         </div>
         <div class="info-card">
-          <label>Total Seasons</label>
-          <span>${data.number_of_seasons || 'N/A'}</span>
+          <label>Total Seasons & Episodes</label>
+          <span>${data.number_of_seasons || 'N/A'} Seasons • ${data.number_of_episodes || 'N/A'} Episodes</span>
         </div>
-        <div class="info-card">
-          <label>Total Episodes</label>
-          <span>${data.number_of_episodes || 'N/A'}</span>
-        </div>
+        ${ottBoxHTML}
       `;
     }
 
-    const castHTML = (credits.cast || []).slice(0, 12).map(c => `
+    const castHTML = (credits.cast || []).slice(0, 18).map(c => `
       <div class="cast-card">
         <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="">
         <div class="cast-name">${esc(c.name)}</div>
@@ -1022,15 +1136,6 @@ async function openDetails(id, type) {
             </div>
             <p class="detail-overview">${esc(data.overview)}</p>
 
-            ${inProviders.length ? `
-              <div class="ott-section">
-                <div class="ott-title">Available On (India)</div>
-                <div class="ott-logos">
-                  ${inProviders.map(p => `<img class="ott-logo" src="${IMG_BASE + 'w92' + p.logo_path}" title="${esc(p.provider_name)}">`).join('')}
-                </div>
-              </div>
-            ` : ''}
-
             <div class="info-grid">
               ${metricsHTML}
             </div>
@@ -1038,16 +1143,23 @@ async function openDetails(id, type) {
         </div>
       </div>
 
-      <section class="section-block">
-        <h2 class="block-title">Top Cast</h2>
-        <div class="cast-row">
+      <!-- ACTION BUTTONS BAR -->
+      <div class="section-actions-bar">
+        <button class="action-btn" onclick="scrollToSection('secCast')">👥 Cast & Crew</button>
+        ${type === 'tv' ? `<button class="action-btn" onclick="scrollToSection('secSeasons')">📺 Seasons & Episodes</button>` : ''}
+        <button class="action-btn" onclick="scrollToSection('secMedia')">🖼️ Media & Visuals</button>
+      </div>
+
+      <section id="secCast" class="section-block">
+        <h2 class="block-title">👥 Top Cast (Original & Character Name)</h2>
+        <div class="cast-grid">
           ${castHTML || '<div class="empty">No cast info available.</div>'}
         </div>
       </section>
 
       ${type === 'tv' ? `
-        <section class="section-block">
-          <h2 class="block-title">Season & Episode Guide</h2>
+        <section id="secSeasons" class="section-block">
+          <h2 class="block-title">📺 Season & Episode Guide</h2>
           <div class="season-select-wrap">
             <select id="seasonSelect" class="season-select" onchange="loadSeasonEpisodes(${id}, this.value)">
               ${Array.from({length: data.number_of_seasons || 1}, (_, i) => `<option value="${i+1}">Season ${i+1}</option>`).join('')}
@@ -1057,8 +1169,8 @@ async function openDetails(id, type) {
         </section>
       ` : ''}
 
-      <section class="section-block">
-        <h2 class="block-title">Media & Visuals</h2>
+      <section id="secMedia" class="section-block">
+        <h2 class="block-title">🖼️ Media & Visuals</h2>
         <div class="media-tabs">
           <button class="media-tab-btn active" onclick="switchMediaTab('backdrops', this)">Backdrops (${state.currentMedia.backdrops.length})</button>
           <button class="media-tab-btn" onclick="switchMediaTab('posters', this)">Posters (${state.currentMedia.posters.length})</button>
@@ -1076,13 +1188,13 @@ async function openDetails(id, type) {
   }
 }
 
-function closeDetails() {
-  document.getElementById("detailOverlay").classList.add("hidden");
-  document.body.style.overflow = "";
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
 /* ============================================================
-   TV EPISODES & MEDIA
+   TV SEASONS & EPISODES
 ============================================================ */
 
 async function loadSeasonEpisodes(tvId, seasonNum) {
@@ -1092,7 +1204,7 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
   try {
     const data = await api(`/tv/${tvId}/season/${seasonNum}`);
     container.innerHTML = (data.episodes || []).map(ep => `
-      <div class="ep-card">
+      <div class="ep-card" onclick="openEpisodeDetails(${tvId}, ${seasonNum}, ${ep.episode_number})">
         <img class="ep-still" src="${image(ep.still_path, 'w300')}" alt="">
         <div class="ep-info">
           <h4 class="ep-title">E${ep.episode_number}. ${esc(ep.name)}</h4>
@@ -1100,7 +1212,7 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
             <span>📅 ${formatDate(ep.air_date)}</span>
             <span>⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
           </div>
-          <div class="ep-overview">${esc(ep.overview || 'No description available.')}</div>
+          <div class="ep-overview">${esc(ep.overview || 'No description available. Click to view episode details.')}</div>
         </div>
       </div>
     `).join('') || `<div class="empty">No episode details found.</div>`;
@@ -1108,6 +1220,59 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
     container.innerHTML = `<div class="empty">Failed to load season episodes.</div>`;
   }
 }
+
+/* ============================================================
+   DEDICATED EPISODE DEEP-DIVE SUB-PAGE
+============================================================ */
+
+async function openEpisodeDetails(tvId, seasonNum, epNum) {
+  history.pushState({ view: 'episode', tvId, seasonNum, epNum }, '', `#ep-S${seasonNum}E${epNum}`);
+
+  const overlay = document.getElementById("episodeOverlay");
+  const body = document.getElementById("episodeBody");
+  overlay.classList.remove("hidden");
+
+  body.innerHTML = `<div class="loading" style="margin-top:100px"><div class="spinner"></div>Loading Episode details...</div>`;
+
+  try {
+    const epData = await api(`/tv/${tvId}/season/${seasonNum}/episode/${epNum}`);
+
+    const guestCastHTML = (epData.guest_stars || []).map(c => `
+      <div class="cast-card">
+        <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="">
+        <div class="cast-name">${esc(c.name)}</div>
+        <div class="cast-character">${esc(c.character)}</div>
+      </div>
+    `).join('');
+
+    body.innerHTML = `
+      <div class="ep-details-container">
+        <img class="ep-hero-img" src="${image(epData.still_path, 'original')}" alt="">
+        <h1 class="ep-detail-title">S${seasonNum} E${epNum}. ${esc(epData.name)}</h1>
+        <div class="ep-detail-meta">
+          <span>📅 Air Date: ${formatDate(epData.air_date)}</span>
+          <span>⭐ Rating: ${epData.vote_average ? epData.vote_average.toFixed(1) : 'N/A'} / 10</span>
+          <span>⏱️ ${epData.runtime ? epData.runtime + ' mins' : ''}</span>
+        </div>
+        <p class="ep-detail-overview">${esc(epData.overview || 'No description available.')}</p>
+
+        <section class="section-block" style="padding:0">
+          <h2 class="block-title">🎭 Episode Guest Stars</h2>
+          <div class="cast-grid">
+            ${guestCastHTML || '<div class="empty">No specific guest stars listed for this episode.</div>'}
+          </div>
+        </section>
+      </div>
+    `;
+
+  } catch(e) {
+    body.innerHTML = `<div class="empty" style="margin-top:100px">Failed to load episode details.</div>`;
+  }
+}
+
+/* ============================================================
+   MEDIA GALLERY & LIGHTBOX
+============================================================ */
 
 function switchMediaTab(category, btnEl) {
   document.querySelectorAll('.media-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1183,6 +1348,7 @@ searchInput.addEventListener("input", async (e) => {
 ============================================================ */
 
 window.addEventListener("DOMContentLoaded", () => {
+  history.replaceState({ view: 'home' }, '', ' ');
   loadBrowse();
   setupInfiniteScroll();
 });
