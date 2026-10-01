@@ -289,7 +289,7 @@ a{
 }
 
 /* ============================================================
-   DETAILS OVERLAY (16:9 ASPECT BANNER NO PORTRAIT POSTER)
+   DETAILS OVERLAY (SLIMMER BANNER WITH LOGO & BADGES OVERLAY)
 ============================================================ */
 
 .detail-overlay{
@@ -306,18 +306,18 @@ a{
   padding:20px 22px 60px;
 }
 
-/* 16:9 BANNER WRAPPER */
+/* SLIMMER BANNER WRAPPER (MAX HEIGHT 380PX) */
 .detail-banner-wrap{
   width:100%;
-  aspect-ratio:16 / 9;
-  max-height:560px;
+  aspect-ratio:21 / 9;
+  max-height:380px;
   border-radius:20px;
   overflow:hidden;
   position:relative;
   background:#11151e;
   border:1px solid var(--border);
   box-shadow:var(--shadow);
-  margin-bottom:28px;
+  margin-bottom:24px;
 }
 
 .detail-banner-img{
@@ -328,46 +328,78 @@ a{
   display:block;
 }
 
+/* ENHANCED GRADIENT OVERLAY FOR READABILITY */
 .detail-banner-gradient{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(8,10,15,0) 30%, rgba(8,10,15,0.95) 100%),
-             linear-gradient(90deg, rgba(8,10,15,0.6) 0%, rgba(8,10,15,0) 50%);
+  background:linear-gradient(180deg, rgba(8,10,15,0.1) 0%, rgba(8,10,15,0.95) 100%),
+             linear-gradient(90deg, rgba(8,10,15,0.7) 0%, rgba(8,10,15,0.2) 60%);
 }
 
-.detail-info-body{
-  margin-bottom:28px;
+/* CONTENT OVERLAY DIRECTLY ON BANNER */
+.banner-overlay-content{
+  position:absolute;
+  bottom:20px;
+  left:24px;
+  right:24px;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
 }
 
-.detail-title{
-  font-size:36px;
+.detail-logo-img{
+  max-height:100px;
+  max-width:60%;
+  object-fit:contain;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,0.85));
+}
+
+.detail-title-fallback{
+  font-size:32px;
   font-weight:900;
+  margin:0;
+  color:#fff;
+  text-shadow:0 2px 10px rgba(0,0,0,0.9);
   line-height:1.15;
-  margin:0 0 10px;
-  letter-spacing:-.5px;
 }
 
-.detail-meta-row{
+.detail-meta-row-overlay{
   display:flex;
   flex-wrap:wrap;
   align-items:center;
-  gap:12px;
+  gap:10px;
   font-size:13px;
-  color:#d1d5db;
-  margin-bottom:18px;
 }
 
 .tmdb-rating-pill{
   display:inline-flex;
   align-items:center;
   gap:5px;
-  background:rgba(26,32,44,0.8);
-  border:1px solid var(--border);
+  background:rgba(8,10,15,0.85);
+  border:1px solid rgba(255,255,255,0.2);
   padding:5px 12px;
   border-radius:8px;
   color:var(--gold);
   font-weight:800;
   font-size:13px;
+  backdrop-filter:blur(8px);
+}
+
+.meta-badge{
+  background:rgba(8,10,15,0.85);
+  border:1px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(8px);
+  padding:5px 12px;
+  border-radius:8px;
+  color:#f3f4f6;
+  font-weight:700;
+  font-size:12px;
+}
+
+.detail-info-body{
+  margin-bottom:28px;
 }
 
 .detail-overview{
@@ -743,6 +775,9 @@ a{
   .pill-btn{ padding:10px 14px; }
   .ep-card{ flex-direction:column; }
   .ep-still{ width:100%; }
+  .detail-logo-img{ max-width:85%; max-height:70px; }
+  .banner-overlay-content{ left:14px; right:14px; bottom:14px; }
+  .detail-banner-wrap{ max-height:260px; }
 }
 </style>
 </head>
@@ -786,7 +821,7 @@ a{
   <div id="scrollSentinel" style="height:40px; margin-top:20px;"></div>
 </main>
 
-<!-- DETAILS OVERLAY (NO BACK BUTTON - BROWSER NATIVE NAVIGATION) -->
+<!-- DETAILS OVERLAY -->
 <div id="detailOverlay" class="detail-overlay hidden">
   <div id="detailBody"></div>
 </div>
@@ -997,7 +1032,7 @@ function setupInfiniteScroll() {
 }
 
 /* ============================================================
-   DETAILS VIEW (16:9 BANNER - NO PORTRAIT POSTER - TOGGLE SECTIONS)
+   DETAILS VIEW (SLIMMER BANNER - LOGO & OVERLAY META DATA)
 ============================================================ */
 
 async function openDetails(id, type) {
@@ -1032,6 +1067,10 @@ async function openDetails(id, type) {
     const releaseDate = formatDate(data.release_date || data.first_air_date);
     const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
     
+    // Find preferred English Title Logo if available
+    const logoObj = (imagesData.logos || []).find(l => l.iso_639_1 === 'en') || (imagesData.logos || [])[0];
+    const logoPath = logoObj ? logoObj.file_path : null;
+
     let director = 'N/A';
     if (type === 'movie') {
       const dirObj = (credits.crew || []).find(c => c.job === 'Director');
@@ -1104,19 +1143,25 @@ async function openDetails(id, type) {
 
     body.innerHTML = `
       <div class="detail-wrapper">
-        <!-- 16:9 BANNER IMAGE (NO PORTRAIT POSTER) -->
+        <!-- SLIMMER 16:9/21:9 BANNER WITH OVERLAY TITLE LOGO & BADGES -->
         <div class="detail-banner-wrap">
           <img class="detail-banner-img" src="${image(data.backdrop_path, 'original')}" alt="">
           <div class="detail-banner-gradient"></div>
+          
+          <div class="banner-overlay-content">
+            ${logoPath 
+              ? `<img class="detail-logo-img" src="${image(logoPath, 'w500')}" alt="${esc(title)}">` 
+              : `<h1 class="detail-title-fallback">${esc(title)}</h1>`
+            }
+            <div class="detail-meta-row-overlay">
+              <div class="tmdb-rating-pill">⭐ ${rating} / 10</div>
+              <span class="meta-badge">📅 ${releaseDate}</span>
+              <span class="meta-badge">${type === 'tv' ? '📺 TV SHOW' : '🎬 MOVIE'}</span>
+            </div>
+          </div>
         </div>
 
         <div class="detail-info-body">
-          <h1 class="detail-title">${esc(title)}</h1>
-          <div class="detail-meta-row">
-            <div class="tmdb-rating-pill">⭐ ${rating} / 10</div>
-            <span>📅 ${releaseDate}</span>
-            <span>• ${type.toUpperCase()}</span>
-          </div>
           <p class="detail-overview">${esc(data.overview)}</p>
 
           <div class="info-grid">
