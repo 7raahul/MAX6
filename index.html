@@ -15,13 +15,9 @@
   --text:#f4f6f8;
   --muted:#9299a6;
   --accent:#e5e7eb;
-  --danger:#ef4444;
-  --success:#22c55e;
   --gold:#f5c518;
   --brand:#14e8c4;
-  --brand-dark:#0bb89b;
   --shadow:0 14px 40px rgba(0,0,0,.35);
-  --radius:18px;
 }
 
 *{box-sizing:border-box}
@@ -177,26 +173,6 @@ header{
   margin-top:3px;
 }
 
-.nav-actions{
-  margin-left:auto;
-  display:flex;
-  gap:8px;
-}
-
-.nav-btn{
-  border:1px solid var(--border);
-  background:#131720;
-  color:#d9dde4;
-  padding:9px 13px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.nav-btn:hover{
-  background:#1b202a;
-}
-
 .global-media-filter{
   max-width:1450px;
   margin:0 auto;
@@ -342,26 +318,6 @@ header{
   letter-spacing:-1px;
 }
 
-.trend-logo-wrap{
-  max-width:280px;
-  margin-bottom:12px;
-}
-
-.trend-logo{
-  max-width:100%;
-  max-height:80px;
-  object-fit:contain;
-}
-
-.trend-meta{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  color:#d7dbe1;
-  font-size:13px;
-  margin-bottom:12px;
-}
-
 .trend-overview{
   color:#d1d5db;
   line-height:1.5;
@@ -382,30 +338,6 @@ header{
   color:#080a0f;
   font-weight:800;
   font-size:12px;
-}
-
-.trend-dots{
-  position:absolute;
-  z-index:4;
-  bottom:16px;
-  left:40px;
-  display:flex;
-  gap:6px;
-}
-
-.dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  border:0;
-  padding:0;
-  background:#69707c;
-}
-
-.dot.active{
-  width:24px;
-  border-radius:20px;
-  background:#fff;
 }
 
 .trend-arrow{
@@ -434,11 +366,6 @@ header{
   align-items:center;
   margin-bottom:15px;
   gap:15px;
-}
-
-.results-count{
-  color:var(--muted);
-  font-size:13px;
 }
 
 .grid{
@@ -532,16 +459,6 @@ header{
   text-overflow:ellipsis;
 }
 
-.card-meta{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:7px;
-  color:var(--muted);
-  margin-top:6px;
-  font-size:11px;
-}
-
 .card-actions{
   display:flex;
   gap:6px;
@@ -557,27 +474,6 @@ header{
   padding:7px 8px;
   font-size:11px;
   font-weight:800;
-}
-
-.quick-btn{
-  width:34px;
-  background:#20252e;
-  border:1px solid #303640;
-  color:#fff;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.quick-btn .wa-icon{
-  width:16px;
-  height:16px;
-}
-
-.quick-btn:hover{
-  border-color:var(--success);
-  color:var(--success);
 }
 
 /* PAGINATION */
@@ -610,136 +506,6 @@ header{
   color:#080a0e;
   border-color:#e8eaed;
   font-weight:800;
-}
-
-/* OVERLAYS & MODALS */
-
-.page-overlay{
-  position:fixed;
-  inset:0;
-  z-index:6000;
-  background:#090b10;
-  overflow:auto;
-}
-
-.page-shell{
-  max-width:1450px;
-  margin:auto;
-  padding:26px 22px 80px;
-}
-
-.page-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:18px;
-  padding-bottom:22px;
-  border-bottom:1px solid var(--border);
-  margin-bottom:24px;
-}
-
-.page-head h1{
-  margin:0;
-  font-size:30px;
-}
-
-.page-head p{
-  margin:6px 0 0;
-  color:var(--muted);
-}
-
-.close{
-  width:34px;
-  height:34px;
-  border-radius:9px;
-  background:#1c212a;
-  color:#fff;
-  border:1px solid #303641;
-  font-size:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* TIMELINE TABS & GRID */
-
-.timeline-tabs{
-  position:relative;
-  display:inline-flex;
-  gap:4px;
-  padding:5px;
-  margin-bottom:24px;
-  background:#11151c;
-  border:1px solid var(--border);
-  border-radius:14px;
-}
-
-.timeline-tab{
-  position:relative;
-  z-index:1;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  padding:10px 18px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:800;
-}
-
-.timeline-tab.active{
-  color:#0b0d11;
-  background:var(--gold);
-}
-
-.timeline-tab b{
-  font-size:10px;
-  font-weight:900;
-  background:rgba(0,0,0,.15);
-  color:inherit;
-  padding:2px 7px;
-  border-radius:20px;
-}
-
-.timeline-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:16px;
-}
-
-.timeline-entry{
-  position:relative;
-  cursor:pointer;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:linear-gradient(135deg,#151a22,#11151c);
-  overflow:hidden;
-}
-
-.timeline-entry img{
-  width:100%;
-  aspect-ratio:2/3;
-  object-fit:cover;
-}
-
-.timeline-entry .te-info{
-  padding:10px;
-}
-
-.timeline-entry .te-title{
-  font-size:12px;
-  font-weight:800;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.timeline-entry .te-date{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:4px;
 }
 
 /* DETAILS PAGE OVERLAY */
@@ -831,162 +597,7 @@ header{
   font-size:14px;
 }
 
-.detail-buttons{
-  display:flex;
-  gap:8px;
-  margin-top:20px;
-}
-
-.action-btn{
-  border:1px solid #303641;
-  background:#181c24;
-  color:#fff;
-  border-radius:9px;
-  padding:10px 14px;
-  font-size:12px;
-  font-weight:750;
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-}
-
-.action-btn.is-active{
-  background:var(--success);
-  border-color:var(--success);
-  color:#fff;
-}
-
-.action-btn.schedule.is-active{
-  background:var(--danger);
-  border-color:var(--danger);
-}
-
-/* RANDOM PICKER MODAL */
-
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:7000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(8px);
-}
-
-.modal-box{
-  width:min(520px,100%);
-  background:#12161d;
-  border:1px solid #2b313c;
-  border-radius:18px;
-  padding:22px;
-}
-
-.modal-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:16px;
-}
-
-.modal-head h2{
-  margin:0;
-  font-size:20px;
-}
-
-.option-title{
-  font-size:11px;
-  color:#9fa6b1;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.7px;
-  margin:14px 0 8px;
-}
-
-.radio-row{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-}
-
-.choice{
-  border:1px solid #2d333e;
-  background:#181d25;
-  color:#dfe3e8;
-  border-radius:8px;
-  padding:8px 12px;
-  font-size:11px;
-}
-
-.choice.active{
-  background:var(--gold);
-  color:#111318;
-  border-color:var(--gold);
-  font-weight:800;
-}
-
-.check{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  color:#cfd4db;
-  font-size:11px;
-  margin-top:10px;
-}
-
-.pick-btn{
-  width:100%;
-  margin-top:20px;
-  border:0;
-  border-radius:10px;
-  background:#e8eaed;
-  color:#080a0e;
-  padding:12px;
-  font-weight:850;
-  font-size:13px;
-}
-
-.random-result{
-  margin-top:16px;
-  display:none;
-  background:#181c24;
-  border:1px solid #303641;
-  border-radius:13px;
-  padding:10px;
-  gap:12px;
-  cursor:pointer;
-}
-
-.random-result.show{
-  display:flex;
-}
-
-.random-result img{
-  width:70px;
-  height:105px;
-  object-fit:cover;
-  border-radius:8px;
-}
-
-.random-info{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.random-name{
-  font-weight:800;
-  font-size:14px;
-}
-
-.random-meta{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:4px;
-}
-
-/* TOAST & UTILS */
+/* UTILS & TOAST */
 
 .toast{
   position:fixed;
@@ -1044,7 +655,7 @@ header{
   to{transform:rotate(360deg)}
 }
 
-/* MOBILE BOTTOM NAV */
+/* MOBILE NAVIGATION */
 
 #cinevoMobileNav{display:none}
 
@@ -1080,9 +691,10 @@ header{
     right:0;
     bottom:0;
     z-index:9999;
-    height:65px;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background:rgba(13,18,27,.98);
     border-top:1px solid var(--border);
     backdrop-filter:blur(14px);
@@ -1097,7 +709,7 @@ header{
     align-items:center;
     justify-content:center;
     gap:2px;
-    font-size:10px;
+    font-size:11px;
     font-weight:700;
   }
 }
@@ -1114,11 +726,6 @@ header{
       <span class="search-icon">⌕</span>
       <input id="searchInput" class="search" type="search" autocomplete="off" placeholder="Search movies & TV shows...">
       <div id="searchSuggestions" class="search-suggestions hidden"></div>
-    </div>
-
-    <div class="nav-actions">
-      <button class="nav-btn" id="timelineBtn">◈ Timeline</button>
-      <button class="nav-btn" id="randomBtn">🎲 Pick for Me</button>
     </div>
   </div>
 </header>
@@ -1146,7 +753,6 @@ header{
     <div class="results-head">
       <div>
         <h2 class="section-title" id="resultsTitle">Discover</h2>
-        <div class="results-count" id="resultsCount"></div>
       </div>
     </div>
 
@@ -1159,8 +765,6 @@ header{
 <!-- MOBILE NAVIGATION -->
 <nav id="cinevoMobileNav">
   <button onclick="goHome()"><span>🏠</span>Home</button>
-  <button id="mobileTimelineBtn"><span>◈</span>Timeline</button>
-  <button id="mobileRandomBtn"><span>🎲</span>Pick For Me</button>
 </nav>
 
 <button id="toTop" class="to-top" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -1169,59 +773,6 @@ header{
 <div id="detailOverlay" class="detail-overlay hidden">
   <button class="detail-back" id="detailBack" onclick="closeDetails()">← Back</button>
   <div id="detailHero" class="detail-hero"></div>
-</div>
-
-<!-- TIMELINE PAGE -->
-<div id="timelinePage" class="page-overlay hidden">
-  <div class="page-shell">
-    <div class="page-head">
-      <div>
-        <h1>Timeline</h1>
-        <p>Watched and scheduled titles.</p>
-      </div>
-      <button class="close" id="closeTimeline" onclick="closeTimeline()">×</button>
-    </div>
-
-    <div class="timeline-tabs">
-      <button class="timeline-tab active" id="tabWatchedBtn" onclick="switchTimelineTab('watched')">Watched</button>
-      <button class="timeline-tab" id="tabScheduledBtn" onclick="switchTimelineTab('scheduled')">Scheduled</button>
-    </div>
-
-    <div id="timelineWatchedGrid" class="timeline-grid"></div>
-    <div id="timelineScheduledGrid" class="timeline-grid hidden"></div>
-  </div>
-</div>
-
-<!-- RANDOM PICKER MODAL -->
-<div id="randomModal" class="modal hidden">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h2>🎲 Pick For Me</h2>
-      <button class="close" onclick="closeRandom()">×</button>
-    </div>
-
-    <div class="option-title">Media Type</div>
-    <div class="radio-row" id="randomType">
-      <button class="choice active" data-value="all" onclick="setRandomType(this, 'all')">All</button>
-      <button class="choice" data-value="movie" onclick="setRandomType(this, 'movie')">Movies</button>
-      <button class="choice" data-value="tv" onclick="setRandomType(this, 'tv')">TV Shows</button>
-    </div>
-
-    <label class="check">
-      <input type="checkbox" id="excludeWatched" checked>
-      Exclude watched titles
-    </label>
-
-    <button class="pick-btn" onclick="pickRandom()">PICK A TITLE</button>
-
-    <div id="randomResult" class="random-result" onclick="openRandomDetails()">
-      <img id="randomResultImage" src="" alt="">
-      <div class="random-info">
-        <div id="randomResultName" class="random-name"></div>
-        <div id="randomResultMeta" class="random-meta"></div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -1239,20 +790,10 @@ const state = {
   page: 1,
   currentResults: [],
   filters: { type: "all" },
-  randomType: "all",
   trending: [],
   trendIndex: 0,
-  trendTimer: null,
-  selectedRandomItem: null
+  trendTimer: null
 };
-
-const STORAGE_WATCHED = "movieTrackerWatchedV2";
-const STORAGE_SCHEDULED = "movieTrackerScheduledV2";
-
-function getWatched(){ try { return JSON.parse(localStorage.getItem(STORAGE_WATCHED)) || {}; } catch{ return {}; } }
-function getScheduled(){ try { return JSON.parse(localStorage.getItem(STORAGE_SCHEDULED)) || {}; } catch{ return {}; } }
-function saveWatched(data){ localStorage.setItem(STORAGE_WATCHED, JSON.stringify(data)); }
-function saveScheduled(data){ localStorage.setItem(STORAGE_SCHEDULED, JSON.stringify(data)); }
 
 /* ============================================================
    API FETCH & HELPERS
@@ -1296,8 +837,6 @@ function goHome() {
   state.page = 1;
   setMainMediaType('all');
   closeDetails();
-  closeTimeline();
-  closeRandom();
 }
 
 /* ============================================================
@@ -1404,7 +943,6 @@ function renderResults() {
           <div class="card-title">${esc(title)}</div>
           <div class="card-actions">
             <button class="details-btn">Details</button>
-            <button class="quick-btn" onclick="event.stopPropagation(); quickWatched(${item.id}, '${type}', '${esc(title)}', '${item.poster_path}')">✓</button>
           </div>
         </div>
       </article>
@@ -1438,7 +976,7 @@ function setMainMediaType(type) {
 }
 
 /* ============================================================
-   DETAILS & ACTIONS
+   DETAILS VIEW
 ============================================================ */
 
 async function openDetails(id, type) {
@@ -1452,9 +990,6 @@ async function openDetails(id, type) {
   try {
     const data = await api(`/${type}/${id}`);
     const title = data.title || data.name;
-    const statusKey = `${type}:${id}`;
-    const isWatched = !!getWatched()[statusKey];
-    const isScheduled = !!getScheduled()[statusKey];
 
     hero.innerHTML = `
       <img class="detail-bg" src="${backdrop(data.backdrop_path)}" alt="">
@@ -1467,14 +1002,6 @@ async function openDetails(id, type) {
             <span>📅 ${data.release_date || data.first_air_date || 'N/A'}</span>
           </div>
           <div class="detail-overview">${esc(data.overview)}</div>
-          <div class="detail-buttons">
-            <button class="action-btn ${isWatched ? 'is-active' : ''}" onclick="toggleTrack('watched', ${id}, '${type}', '${esc(title)}', '${data.poster_path}')">
-              ${isWatched ? '✓ Watched' : 'Mark as Watched'}
-            </button>
-            <button class="action-btn schedule ${isScheduled ? 'is-active' : ''}" onclick="toggleTrack('scheduled', ${id}, '${type}', '${esc(title)}', '${data.poster_path}')">
-              ${isScheduled ? '📅 Scheduled' : 'Schedule'}
-            </button>
-          </div>
         </div>
       </div>
     `;
@@ -1486,36 +1013,6 @@ async function openDetails(id, type) {
 function closeDetails() {
   document.getElementById("detailOverlay").classList.add("hidden");
   document.body.style.overflow = "";
-}
-
-function toggleTrack(listType, id, type, title, poster) {
-  const key = `${type}:${id}`;
-  const store = listType === "watched" ? getWatched() : getScheduled();
-
-  if (store[key]) {
-    delete store[key];
-    toast("Removed from list");
-  } else {
-    store[key] = { id, type, title, poster, date: new Date().toLocaleDateString() };
-    toast("Added to " + listType);
-  }
-
-  if (listType === "watched") saveWatched(store);
-  else saveScheduled(store);
-
-  openDetails(id, type);
-}
-
-function quickWatched(id, type, title, poster) {
-  const key = `${type}:${id}`;
-  const store = getWatched();
-  if (!store[key]) {
-    store[key] = { id, type, title, poster, date: new Date().toLocaleDateString() };
-    saveWatched(store);
-    toast("Marked as watched!");
-  } else {
-    toast("Already watched!");
-  }
 }
 
 /* ============================================================
@@ -1550,7 +1047,7 @@ searchInput.addEventListener("input", async (e) => {
           <img src="${image(item.poster_path, 'w185')}" alt="">
           <div>
             <strong>${esc(title)}</strong>
-            <small>${type.toUpperCase()} •${item.release_date || item.first_air_date || ''}</small>
+            <small>${type.toUpperCase()} • ${item.release_date || item.first_air_date || ''}</small>
           </div>
         </button>
       `;
@@ -1559,120 +1056,6 @@ searchInput.addEventListener("input", async (e) => {
     searchSuggestions.classList.remove("hidden");
   } catch(e) {}
 });
-
-/* ============================================================
-   TIMELINE OVERLAY
-============================================================ */
-
-document.getElementById("timelineBtn").onclick = openTimeline;
-document.getElementById("mobileTimelineBtn").onclick = openTimeline;
-
-function openTimeline() {
-  document.getElementById("timelinePage").classList.remove("hidden");
-  switchTimelineTab("watched");
-}
-
-function closeTimeline() {
-  document.getElementById("timelinePage").classList.add("hidden");
-}
-
-function switchTimelineTab(tab) {
-  const wGrid = document.getElementById("timelineWatchedGrid");
-  const sGrid = document.getElementById("timelineScheduledGrid");
-  const wBtn = document.getElementById("tabWatchedBtn");
-  const sBtn = document.getElementById("tabScheduledBtn");
-
-  if (tab === "watched") {
-    wBtn.classList.add("active");
-    sBtn.classList.remove("active");
-    wGrid.classList.remove("hidden");
-    sGrid.classList.add("hidden");
-    renderTimelineGrid(wGrid, getWatched());
-  } else {
-    sBtn.classList.add("active");
-    wBtn.classList.remove("active");
-    sGrid.classList.remove("hidden");
-    wGrid.classList.add("hidden");
-    renderTimelineGrid(sGrid, getScheduled());
-  }
-}
-
-function renderTimelineGrid(container, dataObj) {
-  const items = Object.values(dataObj);
-  if (!items.length) {
-    container.innerHTML = `<div class="empty" style="grid-column:1/-1">No titles found in this list.</div>`;
-    return;
-  }
-
-  container.innerHTML = items.map(item => `
-    <div class="timeline-entry" onclick="openDetails(${item.id}, '${item.type}')">
-      <img src="${image(item.poster, 'w185')}" alt="">
-      <div class="te-info">
-        <div class="te-title">${esc(item.title)}</div>
-        <div class="te-date">${item.date}</div>
-      </div>
-    </div>
-  `).join("");
-}
-
-/* ============================================================
-   RANDOM PICKER
-============================================================ */
-
-document.getElementById("randomBtn").onclick = openRandom;
-document.getElementById("mobileRandomBtn").onclick = openRandom;
-
-function openRandom() {
-  document.getElementById("randomModal").classList.remove("hidden");
-}
-
-function closeRandom() {
-  document.getElementById("randomModal").classList.add("hidden");
-}
-
-function setRandomType(btn, type) {
-  state.randomType = type;
-  document.querySelectorAll("#randomType .choice").forEach(c => c.classList.remove("active"));
-  btn.classList.add("active");
-}
-
-async function pickRandom() {
-  const type = state.randomType === "all" ? (Math.random() > 0.5 ? "movie" : "tv") : state.randomType;
-  const page = Math.floor(Math.random() * 5) + 1;
-
-  try {
-    const data = await api(`/discover/${type}`, { page });
-    let items = data.results || [];
-
-    if (document.getElementById("excludeWatched").checked) {
-      const watched = getWatched();
-      items = items.filter(i => !watched[`${type}:${i.id}`]);
-    }
-
-    if (!items.length) {
-      toast("No match found, try picking again!");
-      return;
-    }
-
-    const picked = items[Math.floor(Math.random() * items.length)];
-    state.selectedRandomItem = { ...picked, media_type: type };
-
-    const resBox = document.getElementById("randomResult");
-    document.getElementById("randomResultImage").src = image(picked.poster_path, "w185");
-    document.getElementById("randomResultName").textContent = picked.title || picked.name;
-    document.getElementById("randomResultMeta").textContent = `${type.toUpperCase()} • Rating: ${picked.vote_average}/10`;
-    resBox.classList.add("show");
-  } catch(e) {
-    toast("Error picking title.");
-  }
-}
-
-function openRandomDetails() {
-  if (state.selectedRandomItem) {
-    closeRandom();
-    openDetails(state.selectedRandomItem.id, state.selectedRandomItem.media_type);
-  }
-}
 
 /* ============================================================
    INIT
