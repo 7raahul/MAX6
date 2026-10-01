@@ -289,7 +289,7 @@ a{
 }
 
 /* ============================================================
-   DETAILS OVERLAY & BACKDROP DEPTH
+   DETAILS OVERLAY (16:9 ASPECT BANNER NO PORTRAIT POSTER)
 ============================================================ */
 
 .detail-overlay{
@@ -300,62 +300,51 @@ a{
   overflow-y:auto;
 }
 
-.detail-hero{
-  position:relative;
-  min-height:480px;
-  display:flex;
-  align-items:flex-end;
-  background:#11151e;
-  overflow:hidden;
+.detail-wrapper{
+  max-width:1450px;
+  margin:0 auto;
+  padding:20px 22px 60px;
 }
 
-.detail-bg{
-  position:absolute;
-  inset:0;
+/* 16:9 BANNER WRAPPER */
+.detail-banner-wrap{
+  width:100%;
+  aspect-ratio:16 / 9;
+  max-height:560px;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+  background:#11151e;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  margin-bottom:28px;
+}
+
+.detail-banner-img{
   width:100%;
   height:100%;
   object-fit:cover;
-  opacity:.65;
-  filter:brightness(0.85);
+  object-position:center;
+  display:block;
 }
 
-.detail-bg-overlay{
+.detail-banner-gradient{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(8,10,15,0.98) 0%, rgba(8,10,15,0.75) 45%, rgba(8,10,15,0.3) 100%),
-             linear-gradient(0deg, #080a0f 0%, transparent 60%);
+  background:linear-gradient(180deg, rgba(8,10,15,0) 30%, rgba(8,10,15,0.95) 100%),
+             linear-gradient(90deg, rgba(8,10,15,0.6) 0%, rgba(8,10,15,0) 50%);
 }
 
-.detail-content{
-  position:relative;
-  z-index:3;
-  max-width:1450px;
-  width:100%;
-  margin:auto;
-  padding:50px 22px 30px;
-  display:flex;
-  gap:32px;
-}
-
-.detail-poster{
-  width:230px;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,.15);
-  box-shadow:var(--shadow);
-  flex-shrink:0;
-  object-fit:cover;
-}
-
-.detail-info{
-  flex:1;
+.detail-info-body{
+  margin-bottom:28px;
 }
 
 .detail-title{
-  font-size:38px;
+  font-size:36px;
   font-weight:900;
-  line-height:1.1;
+  line-height:1.15;
   margin:0 0 10px;
-  letter-spacing:-.8px;
+  letter-spacing:-.5px;
 }
 
 .detail-meta-row{
@@ -379,25 +368,23 @@ a{
   color:var(--gold);
   font-weight:800;
   font-size:13px;
-  backdrop-filter:blur(10px);
 }
 
 .detail-overview{
   color:#d1d5db;
   line-height:1.6;
   font-size:14px;
-  max-width:900px;
+  max-width:1000px;
   margin-bottom:24px;
-  text-shadow:0 2px 4px rgba(0,0,0,0.8);
 }
 
-/* MERGED INFO GRID WITH OTT CARD */
+/* INFO GRID */
 
 .info-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:15px;
-  margin-bottom:30px;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:16px;
+  margin-bottom:28px;
 }
 
 .info-card{
@@ -405,7 +392,6 @@ a{
   border:1px solid var(--border);
   border-radius:12px;
   padding:14px;
-  backdrop-filter:blur(12px);
 }
 
 .info-card label{
@@ -455,22 +441,20 @@ a{
 /* ACTION BUTTONS BAR */
 
 .section-actions-bar{
-  max-width:1450px;
-  margin:0 auto 25px;
-  padding:0 22px;
   display:flex;
   gap:12px;
   flex-wrap:wrap;
+  margin-bottom:30px;
 }
 
 .action-btn{
   background:var(--panel2);
   border:1px solid var(--border);
   color:#fff;
-  padding:12px 22px;
+  padding:12px 24px;
   border-radius:12px;
   font-weight:700;
-  font-size:13px;
+  font-size:14px;
   display:inline-flex;
   align-items:center;
   gap:8px;
@@ -484,22 +468,21 @@ a{
 
 .action-btn.active{
   background:#2e3444;
-  border-color:rgba(255,255,255,0.3);
+  border-color:rgba(255,255,255,0.4);
   color:#fff;
+  box-shadow:0 0 12px rgba(255,255,255,0.1);
 }
 
 /* SECTIONS BUILDER */
 
-.section-block{
-  max-width:1450px;
-  margin:0 auto 40px;
-  padding:0 22px;
+.detail-tab-content{
+  margin-bottom:40px;
 }
 
 .block-title{
   font-size:20px;
   font-weight:800;
-  margin:0 0 16px;
+  margin:0 0 18px;
   display:flex;
   align-items:center;
   gap:8px;
@@ -643,8 +626,8 @@ a{
 
 .media-gallery{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:14px;
 }
 
 .media-item{
@@ -669,7 +652,7 @@ a{
 }
 
 /* ============================================================
-   EPISODE SUB-PAGE OVERLAY (CLICK TO VIEW EPISODE DETAILS)
+   EPISODE SUB-PAGE OVERLAY
 ============================================================ */
 
 .episode-overlay{
@@ -688,7 +671,8 @@ a{
 
 .ep-hero-img{
   width:100%;
-  max-height:450px;
+  aspect-ratio:16/9;
+  max-height:480px;
   object-fit:cover;
   border-radius:18px;
   border:1px solid var(--border);
@@ -757,9 +741,6 @@ a{
   .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   .pill-btn span{ display:none; }
   .pill-btn{ padding:10px 14px; }
-  .detail-content{ flex-direction:column; align-items:center; text-align:center; }
-  .detail-poster{ width:180px; }
-  .detail-meta-row{ justify-content:center; }
   .ep-card{ flex-direction:column; }
   .ep-still{ width:100%; }
 }
@@ -1016,14 +997,14 @@ function setupInfiniteScroll() {
 }
 
 /* ============================================================
-   DETAILS VIEW
+   DETAILS VIEW (16:9 BANNER - NO PORTRAIT POSTER - TOGGLE SECTIONS)
 ============================================================ */
 
 async function openDetails(id, type) {
   closeSearchModal();
   state.currentShowId = id;
 
-  // Push History State for Browser Navigation
+  // Push History State for Native Browser Navigation
   history.pushState({ view: 'details', id, type }, '', `#details-${type}-${id}`);
 
   const overlay = document.getElementById("detailOverlay");
@@ -1113,7 +1094,7 @@ async function openDetails(id, type) {
       `;
     }
 
-    const castHTML = (credits.cast || []).slice(0, 18).map(c => `
+    const castHTML = (credits.cast || []).slice(0, 20).map(c => `
       <div class="cast-card">
         <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="">
         <div class="cast-name">${esc(c.name)}</div>
@@ -1122,75 +1103,94 @@ async function openDetails(id, type) {
     `).join('');
 
     body.innerHTML = `
-      <div class="detail-hero">
-        <img class="detail-bg" src="${image(data.backdrop_path, 'original')}" alt="">
-        <div class="detail-bg-overlay"></div>
-        <div class="detail-content">
-          <img class="detail-poster" src="${image(data.poster_path)}" alt="">
-          <div class="detail-info">
-            <h1 class="detail-title">${esc(title)}</h1>
-            <div class="detail-meta-row">
-              <div class="tmdb-rating-pill">⭐ ${rating} / 10</div>
-              <span>📅 ${releaseDate}</span>
-              <span>• ${type.toUpperCase()}</span>
-            </div>
-            <p class="detail-overview">${esc(data.overview)}</p>
+      <div class="detail-wrapper">
+        <!-- 16:9 BANNER IMAGE (NO PORTRAIT POSTER) -->
+        <div class="detail-banner-wrap">
+          <img class="detail-banner-img" src="${image(data.backdrop_path, 'original')}" alt="">
+          <div class="detail-banner-gradient"></div>
+        </div>
 
-            <div class="info-grid">
-              ${metricsHTML}
-            </div>
+        <div class="detail-info-body">
+          <h1 class="detail-title">${esc(title)}</h1>
+          <div class="detail-meta-row">
+            <div class="tmdb-rating-pill">⭐ ${rating} / 10</div>
+            <span>📅 ${releaseDate}</span>
+            <span>• ${type.toUpperCase()}</span>
+          </div>
+          <p class="detail-overview">${esc(data.overview)}</p>
+
+          <div class="info-grid">
+            ${metricsHTML}
           </div>
         </div>
-      </div>
 
-      <!-- ACTION BUTTONS BAR -->
-      <div class="section-actions-bar">
-        <button class="action-btn" onclick="scrollToSection('secCast')">👥 Cast & Crew</button>
-        ${type === 'tv' ? `<button class="action-btn" onclick="scrollToSection('secSeasons')">📺 Seasons & Episodes</button>` : ''}
-        <button class="action-btn" onclick="scrollToSection('secMedia')">🖼️ Media & Visuals</button>
-      </div>
-
-      <section id="secCast" class="section-block">
-        <h2 class="block-title">👥 Top Cast (Original & Character Name)</h2>
-        <div class="cast-grid">
-          ${castHTML || '<div class="empty">No cast info available.</div>'}
+        <!-- DYNAMIC ACTION BUTTONS -->
+        <div class="section-actions-bar">
+          <button class="action-btn" onclick="toggleDetailTab('secCast', this)">👥 Cast & Crew</button>
+          ${type === 'tv' ? `<button class="action-btn" onclick="toggleDetailTab('secSeasons', this)">📺 Seasons & Episodes</button>` : ''}
+          <button class="action-btn" onclick="toggleDetailTab('secMedia', this)">🖼️ Media & Visuals</button>
         </div>
-      </section>
 
-      ${type === 'tv' ? `
-        <section id="secSeasons" class="section-block">
-          <h2 class="block-title">📺 Season & Episode Guide</h2>
-          <div class="season-select-wrap">
-            <select id="seasonSelect" class="season-select" onchange="loadSeasonEpisodes(${id}, this.value)">
-              ${Array.from({length: data.number_of_seasons || 1}, (_, i) => `<option value="${i+1}">Season ${i+1}</option>`).join('')}
-            </select>
+        <!-- HIDDEN SECTIONS (APPEAR ONLY ON BUTTON CLICK) -->
+        <section id="secCast" class="detail-tab-content hidden">
+          <h2 class="block-title">👥 Top Cast (Original & Character Name)</h2>
+          <div class="cast-grid">
+            ${castHTML || '<div class="empty">No cast info available.</div>'}
           </div>
-          <div id="episodesList" class="episodes-list"></div>
         </section>
-      ` : ''}
 
-      <section id="secMedia" class="section-block">
-        <h2 class="block-title">🖼️ Media & Visuals</h2>
-        <div class="media-tabs">
-          <button class="media-tab-btn active" onclick="switchMediaTab('backdrops', this)">Backdrops (${state.currentMedia.backdrops.length})</button>
-          <button class="media-tab-btn" onclick="switchMediaTab('posters', this)">Posters (${state.currentMedia.posters.length})</button>
-          <button class="media-tab-btn" onclick="switchMediaTab('logos', this)">Logos (${state.currentMedia.logos.length})</button>
-        </div>
-        <div id="mediaGallery" class="media-gallery"></div>
-      </section>
+        ${type === 'tv' ? `
+          <section id="secSeasons" class="detail-tab-content hidden">
+            <h2 class="block-title">📺 Season & Episode Guide</h2>
+            <div class="season-select-wrap">
+              <select id="seasonSelect" class="season-select" onchange="loadSeasonEpisodes(${id}, this.value)">
+                ${Array.from({length: data.number_of_seasons || 1}, (_, i) => `<option value="${i+1}">Season ${i+1}</option>`).join('')}
+              </select>
+            </div>
+            <div id="episodesList" class="episodes-list"></div>
+          </section>
+        ` : ''}
+
+        <section id="secMedia" class="detail-tab-content hidden">
+          <h2 class="block-title">🖼️ Media & Visuals</h2>
+          <div class="media-tabs">
+            <button class="media-tab-btn active" onclick="switchMediaTab('backdrops', this)">Backdrops (${state.currentMedia.backdrops.length})</button>
+            <button class="media-tab-btn" onclick="switchMediaTab('posters', this)">Posters (${state.currentMedia.posters.length})</button>
+            <button class="media-tab-btn" onclick="switchMediaTab('logos', this)">Logos (${state.currentMedia.logos.length})</button>
+          </div>
+          <div id="mediaGallery" class="media-gallery"></div>
+        </section>
+      </div>
     `;
 
     if (type === 'tv') loadSeasonEpisodes(id, 1);
-    switchMediaTab('backdrops', document.querySelector('.media-tab-btn'));
+    switchMediaTab('backdrops', null);
 
   } catch(e) {
     body.innerHTML = `<div class="empty" style="margin-top:100px">Failed to load details.</div>`;
   }
 }
 
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
+/* ============================================================
+   TAB TOGGLE LOGIC FOR DETAILS PAGE
+============================================================ */
+
+function toggleDetailTab(targetId, btnEl) {
+  const targetSec = document.getElementById(targetId);
+  if (!targetSec) return;
+
+  const isAlreadyVisible = !targetSec.classList.contains('hidden');
+
+  // Hide all dynamic section tabs
+  document.querySelectorAll('.detail-tab-content').forEach(sec => sec.classList.add('hidden'));
+  document.querySelectorAll('.section-actions-bar .action-btn').forEach(b => b.classList.remove('active'));
+
+  // Toggle state
+  if (!isAlreadyVisible) {
+    targetSec.classList.remove('hidden');
+    btnEl.classList.add('active');
+    targetSec.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 /* ============================================================
@@ -1199,6 +1199,7 @@ function scrollToSection(id) {
 
 async function loadSeasonEpisodes(tvId, seasonNum) {
   const container = document.getElementById("episodesList");
+  if (!container) return;
   container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading episodes...</div>`;
 
   try {
@@ -1275,10 +1276,14 @@ async function openEpisodeDetails(tvId, seasonNum, epNum) {
 ============================================================ */
 
 function switchMediaTab(category, btnEl) {
-  document.querySelectorAll('.media-tab-btn').forEach(b => b.classList.remove('active'));
-  if (btnEl) btnEl.classList.add('active');
+  if (btnEl) {
+    document.querySelectorAll('.media-tab-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
 
   const gallery = document.getElementById("mediaGallery");
+  if (!gallery) return;
+
   const items = state.currentMedia[category] || [];
 
   if (!items.length) {
