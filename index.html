@@ -104,6 +104,53 @@
                 box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(251, 191, 36, 0.08);
             }
         }
+
+        /* ===== Modern desktop details redesign ===== */
+        @media (min-width: 900px) {
+            .desktop-detail-shell { margin-bottom: 10px; }
+            .desktop-detail-hero {
+                display:grid; grid-template-columns:minmax(0, 46%) minmax(0, 54%);
+                min-height:410px; overflow:hidden; border:1px solid rgba(255,255,255,.09);
+                border-radius:24px; background:#050506; box-shadow:0 22px 55px rgba(0,0,0,.42);
+            }
+            .desktop-detail-media { position:relative; min-height:410px; overflow:hidden; background:#050506; }
+            .desktop-detail-backdrop { transition:opacity 1s ease, transform 8s ease; }
+            .desktop-detail-media:hover .desktop-detail-backdrop.opacity-100 { transform:scale(1.025); }
+            .desktop-detail-media-shade { position:absolute; inset:0; background:linear-gradient(90deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.28) 100%),linear-gradient(0deg,rgba(0,0,0,.38),transparent 45%); pointer-events:none; }
+            .desktop-detail-rating { position:absolute; top:18px; right:18px; display:flex; align-items:center; gap:7px; padding:8px 11px; border:1px solid rgba(245,197,24,.28); border-radius:12px; background:rgba(7,8,10,.86); color:#f5c518; box-shadow:0 8px 24px rgba(0,0,0,.35); font-size:14px; backdrop-filter:blur(8px); }
+            .desktop-detail-rating i { font-size:12px; }
+            .desktop-detail-media-label { position:absolute; left:18px; bottom:18px; padding:7px 10px; border:1px solid rgba(255,255,255,.15); border-radius:9px; background:rgba(0,0,0,.62); color:#e5e7eb; font-size:10px; font-weight:800; letter-spacing:1.4px; }
+            .desktop-detail-info { min-width:0; display:flex; flex-direction:column; justify-content:center; gap:16px; padding:30px 38px 28px; background:#070709; }
+            .desktop-detail-topline { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+            .desktop-detail-meta { display:flex; align-items:center; flex-wrap:wrap; gap:9px; color:#9ca3af; font-size:12px; font-weight:700; }
+            .desktop-cert { padding:3px 7px; border:1px solid rgba(255,255,255,.14); border-radius:6px; color:#d1d5db; font-size:10px; }
+            .desktop-copy-btn { flex:none; border:1px solid rgba(255,255,255,.13); background:#111216; color:#cbd5e1; border-radius:9px; padding:8px 11px; font-size:11px; font-weight:700; transition:.2s; }
+            .desktop-copy-btn:hover { color:#fff; border-color:rgba(255,255,255,.3); background:#18191e; }
+            .desktop-copy-btn i { margin-right:5px; font-size:10px; }
+            .desktop-title-wrap { min-height:72px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; }
+            .desktop-title-logo { max-width:min(82%,420px); max-height:78px; width:auto; object-fit:contain; object-position:left center; filter:drop-shadow(0 9px 20px rgba(0,0,0,.45)); }
+            .desktop-title { margin:0; color:#fff; font-size:38px; line-height:1.04; letter-spacing:-1.2px; font-weight:900; }
+            .desktop-title-fallback { margin:6px 0 0; color:#737985; font-size:11px; font-weight:600; }
+            .desktop-genre-row { display:flex; flex-wrap:wrap; gap:7px; }
+            .desktop-genre-row span { padding:6px 9px; border:1px solid rgba(255,255,255,.11); border-radius:8px; background:#111216; color:#bfc4ce; font-size:10px; font-weight:700; }
+            .desktop-overview-block { max-width:760px; }
+            .desktop-section-kicker { margin-bottom:6px; color:#737985; font-size:9px; font-weight:900; letter-spacing:1.35px; text-transform:uppercase; }
+            .desktop-overview { margin:0; color:#c8ccd4; font-size:13px; line-height:1.65; }
+            .desktop-readmore { margin-top:5px; padding:0; border:0; background:none; color:#f5c518; font-size:11px; font-weight:800; }
+            .desktop-crew-line { color:#aab0bb; font-size:11px; line-height:1.5; }
+            .desktop-upcoming { margin-top:-4px; }
+            .desktop-upcoming > div { background:rgba(245,197,24,.045) !important; border-color:rgba(245,197,24,.18) !important; }
+            .desktop-action-row { display:flex; flex-wrap:wrap; gap:8px; padding-top:2px; }
+            .desktop-action { border:1px solid rgba(255,255,255,.11); background:#111216; color:#cbd0d8; border-radius:10px; padding:9px 12px; font-size:11px; font-weight:800; transition:.2s; }
+            .desktop-action:hover { border-color:rgba(255,255,255,.28); color:#fff; transform:translateY(-1px); }
+            .desktop-action.primary { background:#f5f5f5; color:#08090b; border-color:#f5f5f5; }
+            .desktop-action i { margin-right:6px; font-size:10px; }
+            .desktop-stat-strip { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:9px; margin-top:12px; }
+            .desktop-stat-strip > * { min-width:0; }
+            .desktop-stat-strip .card-solid { background:#0d0e12; border-color:rgba(255,255,255,.08); border-radius:14px; padding:12px 13px; }
+            /* Make the content below the hero feel like one coherent desktop workspace. */
+            .details-view-shell { max-width:1450px; margin:0 auto; }
+        }
     </style>
 </head>
 <body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
@@ -1300,42 +1347,58 @@
             }
 
             content.innerHTML = `
-                <!-- DESKTOP HEADER: 16:9 image left (rating top-right), black info panel right -->
-                <div class="hidden lg:block">
-                    <div class="relative flex items-stretch bg-black border border-white/10">
-                        <div class="relative w-1/2 max-w-[700px] aspect-video flex-shrink-0 overflow-hidden bg-[#060608]">
-                            <img id="detail-backdrop-a-d" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100">
-                            <img id="detail-backdrop-b-d" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0">
-                            <div class="absolute inset-0 bg-black/10"></div>
-                            <span class="absolute top-3 right-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-sm font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 backdrop-blur-md">
-                                <i class="fa-solid fa-star text-xs"></i> ${rating}
-                            </span>
+                <!-- DESKTOP HEADER: modern cinematic split layout; mobile block below is untouched -->
+                <div class="hidden lg:block desktop-detail-shell">
+                    <div class="desktop-detail-hero">
+                        <div class="desktop-detail-media">
+                            <img id="detail-backdrop-a-d" src="${backdrop}" class="desktop-detail-backdrop absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100">
+                            <img id="detail-backdrop-b-d" src="${backdrop}" class="desktop-detail-backdrop absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0">
+                            <div class="desktop-detail-media-shade"></div>
+                            <div class="desktop-detail-rating">
+                                <i class="fa-solid fa-star"></i><strong>${rating}</strong>
+                            </div>
+                            <div class="desktop-detail-media-label">${type === 'movie' ? 'MOVIE' : 'TV SHOW'}</div>
                         </div>
 
-                        <div class="flex-1 min-w-0 flex flex-col justify-center gap-3 px-10 py-6 bg-black">
-                            <div class="flex items-center justify-between gap-3">
-                                <p class="text-sm text-slate-400">${hdrMeta}</p>
-                                <button onclick="copyDetailLink()" class="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white border border-white/15 hover:border-white/40 rounded-lg px-3 py-1.5 transition">
-                                    <i class="fa-solid fa-link text-[10px]"></i> Copy link
-                                </button>
+                        <div class="desktop-detail-info">
+                            <div class="desktop-detail-topline">
+                                <div class="desktop-detail-meta">
+                                    <span>${releaseYear !== 'N/A' ? releaseYear : '—'}</span>
+                                    <i class="fa-solid fa-circle text-[4px]"></i>
+                                    <span>${type === 'movie' ? (chipRuntime ? chipRuntime + ' min' : 'Movie') : seasonsValue}</span>
+                                    ${ageRating !== '—' ? `<span class="desktop-cert">${ageRating}</span>` : ''}
+                                </div>
+                                <button onclick="copyDetailLink()" class="desktop-copy-btn"><i class="fa-solid fa-link"></i> Share</button>
                             </div>
 
-                            ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="max-h-20 max-w-[80%] object-contain object-left drop-shadow-2xl">`
-                                      : `<h1 class="text-3xl font-black text-white leading-tight">${title}</h1>`}
-
-                            ${chipGenres.length ? `<div class="flex flex-wrap gap-2">${chipGenres.map(g => `<span class="text-xs font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-full">${g}</span>`).join('')}</div>` : ''}
-
-                            <div>
-                                <p id="hdr-overview" class="text-sm text-slate-300 leading-relaxed ${overviewText.length > 200 ? 'line-clamp-3' : ''}">${overviewText}</p>
-                                ${overviewText.length > 200 ? `<button onclick="toggleHdrOverview(this)" class="mt-1 text-xs font-semibold text-amber-400 hover:text-amber-300 transition">Read more</button>` : ''}
+                            <div class="desktop-title-wrap">
+                                ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="desktop-title-logo">` : `<h1 class="desktop-title">${title}</h1>`}
+                                ${logoUrl ? `<p class="desktop-title-fallback">${title}</p>` : ''}
                             </div>
 
-                            ${crewLineHtml}
-                            ${upcomingHtml}
+                            ${chipGenres.length ? `<div class="desktop-genre-row">${chipGenres.map(g => `<span>${g}</span>`).join('')}</div>` : ''}
+
+                            <div class="desktop-overview-block">
+                                <div class="desktop-section-kicker">Overview</div>
+                                <p id="hdr-overview" class="desktop-overview ${overviewText.length > 260 ? 'line-clamp-4' : ''}">${overviewText}</p>
+                                ${overviewText.length > 260 ? `<button onclick="toggleHdrOverview(this)" class="desktop-readmore">Read more</button>` : ''}
+                            </div>
+
+                            ${crewLineHtml ? `<div class="desktop-crew-line">${crewLineHtml}</div>` : ''}
+                            ${upcomingHtml ? `<div class="desktop-upcoming">${upcomingHtml}</div>` : ''}
+
+                            <div class="desktop-action-row">
+                                <button onclick="switchDetailTab('overview')" class="desktop-action primary"><i class="fa-solid fa-circle-info"></i> Details</button>
+                                ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" class="desktop-action"><i class="fa-solid fa-layer-group"></i> Seasons</button>` : ''}
+                                <button onclick="switchDetailTab('more')" class="desktop-action"><i class="fa-solid fa-users"></i> Cast</button>
+                                ${hasMedia ? `<button onclick="switchDetailTab('media')" class="desktop-action"><i class="fa-solid fa-images"></i> Media</button>` : ''}
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-6 gap-3 mt-4">${statBoxesHtml}</div>
+                    <div class="desktop-stat-strip">
+                        ${statBoxesHtml}
+                    </div>
                 </div>
 
                 <div class="lg:flex lg:gap-10 lg:items-start">
