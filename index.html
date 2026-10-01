@@ -15,9 +15,7 @@
   --text:#f3f4f6;
   --muted:#9ca3af;
   --gold:#fbbf24;
-  --brand:#10b981;
-  --danger:#ef4444;
-  --shadow:0 14px 40px rgba(0,0,0,.5);
+  --shadow:0 20px 50px rgba(0,0,0,.6);
 }
 
 *{box-sizing:border-box}
@@ -31,7 +29,7 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  padding-bottom:40px;
+  padding-bottom:50px;
 }
 
 button, select, input{
@@ -51,172 +49,183 @@ a{
   display:none!important;
 }
 
-/* HEADER */
+/* ============================================================
+   NEW FLOATING PILL NAVIGATION (TOP CENTER)
+============================================================ */
 
-header{
+.top-pill-wrapper{
   position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(8,10,15,.92);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-}
-
-.nav{
-  max-width:1450px;
-  margin:auto;
-  min-height:70px;
-  padding:12px 22px;
+  top:16px;
+  z-index:2000;
   display:flex;
+  justify-content:center;
+  padding:0 15px;
+  pointer-events:none;
+}
+
+.pill-nav{
+  pointer-events:auto;
+  display:inline-flex;
   align-items:center;
-  gap:18px;
-}
-
-.logo{
-  font-size:22px;
-  font-weight:900;
-  letter-spacing:-.5px;
-  white-space:nowrap;
-  cursor:pointer;
-  color:#fff;
-}
-
-.logo span{
-  color:var(--gold);
-}
-
-.search-wrap{
-  flex:1;
-  max-width:450px;
-  position:relative;
-}
-
-.search{
-  width:100%;
-  background:#141822;
-  border:1px solid var(--border);
-  border-radius:12px;
-  color:white;
-  outline:none;
-  padding:9px 13px 9px 38px;
-  height:42px;
-  font-size:13px;
-}
-
-.search:focus{
-  border-color:#4b5563;
-}
-
-.search-icon{
-  position:absolute;
-  left:13px;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--muted);
-  font-size:16px;
-}
-
-.search-suggestions{
-  position:absolute;
-  left:0;
-  right:0;
-  top:calc(100% + 7px);
-  z-index:5000;
-  background:#121620;
-  border:1px solid var(--border);
-  border-radius:12px;
+  background:rgba(18, 21, 30, 0.88);
+  border:1px solid rgba(255, 255, 255, 0.12);
+  border-radius:40px;
+  padding:6px;
   box-shadow:var(--shadow);
-  overflow:hidden;
-  max-height:390px;
-  overflow-y:auto;
+  backdrop-filter:blur(20px);
+  gap:4px;
 }
 
-.search-suggestion{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:10px;
-  border:0;
-  background:transparent;
-  color:#fff;
-  width:100%;
-  text-align:left;
-  cursor:pointer;
-}
-
-.search-suggestion:hover{
-  background:#1a202c;
-}
-
-.search-suggestion img{
-  width:36px;
-  height:52px;
-  object-fit:cover;
-  border-radius:6px;
-  flex:0 0 36px;
-}
-
-.search-suggestion strong{
-  font-size:13px;
-  display:block;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.search-suggestion small{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:3px;
-}
-
-.global-media-filter{
-  max-width:1450px;
-  margin:0 auto;
-  padding:18px 22px 0;
+.pill-btn{
   display:flex;
   align-items:center;
   gap:8px;
-}
-
-.global-media-btn{
-  border:1px solid var(--border);
-  background:#121620;
+  padding:10px 22px;
+  border-radius:30px;
+  border:0;
+  background:transparent;
   color:#9ca3af;
-  padding:8px 18px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.05em;
-  cursor:pointer;
-  transition:all .2s ease;
+  font-size:13px;
+  font-weight:700;
+  transition:all .25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.global-media-btn:hover{
-  background:#1a202c;
+.pill-btn:hover{
   color:#fff;
 }
 
-.global-media-btn.active{
-  background:#fff;
-  border-color:#fff;
-  color:#080a0f;
+.pill-btn.active{
+  background:#2e3444;
+  color:#ffffff;
+  box-shadow:0 4px 14px rgba(0,0,0,.4);
 }
 
-/* MAIN CONTAINER & MINIMAL CARDS */
+.pill-icon{
+  width:18px;
+  height:18px;
+  fill:currentColor;
+  display:inline-block;
+  flex-shrink:0;
+}
+
+/* ============================================================
+   SEARCH OVERLAY MODAL
+============================================================ */
+
+.search-modal{
+  position:fixed;
+  inset:0;
+  z-index:6000;
+  background:rgba(8,10,15,.95);
+  backdrop-filter:blur(20px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:60px 20px 20px;
+}
+
+.search-modal-close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff;
+  border-radius:50%;
+  width:38px;
+  height:38px;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.search-box-large{
+  width:100%;
+  max-width:650px;
+  position:relative;
+}
+
+.search-input-large{
+  width:100%;
+  background:#171c28;
+  border:1px solid var(--border);
+  border-radius:16px;
+  color:#fff;
+  padding:16px 20px 16px 52px;
+  font-size:16px;
+  outline:none;
+}
+
+.search-input-large:focus{
+  border-color:#4b5563;
+}
+
+.search-icon-inside{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+}
+
+.search-results-list{
+  width:100%;
+  max-width:650px;
+  margin-top:15px;
+  max-height:60vh;
+  overflow-y:auto;
+  border-radius:16px;
+  background:#121620;
+  border:1px solid var(--border);
+}
+
+.search-item{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:background .2s;
+}
+
+.search-item:hover{
+  background:#1a202c;
+}
+
+.search-item img{
+  width:42px;
+  height:60px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.search-item-info strong{
+  font-size:14px;
+  display:block;
+  color:#fff;
+}
+
+.search-item-info small{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* ============================================================
+   MAIN CONTAINER & MINIMAL CARDS UI
+============================================================ */
 
 .container{
   max-width:1450px;
   margin:auto;
-  padding:20px 22px 60px;
+  padding:10px 22px 60px;
 }
 
 .grid{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
   gap:20px;
-  margin-top:15px;
 }
 
 .movie-card{
@@ -279,7 +288,9 @@ header{
   margin:0;
 }
 
-/* DETAILS OVERLAY */
+/* ============================================================
+   DETAILS OVERLAY
+============================================================ */
 
 .detail-overlay{
   position:fixed;
@@ -391,8 +402,6 @@ header{
   margin-bottom:24px;
 }
 
-/* DETAILS METRICS & OTT */
-
 .info-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -461,8 +470,6 @@ header{
   border:1px solid var(--border);
 }
 
-/* CAST SECTION */
-
 .section-block{
   max-width:1450px;
   margin:0 auto 40px;
@@ -512,8 +519,6 @@ header{
   overflow:hidden;
   text-overflow:ellipsis;
 }
-
-/* TV EPISODE GUIDE */
 
 .season-select-wrap{
   margin-bottom:20px;
@@ -581,8 +586,6 @@ header{
   overflow:hidden;
 }
 
-/* MEDIA SECTION & TABS */
-
 .media-tabs{
   display:flex;
   gap:10px;
@@ -632,8 +635,6 @@ header{
   background:#111520;
 }
 
-/* LIGHTBOX */
-
 .lightbox{
   position:fixed;
   inset:0;
@@ -651,8 +652,6 @@ header{
   object-fit:contain;
   border-radius:8px;
 }
-
-/* UTILS */
 
 .loading, .empty{
   padding:40px 15px;
@@ -675,6 +674,8 @@ header{
 
 @media(max-width:768px){
   .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .pill-btn span{ display:none; }
+  .pill-btn{ padding:10px 14px; }
   .detail-content{ flex-direction:column; align-items:center; text-align:center; }
   .detail-poster{ width:180px; }
   .detail-meta-row{ justify-content:center; }
@@ -686,22 +687,36 @@ header{
 
 <body>
 
-<header>
-  <div class="nav">
-    <div class="logo" onclick="goHome()">Cinemo<span>.</span></div>
+<!-- TOP FLOATING PILL NAVIGATION -->
+<div class="top-pill-wrapper">
+  <nav class="pill-nav">
+    <button type="button" class="pill-btn active" data-tab="home" onclick="setActiveTab('home')">
+      <svg class="pill-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </button>
+    <button type="button" class="pill-btn" data-tab="movie" onclick="setActiveTab('movie')">
+      <svg class="pill-icon" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H9l2 4H8L6 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+      <span>Movies</span>
+    </button>
+    <button type="button" class="pill-btn" data-tab="tv" onclick="setActiveTab('tv')">
+      <svg class="pill-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+      <span>TV Shows</span>
+    </button>
+    <button type="button" class="pill-btn" data-tab="search" onclick="openSearchModal()">
+      <svg class="pill-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span>Search</span>
+    </button>
+  </nav>
+</div>
 
-    <div class="search-wrap">
-      <span class="search-icon">⌕</span>
-      <input id="searchInput" class="search" type="search" autocomplete="off" placeholder="Search movies & TV shows...">
-      <div id="searchSuggestions" class="search-suggestions hidden"></div>
-    </div>
+<!-- SEARCH MODAL -->
+<div id="searchModal" class="search-modal hidden">
+  <button class="search-modal-close" onclick="closeSearchModal()">✕</button>
+  <div class="search-box-large">
+    <span class="search-icon-inside">🔍</span>
+    <input id="searchInput" class="search-input-large" type="search" placeholder="Type movie or TV show name..." autocomplete="off">
   </div>
-</header>
-
-<div class="global-media-filter" id="globalMediaFilter">
-  <button type="button" class="global-media-btn active" data-value="all" onclick="setMainMediaType('all')">ALL</button>
-  <button type="button" class="global-media-btn" data-value="movie" onclick="setMainMediaType('movie')">MOVIES</button>
-  <button type="button" class="global-media-btn" data-value="tv" onclick="setMainMediaType('tv')">TV SHOWS</button>
+  <div id="searchResultsList" class="search-results-list hidden"></div>
 </div>
 
 <main class="container">
@@ -732,7 +747,7 @@ const IMG_BASE = "https://image.tmdb.org/t/p/";
 const state = {
   page: 1,
   totalPages: 1,
-  type: "all",
+  tab: "home", // home, movie, tv
   isLoading: false,
   results: [],
   currentMedia: { posters: [], backdrops: [], logos: [] }
@@ -793,12 +808,30 @@ function getBoxOfficeStatus(budget, revenue) {
   return { text: 'FLOP', class: 'status-flop' };
 }
 
-function goHome() {
-  state.type = "all";
+/* ============================================================
+   PILL NAVIGATION LOGIC
+============================================================ */
+
+function setActiveTab(tab) {
+  if (state.tab === tab) return;
+  state.tab = tab;
   state.page = 1;
   state.results = [];
-  setMainMediaType('all');
-  closeDetails();
+
+  document.querySelectorAll('.pill-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+
+  loadBrowse();
+}
+
+function openSearchModal() {
+  document.getElementById("searchModal").classList.remove("hidden");
+  document.getElementById("searchInput").focus();
+}
+
+function closeSearchModal() {
+  document.getElementById("searchModal").classList.add("hidden");
 }
 
 /* ============================================================
@@ -810,11 +843,11 @@ async function loadBrowse(append = false) {
   state.isLoading = true;
 
   const container = document.getElementById("results");
-  if (!append) container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading titles...</div>`;
+  if (!append) container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading...</div>`;
 
   try {
     let newItems = [];
-    if (state.type === "all") {
+    if (state.tab === "home") {
       const [m, t] = await Promise.all([
         api("/discover/movie", { page: state.page }),
         api("/discover/tv", { page: state.page })
@@ -826,8 +859,8 @@ async function loadBrowse(append = false) {
       newItems.sort((a,b) => b.popularity - a.popularity);
       state.totalPages = Math.max(m.total_pages || 1, t.total_pages || 1);
     } else {
-      const res = await api(`/discover/${state.type}`, { page: state.page });
-      newItems = (res.results || []).map(r => ({ ...r, media_type: state.type }));
+      const res = await api(`/discover/${state.tab}`, { page: state.page });
+      newItems = (res.results || []).map(r => ({ ...r, media_type: state.tab }));
       state.totalPages = res.total_pages || 1;
     }
 
@@ -836,7 +869,7 @@ async function loadBrowse(append = false) {
 
     renderResults();
   } catch(e) {
-    if (!append) container.innerHTML = `<div class="empty">Failed to load content.</div>`;
+    if (!append) container.innerHTML = `<div class="empty">Failed to load titles.</div>`;
   } finally {
     state.isLoading = false;
   }
@@ -849,7 +882,6 @@ function renderResults() {
     return;
   }
 
-  /* MINIMAL CARD UI: Poster + Rating (Top-Right) + Title */
   container.innerHTML = state.results.map(item => {
     const type = item.media_type || (item.first_air_date ? "tv" : "movie");
     const title = item.title || item.name;
@@ -880,21 +912,12 @@ function setupInfiniteScroll() {
   observer.observe(sentinel);
 }
 
-function setMainMediaType(type) {
-  state.type = type;
-  state.page = 1;
-  state.results = [];
-  document.querySelectorAll(".global-media-btn").forEach(b => {
-    b.classList.toggle("active", b.dataset.value === type);
-  });
-  loadBrowse();
-}
-
 /* ============================================================
-   DETAILS VIEW (MOVIES & TV SHOWS)
+   DETAILS VIEW
 ============================================================ */
 
 async function openDetails(id, type) {
+  closeSearchModal();
   const overlay = document.getElementById("detailOverlay");
   const body = document.getElementById("detailBody");
   overlay.classList.remove("hidden");
@@ -920,7 +943,6 @@ async function openDetails(id, type) {
     const releaseDate = formatDate(data.release_date || data.first_air_date);
     const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
     
-    // Director / Creator
     let director = 'N/A';
     if (type === 'movie') {
       const dirObj = (credits.crew || []).find(c => c.job === 'Director');
@@ -934,10 +956,8 @@ async function openDetails(id, type) {
       }
     }
 
-    // OTT Providers (India IN)
     const inProviders = providers.results?.IN?.flatrate || providers.results?.IN?.buy || [];
 
-    // Metrics HTML
     let metricsHTML = '';
     if (type === 'movie') {
       const status = getBoxOfficeStatus(data.budget, data.revenue);
@@ -979,7 +999,6 @@ async function openDetails(id, type) {
       `;
     }
 
-    // Cast HTML
     const castHTML = (credits.cast || []).slice(0, 12).map(c => `
       <div class="cast-card">
         <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="">
@@ -1019,7 +1038,6 @@ async function openDetails(id, type) {
         </div>
       </div>
 
-      <!-- CAST SECTION -->
       <section class="section-block">
         <h2 class="block-title">Top Cast</h2>
         <div class="cast-row">
@@ -1027,7 +1045,6 @@ async function openDetails(id, type) {
         </div>
       </section>
 
-      <!-- TV SHOW SEASON & EPISODE GUIDE -->
       ${type === 'tv' ? `
         <section class="section-block">
           <h2 class="block-title">Season & Episode Guide</h2>
@@ -1040,7 +1057,6 @@ async function openDetails(id, type) {
         </section>
       ` : ''}
 
-      <!-- MEDIA SECTION -->
       <section class="section-block">
         <h2 class="block-title">Media & Visuals</h2>
         <div class="media-tabs">
@@ -1066,7 +1082,7 @@ function closeDetails() {
 }
 
 /* ============================================================
-   TV SHOW EPISODES
+   TV EPISODES & MEDIA
 ============================================================ */
 
 async function loadSeasonEpisodes(tvId, seasonNum) {
@@ -1092,10 +1108,6 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
     container.innerHTML = `<div class="empty">Failed to load season episodes.</div>`;
   }
 }
-
-/* ============================================================
-   MEDIA GALLERY & LIGHTBOX
-============================================================ */
 
 function switchMediaTab(category, btnEl) {
   document.querySelectorAll('.media-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1125,51 +1137,45 @@ function openLightbox(src) {
 }
 
 /* ============================================================
-   SEARCH SUGGESTIONS
+   SEARCH INPUT LISTENER
 ============================================================ */
 
 const searchInput = document.getElementById("searchInput");
-const searchSuggestions = document.getElementById("searchSuggestions");
+const searchResultsList = document.getElementById("searchResultsList");
 
 searchInput.addEventListener("input", async (e) => {
   const q = e.target.value.trim();
   if (q.length < 2) {
-    searchSuggestions.classList.add("hidden");
+    searchResultsList.classList.add("hidden");
     return;
   }
 
   try {
     const data = await api("/search/multi", { query: q });
-    const items = (data.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv').slice(0, 5);
+    const items = (data.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv').slice(0, 10);
 
     if (!items.length) {
-      searchSuggestions.classList.add("hidden");
+      searchResultsList.classList.add("hidden");
       return;
     }
 
-    searchSuggestions.innerHTML = items.map(item => {
+    searchResultsList.innerHTML = items.map(item => {
       const type = item.media_type;
       const title = item.title || item.name;
       const date = formatDate(item.release_date || item.first_air_date);
       return `
-        <button class="search-suggestion" onclick="openDetails(${item.id}, '${type}')">
+        <div class="search-item" onclick="openDetails(${item.id}, '${type}')">
           <img src="${image(item.poster_path, 'w185')}" alt="">
-          <div>
+          <div class="search-item-info">
             <strong>${esc(title)}</strong>
             <small>${type.toUpperCase()} • ${date}</small>
           </div>
-        </button>
+        </div>
       `;
     }).join("");
 
-    searchSuggestions.classList.remove("hidden");
+    searchResultsList.classList.remove("hidden");
   } catch(e) {}
-});
-
-document.addEventListener("click", (e) => {
-  if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
-    searchSuggestions.classList.add("hidden");
-  }
 });
 
 /* ============================================================
