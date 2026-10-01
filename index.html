@@ -109,6 +109,140 @@ a{
 }
 
 /* ============================================================
+   16:9 HERO SLIDER SECTION
+============================================================ */
+
+.hero-wrapper{
+  width:100%;
+  aspect-ratio:16/9;
+  max-height:540px;
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:32px;
+  background:#11151e;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+
+.hero-slide{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.7s ease-in-out;
+  z-index:1;
+}
+
+.hero-slide.active{
+  opacity:1;
+  pointer-events:auto;
+  z-index:2;
+}
+
+.hero-backdrop{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+}
+
+.hero-gradient{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(8,10,15,0.1) 0%, rgba(8,10,15,0.95) 100%),
+             linear-gradient(90deg, rgba(8,10,15,0.85) 0%, rgba(8,10,15,0.2) 65%);
+}
+
+.hero-content{
+  position:absolute;
+  bottom:28px;
+  left:28px;
+  right:28px;
+  z-index:3;
+  max-width:650px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.hero-title{
+  font-size:32px;
+  font-weight:900;
+  margin:0;
+  color:#fff;
+  line-height:1.15;
+  text-shadow:0 3px 12px rgba(0,0,0,0.9);
+}
+
+.hero-meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+}
+
+.hero-overview{
+  font-size:13px;
+  color:#d1d5db;
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  text-shadow:0 2px 6px rgba(0,0,0,0.8);
+  margin:0;
+}
+
+.hero-cta-btn{
+  background:#fff;
+  color:#000;
+  border:0;
+  padding:10px 22px;
+  border-radius:10px;
+  font-weight:800;
+  font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:4px;
+  transition:transform .2s, background .2s;
+}
+
+.hero-cta-btn:hover{
+  background:#e5e7eb;
+  transform:scale(1.03);
+}
+
+.hero-dots{
+  position:absolute;
+  bottom:16px;
+  right:24px;
+  z-index:4;
+  display:flex;
+  gap:8px;
+}
+
+.hero-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  border:0;
+  padding:0;
+  transition:all .3s;
+}
+
+.hero-dot.active{
+  background:#fff;
+  width:24px;
+  border-radius:10px;
+}
+
+/* ============================================================
    SEARCH OVERLAY MODAL
 ============================================================ */
 
@@ -306,7 +440,6 @@ a{
   padding:20px 22px 60px;
 }
 
-/* 2-COLUMN GRID SYSTEM FOR HERO SECTION */
 .detail-hero-grid{
   display:grid;
   grid-template-columns:1.8fr 1fr;
@@ -315,7 +448,6 @@ a{
   align-items:stretch;
 }
 
-/* LEFT COLUMN BANNER */
 .detail-banner-wrap{
   width:100%;
   min-height:380px;
@@ -328,7 +460,6 @@ a{
   box-shadow:var(--shadow);
 }
 
-/* OBJECT-POSITION TOP TO PREVENT TOP CROPPING */
 .detail-banner-img{
   width:100%;
   height:100%;
@@ -408,7 +539,6 @@ a{
   font-size:12px;
 }
 
-/* RIGHT COLUMN INFO CARDS STACK */
 .detail-right-info{
   display:flex;
   flex-direction:column;
@@ -517,8 +647,6 @@ a{
   color:#fff;
   box-shadow:0 0 12px rgba(255,255,255,0.1);
 }
-
-/* SECTIONS BUILDER */
 
 .detail-tab-content{
   margin-bottom:40px;
@@ -696,9 +824,7 @@ a{
   background:#111520;
 }
 
-/* ============================================================
-   EPISODE SUB-PAGE OVERLAY
-============================================================ */
+/* EPISODE OVERLAY */
 
 .episode-overlay{
   position:fixed;
@@ -783,6 +909,8 @@ a{
 @keyframes spin{ to{transform:rotate(360deg)} }
 
 @media(max-width:900px){
+  .hero-wrapper{ aspect-ratio:16/10; }
+  .hero-title{ font-size:24px; }
   .detail-hero-grid{ grid-template-columns:1fr; }
   .detail-banner-wrap{ min-height:280px; height:280px; }
 }
@@ -791,10 +919,10 @@ a{
   .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   .pill-btn span{ display:none; }
   .pill-btn{ padding:10px 14px; }
+  .hero-content{ left:16px; right:16px; bottom:20px; }
+  .hero-overview{ display:none; }
   .ep-card{ flex-direction:column; }
   .ep-still{ width:100%; }
-  .detail-logo-img{ max-width:85%; max-height:70px; }
-  .banner-overlay-content{ left:14px; right:14px; bottom:14px; }
 }
 </style>
 </head>
@@ -834,6 +962,12 @@ a{
 </div>
 
 <main class="container">
+  <!-- 16:9 HOME HERO CAROUSEL -->
+  <div id="heroSection" class="hero-wrapper" onmouseenter="pauseHeroTimer()" onmouseleave="resumeHeroTimer()">
+    <div id="heroSlidesContainer"></div>
+    <div id="heroDots" class="hero-dots"></div>
+  </div>
+
   <div id="results" class="grid"></div>
   <div id="scrollSentinel" style="height:40px; margin-top:20px;"></div>
 </main>
@@ -869,10 +1003,13 @@ const state = {
   isLoading: false,
   results: [],
   currentMedia: { posters: [], backdrops: [], logos: [] },
-  currentShowId: null
+  currentShowId: null,
+  heroItems: [],
+  heroIndex: 0
 };
 
-let backdropTimer = null; // Store 3-second slideshow timer
+let detailBackdropTimer = null;
+let heroAutoTimer = null;
 
 /* ============================================================
    HELPERS & FORMATTERS
@@ -930,11 +1067,11 @@ function getBoxOfficeStatus(budget, revenue) {
 }
 
 /* ============================================================
-   BROWSER NATIVE NAVIGATION (< / >) HISTORY API LOGIC
+   BROWSER NATIVE NAVIGATION HISTORY API LOGIC
 ============================================================ */
 
 window.addEventListener('popstate', (e) => {
-  if (backdropTimer) clearInterval(backdropTimer); // Stop slideshow when navigating away
+  if (detailBackdropTimer) clearInterval(detailBackdropTimer);
 
   const currentState = e.state;
 
@@ -953,6 +1090,117 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ============================================================
+   16:9 HERO SLIDER LOGIC (3 SECONDS CHANGE)
+============================================================ */
+
+async function loadHeroSection() {
+  try {
+    let heroItems = [];
+    if (state.tab === "home") {
+      const trending = await api("/trending/all/day");
+      heroItems = (trending.results || []).filter(i => i.backdrop_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 5);
+    } else if (state.tab === "movie") {
+      const trending = await api("/trending/movie/day");
+      heroItems = (trending.results || []).filter(i => i.backdrop_path).map(i => ({ ...i, media_type: 'movie' })).slice(0, 5);
+    } else if (state.tab === "tv") {
+      const trending = await api("/trending/tv/day");
+      heroItems = (trending.results || []).filter(i => i.backdrop_path).map(i => ({ ...i, media_type: 'tv' })).slice(0, 5);
+    }
+
+    state.heroItems = heroItems;
+    state.heroIndex = 0;
+
+    renderHeroSlides();
+    startHeroTimer();
+  } catch(e) {
+    document.getElementById("heroSection").style.display = "none";
+  }
+}
+
+function renderHeroSlides() {
+  const slidesContainer = document.getElementById("heroSlidesContainer");
+  const dotsContainer = document.getElementById("heroDots");
+
+  if (!state.heroItems.length) {
+    document.getElementById("heroSection").style.display = "none";
+    return;
+  }
+
+  document.getElementById("heroSection").style.display = "block";
+
+  slidesContainer.innerHTML = state.heroItems.map((item, idx) => {
+    const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+    const title = item.title || item.name;
+    const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+    const releaseDate = formatDate(item.release_date || item.first_air_date);
+
+    return `
+      <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+        <img class="hero-backdrop" src="${image(item.backdrop_path, 'original')}" alt="${esc(title)}">
+        <div class="hero-gradient"></div>
+        <div class="hero-content">
+          <h2 class="hero-title">${esc(title)}</h2>
+          <div class="hero-meta-row">
+            <span class="tmdb-rating-pill">⭐ ${rating} / 10</span>
+            <span class="meta-badge">📅 ${releaseDate}</span>
+            <span class="meta-badge">${type === 'tv' ? '📺 TV SHOW' : '🎬 MOVIE'}</span>
+          </div>
+          <p class="hero-overview">${esc(item.overview)}</p>
+          <button class="hero-cta-btn" onclick="openDetails(${item.id}, '${type}')">
+            ℹ️ View Details
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  dotsContainer.innerHTML = state.heroItems.map((_, idx) => `
+    <button class="hero-dot ${idx === 0 ? 'active' : ''}" onclick="goToHeroSlide(${idx})"></button>
+  `).join('');
+}
+
+function startHeroTimer() {
+  stopHeroTimer();
+  if (state.heroItems.length <= 1) return;
+
+  heroAutoTimer = setInterval(() => {
+    state.heroIndex = (state.heroIndex + 1) % state.heroItems.length;
+    updateHeroDOM();
+  }, 3000); // 3 seconds interval
+}
+
+function stopHeroTimer() {
+  if (heroAutoTimer) clearInterval(heroAutoTimer);
+}
+
+function pauseHeroTimer() {
+  stopHeroTimer();
+}
+
+function resumeHeroTimer() {
+  startHeroTimer();
+}
+
+function goToHeroSlide(index) {
+  state.heroIndex = index;
+  updateHeroDOM();
+  startHeroTimer(); // Reset timer on manual dot click
+}
+
+function updateHeroDOM() {
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.hero-dot');
+
+  slides.forEach((s, idx) => {
+    s.classList.toggle('active', idx === state.heroIndex);
+  });
+
+  dots.forEach((d, idx) => {
+    d.classList.toggle('active', idx === state.heroIndex);
+  });
+}
+
+/* ============================================================
    NAVIGATION & BROWSE
 ============================================================ */
 
@@ -966,6 +1214,7 @@ function setActiveTab(tab) {
     btn.classList.toggle('active', btn.dataset.tab === tab);
   });
 
+  loadHeroSection();
   loadBrowse();
 }
 
@@ -1053,11 +1302,11 @@ function setupInfiniteScroll() {
 }
 
 /* ============================================================
-   AUTO SLIDESHOW BACKDROP LOGIC (3 SECONDS)
+   AUTO SLIDESHOW BACKDROP FOR DETAILS MODAL
 ============================================================ */
 
-function startBackdropSlideshow(backdropsList, defaultBackdrop) {
-  if (backdropTimer) clearInterval(backdropTimer);
+function startDetailBackdropSlideshow(backdropsList, defaultBackdrop) {
+  if (detailBackdropTimer) clearInterval(detailBackdropTimer);
 
   const imgEl = document.getElementById("detailBannerImg");
   if (!imgEl) return;
@@ -1070,27 +1319,26 @@ function startBackdropSlideshow(backdropsList, defaultBackdrop) {
 
   let currentIndex = 0;
 
-  backdropTimer = setInterval(() => {
+  detailBackdropTimer = setInterval(() => {
     currentIndex = (currentIndex + 1) % validBackdrops.length;
     imgEl.style.opacity = '0';
     
     setTimeout(() => {
       imgEl.src = validBackdrops[currentIndex];
       imgEl.style.opacity = '1';
-    }, 400); // Crossfade transition timing
-  }, 3000); // 3 seconds interval
+    }, 400);
+  }, 3000);
 }
 
 /* ============================================================
-   DETAILS VIEW (LEFT BACKDROP & RIGHT INFO CARDS LAYOUT)
+   DETAILS VIEW
 ============================================================ */
 
 async function openDetails(id, type) {
   closeSearchModal();
   state.currentShowId = id;
-  if (backdropTimer) clearInterval(backdropTimer);
+  if (detailBackdropTimer) clearInterval(detailBackdropTimer);
 
-  // Push History State for Native Browser Navigation
   history.pushState({ view: 'details', id, type }, '', `#details-${type}-${id}`);
 
   const overlay = document.getElementById("detailOverlay");
@@ -1118,7 +1366,6 @@ async function openDetails(id, type) {
     const releaseDate = formatDate(data.release_date || data.first_air_date);
     const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
     
-    // Find preferred English Title Logo if available
     const logoObj = (imagesData.logos || []).find(l => l.iso_639_1 === 'en') || (imagesData.logos || [])[0];
     const logoPath = logoObj ? logoObj.file_path : null;
 
@@ -1137,7 +1384,6 @@ async function openDetails(id, type) {
 
     const inProviders = providers.results?.IN?.flatrate || providers.results?.IN?.buy || [];
 
-    // OTT LOGOS BOX
     const ottBoxHTML = `
       <div class="info-card">
         <label>Available On (India)</label>
@@ -1149,7 +1395,6 @@ async function openDetails(id, type) {
       </div>
     `;
 
-    // RIGHT COLUMN INFO CARDS ACCORDING TO TYPE
     let rightSideHTML = '';
     if (type === 'movie') {
       const status = getBoxOfficeStatus(data.budget, data.revenue);
@@ -1195,9 +1440,7 @@ async function openDetails(id, type) {
 
     body.innerHTML = `
       <div class="detail-wrapper">
-        <!-- SPLIT 2-COLUMN HERO SECTION -->
         <div class="detail-hero-grid">
-          <!-- LEFT SIDE: BACKDROP SLIDER WITH OVERLAY -->
           <div class="detail-banner-wrap">
             <img id="detailBannerImg" class="detail-banner-img" src="${image(data.backdrop_path, 'original')}" alt="">
             <div class="detail-banner-gradient"></div>
@@ -1215,7 +1458,6 @@ async function openDetails(id, type) {
             </div>
           </div>
 
-          <!-- RIGHT SIDE: DEDICATED STACKED INFO BOXES -->
           <div class="detail-right-info">
             ${rightSideHTML}
           </div>
@@ -1225,16 +1467,14 @@ async function openDetails(id, type) {
           <p class="detail-overview">${esc(data.overview)}</p>
         </div>
 
-        <!-- DYNAMIC ACTION BUTTONS -->
         <div class="section-actions-bar">
           <button class="action-btn" onclick="toggleDetailTab('secCast', this)">👥 Cast & Crew</button>
           ${type === 'tv' ? `<button class="action-btn" onclick="toggleDetailTab('secSeasons', this)">📺 Seasons & Episodes</button>` : ''}
           <button class="action-btn" onclick="toggleDetailTab('secMedia', this)">🖼️ Media & Visuals</button>
         </div>
 
-        <!-- HIDDEN SECTIONS (APPEAR ONLY ON BUTTON CLICK) -->
         <section id="secCast" class="detail-tab-content hidden">
-          <h2 class="block-title">👥 Top Cast (Original & Character Name)</h2>
+          <h2 class="block-title">👥 Top Cast</h2>
           <div class="cast-grid">
             ${castHTML || '<div class="empty">No cast info available.</div>'}
           </div>
@@ -1264,8 +1504,7 @@ async function openDetails(id, type) {
       </div>
     `;
 
-    // Start 3-second auto backdrop change
-    startBackdropSlideshow(imagesData.backdrops, data.backdrop_path);
+    startDetailBackdropSlideshow(imagesData.backdrops, data.backdrop_path);
 
     if (type === 'tv') loadSeasonEpisodes(id, 1);
     switchMediaTab('backdrops', null);
@@ -1275,21 +1514,15 @@ async function openDetails(id, type) {
   }
 }
 
-/* ============================================================
-   TAB TOGGLE LOGIC FOR DETAILS PAGE
-============================================================ */
-
 function toggleDetailTab(targetId, btnEl) {
   const targetSec = document.getElementById(targetId);
   if (!targetSec) return;
 
   const isAlreadyVisible = !targetSec.classList.contains('hidden');
 
-  // Hide all dynamic section tabs
   document.querySelectorAll('.detail-tab-content').forEach(sec => sec.classList.add('hidden'));
   document.querySelectorAll('.section-actions-bar .action-btn').forEach(b => b.classList.remove('active'));
 
-  // Toggle state
   if (!isAlreadyVisible) {
     targetSec.classList.remove('hidden');
     btnEl.classList.add('active');
@@ -1317,7 +1550,7 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
             <span>📅 ${formatDate(ep.air_date)}</span>
             <span>⭐ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}</span>
           </div>
-          <div class="ep-overview">${esc(ep.overview || 'No description available. Click to view episode details.')}</div>
+          <div class="ep-overview">${esc(ep.overview || 'No description available.')}</div>
         </div>
       </div>
     `).join('') || `<div class="empty">No episode details found.</div>`;
@@ -1327,7 +1560,7 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
 }
 
 /* ============================================================
-   DEDICATED EPISODE DEEP-DIVE SUB-PAGE
+   EPISODE SUB-PAGE
 ============================================================ */
 
 async function openEpisodeDetails(tvId, seasonNum, epNum) {
@@ -1364,7 +1597,7 @@ async function openEpisodeDetails(tvId, seasonNum, epNum) {
         <section class="section-block" style="padding:0">
           <h2 class="block-title">🎭 Episode Guest Stars</h2>
           <div class="cast-grid">
-            ${guestCastHTML || '<div class="empty">No specific guest stars listed for this episode.</div>'}
+            ${guestCastHTML || '<div class="empty">No guest stars listed.</div>'}
           </div>
         </section>
       </div>
@@ -1458,6 +1691,7 @@ searchInput.addEventListener("input", async (e) => {
 
 window.addEventListener("DOMContentLoaded", () => {
   history.replaceState({ view: 'home' }, '', ' ');
+  loadHeroSection();
   loadBrowse();
   setupInfiniteScroll();
 });
