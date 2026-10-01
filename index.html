@@ -289,7 +289,7 @@ a{
 }
 
 /* ============================================================
-   DETAILS OVERLAY (SLIMMER BANNER WITH LOGO & BADGES OVERLAY)
+   DETAILS OVERLAY (BACKDROP TOP FIX & AUTO SLIDESHOW)
 ============================================================ */
 
 .detail-overlay{
@@ -306,11 +306,11 @@ a{
   padding:20px 22px 60px;
 }
 
-/* SLIMMER BANNER WRAPPER (MAX HEIGHT 380PX) */
+/* SLIMMER BANNER WRAPPER WITH CENTER-TOP ALIGNMENT */
 .detail-banner-wrap{
   width:100%;
   aspect-ratio:21 / 9;
-  max-height:380px;
+  max-height:400px;
   border-radius:20px;
   overflow:hidden;
   position:relative;
@@ -320,12 +320,15 @@ a{
   margin-bottom:24px;
 }
 
+/* FIX: OBJECT-POSITION TOP TO PREVENT TOP CROPPING */
 .detail-banner-img{
   width:100%;
   height:100%;
   object-fit:cover;
-  object-position:center;
+  object-position:center top;
   display:block;
+  transition:opacity 0.6s ease-in-out;
+  opacity:1;
 }
 
 /* ENHANCED GRADIENT OVERLAY FOR READABILITY */
@@ -334,6 +337,7 @@ a{
   inset:0;
   background:linear-gradient(180deg, rgba(8,10,15,0.1) 0%, rgba(8,10,15,0.95) 100%),
              linear-gradient(90deg, rgba(8,10,15,0.7) 0%, rgba(8,10,15,0.2) 60%);
+  z-index:1;
 }
 
 /* CONTENT OVERLAY DIRECTLY ON BANNER */
@@ -855,6 +859,8 @@ const state = {
   currentShowId: null
 };
 
+let backdropTimer = null; // Store 3-second slideshow timer
+
 /* ============================================================
    HELPERS & FORMATTERS
 ============================================================ */
@@ -915,6 +921,8 @@ function getBoxOfficeStatus(budget, revenue) {
 ============================================================ */
 
 window.addEventListener('popstate', (e) => {
+  if (backdropTimer) clearInterval(backdropTimer); // Stop slideshow when navigating away
+
   const currentState = e.state;
 
   if (!currentState || currentState.view === 'home') {
@@ -1032,12 +1040,42 @@ function setupInfiniteScroll() {
 }
 
 /* ============================================================
-   DETAILS VIEW (SLIMMER BANNER - LOGO & OVERLAY META DATA)
+   AUTO SLIDESHOW BACKDROP LOGIC (3 SECONDS)
+============================================================ */
+
+function startBackdropSlideshow(backdropsList, defaultBackdrop) {
+  if (backdropTimer) clearInterval(backdropTimer);
+
+  const imgEl = document.getElementById("detailBannerImg");
+  if (!imgEl) return;
+
+  const validBackdrops = (backdropsList && backdropsList.length > 0)
+    ? backdropsList.slice(0, 10).map(b => image(b.file_path, 'original'))
+    : [image(defaultBackdrop, 'original')];
+
+  if (validBackdrops.length <= 1) return;
+
+  let currentIndex = 0;
+
+  backdropTimer = setInterval(() => {
+    currentIndex = (currentIndex + 1) % validBackdrops.length;
+    imgEl.style.opacity = '0';
+    
+    setTimeout(() => {
+      imgEl.src = validBackdrops[currentIndex];
+      imgEl.style.opacity = '1';
+    }, 400); // Crossfade transition timing
+  }, 3000); // 3 seconds interval
+}
+
+/* ============================================================
+   DETAILS VIEW
 ============================================================ */
 
 async function openDetails(id, type) {
   closeSearchModal();
   state.currentShowId = id;
+  if (backdropTimer) clearInterval(backdropTimer);
 
   // Push History State for Native Browser Navigation
   history.pushState({ view: 'details', id, type }, '', `#details-${type}-${id}`);
@@ -1143,9 +1181,9 @@ async function openDetails(id, type) {
 
     body.innerHTML = `
       <div class="detail-wrapper">
-        <!-- SLIMMER 16:9/21:9 BANNER WITH OVERLAY TITLE LOGO & BADGES -->
+        <!-- BANNER WITH AUTO SLIDESHOW & CENTER-TOP ALIGNMENT -->
         <div class="detail-banner-wrap">
-          <img class="detail-banner-img" src="${image(data.backdrop_path, 'original')}" alt="">
+          <img id="detailBannerImg" class="detail-banner-img" src="${image(data.backdrop_path, 'original')}" alt="">
           <div class="detail-banner-gradient"></div>
           
           <div class="banner-overlay-content">
@@ -1207,6 +1245,9 @@ async function openDetails(id, type) {
         </section>
       </div>
     `;
+
+    // Start 3-second auto backdrop change
+    startBackdropSlideshow(imagesData.backdrops, data.backdrop_path);
 
     if (type === 'tv') loadSeasonEpisodes(id, 1);
     switchMediaTab('backdrops', null);
