@@ -154,6 +154,8 @@ a{
 }
 
 .hero-backdrop{
+  position:relative;
+  z-index:1;
   width:100%;
   height:100%;
   object-fit:cover;
@@ -164,6 +166,7 @@ a{
 .hero-gradient{
   position:absolute;
   inset:0;
+  z-index:3;
   background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.95) 100%),
              linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 65%);
 }
@@ -195,7 +198,7 @@ a{
   position:absolute;
   bottom:14px;
   right:14px;
-  z-index:5;
+  z-index:50;
   display:flex;
   align-items:center;
   gap:6px;
@@ -204,6 +207,8 @@ a{
 }
 
 .hero-dot{
+  position:relative;
+  z-index:51;
   width:6px;
   height:6px;
   border-radius:50%;
@@ -358,8 +363,9 @@ a{
 
 .search-results-grid{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3, minmax(0, 1fr));
   gap:10px;
+  align-items:start;
   max-width:1200px;
   width:100%;
   margin:0 auto;
@@ -896,6 +902,36 @@ a{
   border-radius:8px;
 }
 
+.search-result-card{
+  min-width:0;
+  cursor:pointer;
+  overflow:hidden;
+  border-radius:10px;
+}
+
+.search-result-card .search-card-poster-only{
+  display:block;
+}
+
+.episode-media-empty{
+  min-height:120px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:var(--muted);
+  text-align:center;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  background:#0d111a;
+}
+
+.episode-media-empty-icon{
+  font-size:28px;
+}
+
 .loading, .empty{
   padding:30px 15px;
   text-align:center;
@@ -1041,11 +1077,19 @@ const state = {
   heroItems: [],
   heroIndex: 0,
   currentTvId: null,
-  totalSeasons: 1
+  totalSeasons: 1,
+  currentRoute: null,
+  searchMode: "movie",
+  searchGenreId: null,
+  searchQuery: ""
 };
 
 let detailBackdropTimer = null;
 let heroAutoTimer = null;
+let searchDebounceTimer = null;
+let searchRequestToken = 0;
+let browseRequestToken = 0;
+let heroRequestToken = 0;
 
 /* ============================================================
    HELPERS & FORMATTERS
@@ -1057,27 +1101,45 @@ async function api(path, params = {}) {
   url.searchParams.set("language", "en-US");
 
   Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, v);
+    if (v !== undefined && v !== null && v !== "") {
+      url.searchParams.set(k, v);
+    }
   });
 
   const res = await fetch(url);
-  if (!res.ok) throw new Error("TMDB fetch error");
+  if (!res.ok) {
+    throw new Error(`TMDB fetch error: ${res.status}`);
+  }
   return await res.json();
 }
 
 function image(path, size = "w500") {
-  return path ? IMG_BASE + size + path : "https://via.placeholder.com/500x750?text=No+Image";
+  return path
+    ? IMG_BASE + size + path
+    : "https://via.placeholder.com/500x750?text=No+Image";
 }
 
 function esc(str) {
-  return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  return String(str || '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+  }[m]));
+}
+
+function safeAttrText(str) {
+  return encodeURIComponent(String(str || ''));
+}
+
+function decodeAttrText(str) {
+  try { return decodeURIComponent(str || ''); } catch(e) { return String(str || ''); }
 }
 
 function formatDate(dateStr) {
   if (!dateStr) return 'N/A';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit', month: 'long', year: 'numeric'
+  });
 }
 
 function formatRuntime(mins) {
@@ -1102,9 +1164,33 @@ function getBoxOfficeStatus(budget, revenue) {
   return { text: 'FLOP', class: 'status-flop' };
 }
 
+function setNavActive(tab) {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+}
+
+function hideAllOverlays() {
+  document.getElementById("detailOverlay").classList.add("hidden");
+  document.getElementById("seasonsOverlay").classList.add("hidden");
+  document.getElementById("episodeOverlay").classList.add("hidden");
+  document.getElementById("searchPage").classList.add("hidden");
+  document.getElementById("lightbox").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function clearDetailTimer() {
+  if (detailBackdropTimer) {
+    clearInterval(detailBackdropTimer);
+    detailBackdropTimer = null;
+  }
+}
+
 async function fetchMediaLogo(type, id) {
   try {
-    const res = await api(`/${type}/${id}/images`, { include_image_language: 'en,null' });
+    const res = await api(`/${type}/${id}/images`, {
+      include_image_language: 'en,null'
+    });
     const logos = res.logos || [];
     const logoObj = logos.find(l => l.iso_639_1 === 'en') || logos[0];
     return logoObj ? logoObj.file_path : null;
@@ -1114,81 +1200,189 @@ async function fetchMediaLogo(type, id) {
 }
 
 /* ============================================================
-   BROWSER POPSTATE HISTORY HANDLING
+   HASH ROUTER / BROWSER HISTORY
 ============================================================ */
 
-window.addEventListener('popstate', (e) => {
-  if (detailBackdropTimer) clearInterval(detailBackdropTimer);
+function parseHash() {
+  const hash = (location.hash || '').replace(/^#/, '');
 
-  const currentState = e.state;
-
-  if (!currentState || currentState.view === 'home') {
-    document.getElementById("detailOverlay").classList.add("hidden");
-    document.getElementById("seasonsOverlay").classList.add("hidden");
-    document.getElementById("episodeOverlay").classList.add("hidden");
-    document.getElementById("searchPage").classList.add("hidden");
-    document.body.style.overflow = "";
-  } else if (currentState.view === 'details') {
-    document.getElementById("detailOverlay").classList.remove("hidden");
-    document.getElementById("seasonsOverlay").classList.add("hidden");
-    document.getElementById("episodeOverlay").classList.add("hidden");
-    document.getElementById("searchPage").classList.add("hidden");
-    document.body.style.overflow = "hidden";
-  } else if (currentState.view === 'seasons') {
-    document.getElementById("seasonsOverlay").classList.remove("hidden");
-    document.getElementById("episodeOverlay").classList.add("hidden");
-    document.body.style.overflow = "hidden";
-  } else if (currentState.view === 'episode') {
-    document.getElementById("episodeOverlay").classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-  } else if (currentState.view === 'search') {
-    document.getElementById("searchPage").classList.remove("hidden");
-    document.body.style.overflow = "hidden";
+  if (!hash || hash === 'home') {
+    return { view: 'home' };
   }
+
+  if (hash === 'movie' || hash === 'tv') {
+    return { view: 'browse', tab: hash };
+  }
+
+  if (hash === 'search') {
+    return { view: 'search' };
+  }
+
+  let m = hash.match(/^details-(movie|tv)-(\d+)$/);
+  if (m) {
+    return { view: 'details', type: m[1], id: Number(m[2]) };
+  }
+
+  m = hash.match(/^seasons-(\d+)$/);
+  if (m) {
+    return { view: 'seasons', tvId: Number(m[1]) };
+  }
+
+  m = hash.match(/^ep-S(\d+)E(\d+)-(\d+)$/);
+  if (m) {
+    return {
+      view: 'episode',
+      seasonNum: Number(m[1]),
+      epNum: Number(m[2]),
+      tvId: Number(m[3])
+    };
+  }
+
+  return { view: 'home' };
+}
+
+function routeHash(route) {
+  if (!route || route.view === 'home') return '#home';
+  if (route.view === 'browse') return `#${route.tab}`;
+  if (route.view === 'search') return '#search';
+  if (route.view === 'details') return `#details-${route.type}-${route.id}`;
+  if (route.view === 'seasons') return `#seasons-${route.tvId}`;
+  if (route.view === 'episode') return `#ep-S${route.seasonNum}E${route.epNum}-${route.tvId}`;
+  return '#home';
+}
+
+function navigate(route, replace = false) {
+  const url = routeHash(route);
+  const stateObj = { ...route };
+  if (replace) {
+    history.replaceState(stateObj, '', url);
+  } else {
+    history.pushState(stateObj, '', url);
+  }
+  renderRoute(route);
+}
+
+window.addEventListener('popstate', () => {
+  renderRoute(parseHash(), true);
 });
 
+window.addEventListener('hashchange', () => {
+  const currentHash = routeHash(parseHash());
+  if (location.hash !== currentHash) {
+    history.replaceState(parseHash(), '', currentHash);
+  }
+  renderRoute(parseHash(), true);
+});
+
+async function renderRoute(route, fromHistory = false) {
+  if (!route) route = { view: 'home' };
+
+  clearDetailTimer();
+  hideAllOverlays();
+  state.currentRoute = route;
+
+  if (route.view === 'home') {
+    state.tab = 'home';
+    setNavActive('home');
+    await loadHomeBrowse(false);
+    return;
+  }
+
+  if (route.view === 'browse') {
+    state.tab = route.tab;
+    setNavActive(route.tab);
+    await loadBrowse(false);
+    return;
+  }
+
+  if (route.view === 'search') {
+    setNavActive('search');
+    openSearchUI();
+    return;
+  }
+
+  if (route.view === 'details') {
+    setNavActive(state.tab === 'tv' || route.type === 'tv' ? 'tv' : 'movie');
+    await loadDetails(route.id, route.type);
+    return;
+  }
+
+  if (route.view === 'seasons') {
+    setNavActive('tv');
+    await restoreSeasonsPage(route.tvId);
+    return;
+  }
+
+  if (route.view === 'episode') {
+    setNavActive('tv');
+    await loadEpisodePage(route.tvId, route.seasonNum, route.epNum);
+    return;
+  }
+}
+
 /* ============================================================
-   HERO CAROUSEL (WHITE DOTS & LOGOS)
+   HERO CAROUSEL
 ============================================================ */
 
 async function loadHeroSection() {
+  const requestId = ++heroRequestToken;
+  const heroSection = document.getElementById("heroSection");
+
   try {
     let heroItems = [];
+
     if (state.tab === "home") {
       const trending = await api("/trending/all/day");
-      heroItems = (trending.results || []).filter(i => i.backdrop_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 5);
+      heroItems = (trending.results || [])
+        .filter(i => i.backdrop_path && (i.media_type === 'movie' || i.media_type === 'tv'))
+        .slice(0, 5);
     } else if (state.tab === "movie") {
       const trending = await api("/trending/movie/day");
-      heroItems = (trending.results || []).filter(i => i.backdrop_path).map(i => ({ ...i, media_type: 'movie' })).slice(0, 5);
+      heroItems = (trending.results || [])
+        .filter(i => i.backdrop_path)
+        .map(i => ({ ...i, media_type: 'movie' }))
+        .slice(0, 5);
     } else if (state.tab === "tv") {
       const trending = await api("/trending/tv/day");
-      heroItems = (trending.results || []).filter(i => i.backdrop_path).map(i => ({ ...i, media_type: 'tv' })).slice(0, 5);
+      heroItems = (trending.results || [])
+        .filter(i => i.backdrop_path)
+        .map(i => ({ ...i, media_type: 'tv' }))
+        .slice(0, 5);
     }
 
-    state.heroItems = await Promise.all(heroItems.map(async item => {
+    const mapped = await Promise.all(heroItems.map(async item => {
       const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
       const logoPath = await fetchMediaLogo(type, item.id);
       return { ...item, media_type: type, logo_path: logoPath };
     }));
 
+    if (requestId !== heroRequestToken) return;
+
+    state.heroItems = mapped;
     state.heroIndex = 0;
     renderHeroSlides();
     startHeroTimer();
   } catch(e) {
-    document.getElementById("heroSection").style.display = "none";
+    if (requestId !== heroRequestToken) return;
+    state.heroItems = [];
+    stopHeroTimer();
+    heroSection.style.display = "none";
   }
 }
 
 function renderHeroSlides() {
   const slidesContainer = document.getElementById("heroSlidesContainer");
   const dotsContainer = document.getElementById("heroDots");
+  const heroSection = document.getElementById("heroSection");
 
   if (!state.heroItems.length) {
-    document.getElementById("heroSection").style.display = "none";
+    heroSection.style.display = "none";
+    slidesContainer.innerHTML = '';
+    dotsContainer.innerHTML = '';
     return;
   }
 
-  document.getElementById("heroSection").style.display = "block";
+  heroSection.style.display = "block";
 
   slidesContainer.innerHTML = state.heroItems.map((item, idx) => {
     const title = item.title || item.name;
@@ -1198,24 +1392,22 @@ function renderHeroSlides() {
       <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="openDetails(${item.id}, '${item.media_type}')">
         <img class="hero-backdrop" src="${image(item.backdrop_path, 'w780')}" alt="${esc(title)}">
         <div class="hero-gradient"></div>
-        
+
         <div class="hero-top-left-rating">
           <div class="tmdb-rating-pill">⭐ ${rating}</div>
         </div>
 
         <div class="hero-content">
-          ${item.logo_path 
-            ? `<img class="hero-logo-img" src="${image(item.logo_path, 'w500')}" alt="${esc(title)}">` 
-            : `<h2 class="hero-title-text">${esc(title)}</h2>`
-          }
+          ${item.logo_path
+            ? `<img class="hero-logo-img" src="${image(item.logo_path, 'w500')}" alt="${esc(title)}">`
+            : `<h2 class="hero-title-text">${esc(title)}</h2>`}
         </div>
       </div>
     `;
   }).join('');
 
-  // PURE WHITE DOTS
   dotsContainer.innerHTML = state.heroItems.map((_, idx) => `
-    <button class="hero-dot ${idx === 0 ? 'active' : ''}" onclick="event.stopPropagation(); goToHeroSlide(${idx})"></button>
+    <button type="button" aria-label="Go to slide ${idx + 1}" class="hero-dot ${idx === 0 ? 'active' : ''}" onclick="event.stopPropagation(); goToHeroSlide(${idx})"></button>
   `).join('');
 }
 
@@ -1230,24 +1422,29 @@ function startHeroTimer() {
 }
 
 function stopHeroTimer() {
-  if (heroAutoTimer) clearInterval(heroAutoTimer);
+  if (heroAutoTimer) {
+    clearInterval(heroAutoTimer);
+    heroAutoTimer = null;
+  }
 }
 
 function pauseHeroTimer() { stopHeroTimer(); }
 function resumeHeroTimer() { startHeroTimer(); }
 
 function goToHeroSlide(index) {
-  state.heroIndex = index;
+  if (!state.heroItems.length) return;
+  state.heroIndex = Math.max(0, Math.min(index, state.heroItems.length - 1));
   updateHeroDOM();
   startHeroTimer();
 }
 
 function updateHeroDOM() {
-  const slides = document.querySelectorAll('.hero-slide');
-  const dots = document.querySelectorAll('.hero-dot');
-
-  slides.forEach((s, idx) => s.classList.toggle('active', idx === state.heroIndex));
-  dots.forEach((d, idx) => d.classList.toggle('active', idx === state.heroIndex));
+  document.querySelectorAll('.hero-slide').forEach((s, idx) => {
+    s.classList.toggle('active', idx === state.heroIndex);
+  });
+  document.querySelectorAll('.hero-dot').forEach((d, idx) => {
+    d.classList.toggle('active', idx === state.heroIndex);
+  });
 }
 
 /* ============================================================
@@ -1255,52 +1452,82 @@ function updateHeroDOM() {
 ============================================================ */
 
 function setActiveTab(tab) {
-  closeSearchModal();
-  if (state.tab === tab) return;
-  state.tab = tab;
-  state.page = 1;
-  state.results = [];
+  if (tab === 'search') {
+    openSearchModal();
+    return;
+  }
 
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tab === tab);
-  });
+  if (state.currentRoute && state.currentRoute.view === 'browse' && state.tab === tab) {
+    return;
+  }
 
-  loadHeroSection();
-  loadBrowse();
+  navigate({ view: tab === 'home' ? 'home' : 'browse', tab });
 }
 
 function openSearchModal() {
-  history.pushState({ view: 'search' }, '', '#search');
-  document.getElementById("searchPage").classList.remove("hidden");
+  navigate({ view: 'search' });
+}
+
+function openSearchUI() {
+  const searchPage = document.getElementById("searchPage");
+  searchPage.classList.remove("hidden");
   document.body.style.overflow = "hidden";
-  document.getElementById("searchInput").focus();
-  loadCategoryResults('movie');
+
+  const input = document.getElementById("searchInput");
+  input.focus({ preventScroll: true });
+
+  if (!document.querySelector('.chip-btn.active')) {
+    const first = document.querySelector('.chip-btn');
+    if (first) first.classList.add('active');
+  }
+
+  if (!state.searchQuery) {
+    loadCategoryResults(state.searchMode || 'movie', state.searchGenreId, false);
+  }
 }
 
 function closeSearchModal() {
-  document.getElementById("searchPage").classList.add("hidden");
-  document.body.style.overflow = "";
+  if (parseHash().view === 'search') {
+    history.back();
+  } else {
+    document.getElementById("searchPage").classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+}
+
+async function loadHomeBrowse(append = false) {
+  state.tab = 'home';
+  setNavActive('home');
+  await loadBrowse(append);
 }
 
 async function loadBrowse(append = false) {
-  if (state.isLoading) return;
+  if (state.isLoading && append) return;
+
+  const requestId = ++browseRequestToken;
   state.isLoading = true;
 
   const container = document.getElementById("results");
-  if (!append) container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading titles...</div>`;
+  if (!append) {
+    state.page = 1;
+    container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading titles...</div>`;
+    loadHeroSection();
+  }
 
   try {
     let newItems = [];
+
     if (state.tab === "home") {
       const [m, t] = await Promise.all([
         api("/discover/movie", { page: state.page }),
         api("/discover/tv", { page: state.page })
       ]);
+
       newItems = [
-        ...(m.results || []).map(r=>({...r, media_type:"movie"})), 
-        ...(t.results || []).map(r=>({...r, media_type:"tv"}))
+        ...(m.results || []).map(r => ({ ...r, media_type: "movie" })),
+        ...(t.results || []).map(r => ({ ...r, media_type: "tv" }))
       ];
-      newItems.sort((a,b) => b.popularity - a.popularity);
+      newItems.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
       state.totalPages = Math.max(m.total_pages || 1, t.total_pages || 1);
     } else {
       const res = await api(`/discover/${state.tab}`, { page: state.page });
@@ -1308,14 +1535,17 @@ async function loadBrowse(append = false) {
       state.totalPages = res.total_pages || 1;
     }
 
+    if (requestId !== browseRequestToken) return;
+
     if (!append) state.results = [];
     state.results.push(...newItems);
-
     renderResults();
   } catch(e) {
-    if (!append) container.innerHTML = `<div class="empty">Failed to load titles.</div>`;
+    if (requestId === browseRequestToken && !append) {
+      container.innerHTML = `<div class="empty">Failed to load titles.</div>`;
+    }
   } finally {
-    state.isLoading = false;
+    if (requestId === browseRequestToken) state.isLoading = false;
   }
 }
 
@@ -1334,7 +1564,7 @@ function renderResults() {
     return `
       <article class="movie-card" onclick="openDetails(${item.id}, '${type}')">
         <div class="poster-wrap">
-          <img class="poster" src="${image(item.poster_path)}" alt="" loading="lazy">
+          <img class="poster" src="${image(item.poster_path)}" alt="${esc(title)}" loading="lazy">
           <div class="poster-rating-badge">⭐ ${rating}</div>
         </div>
         <div class="card-body">
@@ -1347,47 +1577,81 @@ function renderResults() {
 
 function setupInfiniteScroll() {
   const sentinel = document.getElementById("scrollSentinel");
+  if (!sentinel || !('IntersectionObserver' in window)) return;
+
   const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && !state.isLoading && state.page < state.totalPages) {
+    if (
+      entries[0].isIntersecting &&
+      !state.isLoading &&
+      state.page < state.totalPages &&
+      !['details','seasons','episode','search'].includes(parseHash().view)
+    ) {
       state.page++;
       loadBrowse(true);
     }
   }, { rootMargin: '250px' });
+
   observer.observe(sentinel);
 }
 
 /* ============================================================
-   SEARCH PAGE FILTER TABS (ERROR-FREE RE-WRITTEN)
+   SEARCH
 ============================================================ */
 
 async function selectSearchCategory(name, btnEl, type, genreId) {
   document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
   if (btnEl) btnEl.classList.add('active');
-  document.getElementById("searchInput").value = "";
 
-  loadCategoryResults(type, genreId);
+  searchRequestToken++;
+  clearTimeout(searchDebounceTimer);
+  state.searchMode = type;
+  state.searchGenreId = genreId || null;
+  state.searchQuery = '';
+
+  const input = document.getElementById("searchInput");
+  input.value = '';
+
+  await loadCategoryResults(type, genreId, true);
 }
 
-async function loadCategoryResults(type, genreId) {
+async function loadCategoryResults(type, genreId, showLoading = true) {
   const grid = document.getElementById("searchResultsGrid");
-  grid.innerHTML = `<div class="loading"><div class="spinner"></div>Loading titles...</div>`;
+  const requestId = ++searchRequestToken;
+
+  if (showLoading) {
+    grid.innerHTML = `<div class="loading"><div class="spinner"></div>Loading titles...</div>`;
+  }
 
   try {
     let items = [];
+
     if (type === 'genre' && genreId) {
-      const data = await api("/discover/movie", { with_genres: genreId });
+      const data = await api("/discover/movie", {
+        with_genres: genreId,
+        page: 1,
+        sort_by: 'popularity.desc'
+      });
       items = (data.results || []).map(i => ({ ...i, media_type: 'movie' }));
     } else if (type === 'tv') {
-      const data = await api("/discover/tv");
+      const data = await api("/discover/tv", {
+        page: 1,
+        sort_by: 'popularity.desc'
+      });
       items = (data.results || []).map(i => ({ ...i, media_type: 'tv' }));
     } else {
-      const data = await api("/discover/movie");
+      const data = await api("/discover/movie", {
+        page: 1,
+        sort_by: 'popularity.desc'
+      });
       items = (data.results || []).map(i => ({ ...i, media_type: 'movie' }));
     }
 
+    if (requestId !== searchRequestToken) return;
     renderSearchGridPosters(items);
   } catch(e) {
-    grid.innerHTML = `<div class="empty">Failed to load category.</div>`;
+    if (requestId === searchRequestToken) {
+      grid.innerHTML = `<div class="empty">Failed to load category.</div>`;
+    }
   }
 }
 
@@ -1400,40 +1664,71 @@ function renderSearchGridPosters(items) {
 
   grid.innerHTML = items.map(item => {
     const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+    const title = item.title || item.name || '';
     return `
-      <img class="search-card-poster-only" src="${image(item.poster_path, 'w342')}" alt="" onclick="openDetails(${item.id}, '${type}')" loading="lazy">
+      <div class="search-result-card" onclick="openDetails(${item.id}, '${type}')">
+        <img class="search-card-poster-only" src="${image(item.poster_path, 'w342')}" alt="${esc(title)}" loading="lazy">
+      </div>
     `;
   }).join('');
 }
 
 const searchInput = document.getElementById("searchInput");
-searchInput.addEventListener("input", async (e) => {
+searchInput.addEventListener("input", (e) => {
   const q = e.target.value.trim();
+  state.searchQuery = q;
+
+  clearTimeout(searchDebounceTimer);
+  searchRequestToken++;
+
   if (q.length < 2) {
-    loadCategoryResults('movie');
+    searchDebounceTimer = setTimeout(() => {
+      if (!state.searchQuery) {
+        loadCategoryResults(state.searchMode || 'movie', state.searchGenreId, true);
+      }
+    }, 250);
     return;
   }
 
-  try {
-    const data = await api("/search/multi", { query: q });
-    const items = (data.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv');
-    renderSearchGridPosters(items);
-  } catch(e) {}
+  const requestId = ++searchRequestToken;
+  searchDebounceTimer = setTimeout(async () => {
+    const grid = document.getElementById("searchResultsGrid");
+    grid.innerHTML = `<div class="loading"><div class="spinner"></div>Searching...</div>`;
+
+    try {
+      const data = await api("/search/multi", { query: q, page: 1, include_adult: false });
+      if (requestId !== searchRequestToken || q !== state.searchQuery) return;
+
+      const items = (data.results || []).filter(i =>
+        i.media_type === 'movie' || i.media_type === 'tv'
+      );
+      renderSearchGridPosters(items);
+    } catch(e) {
+      if (requestId === searchRequestToken) {
+        grid.innerHTML = `<div class="empty">Search failed. Please try again.</div>`;
+      }
+    }
+  }, 350);
 });
 
 /* ============================================================
-   DETAILS MODAL (CLEANED UP & WITHOUT BOTTOM BUTTONS BAR)
+   DETAILS PAGE
 ============================================================ */
 
 function startDetailBackdropSlideshow(backdropsList, defaultBackdrop) {
-  if (detailBackdropTimer) clearInterval(detailBackdropTimer);
+  clearDetailTimer();
 
   const imgEl = document.getElementById("detailBannerImg");
   if (!imgEl) return;
 
-  const validBackdrops = (backdropsList && backdropsList.length > 0)
-    ? backdropsList.slice(0, 10).map(b => image(b.file_path, 'w780'))
-    : [image(defaultBackdrop, 'w780')];
+  const validBackdrops = (backdropsList || [])
+    .filter(b => b && b.file_path)
+    .slice(0, 10)
+    .map(b => image(b.file_path, 'w780'));
+
+  if (!validBackdrops.length && defaultBackdrop) {
+    validBackdrops.push(image(defaultBackdrop, 'w780'));
+  }
 
   if (validBackdrops.length <= 1) return;
 
@@ -1441,7 +1736,9 @@ function startDetailBackdropSlideshow(backdropsList, defaultBackdrop) {
   detailBackdropTimer = setInterval(() => {
     currentIndex = (currentIndex + 1) % validBackdrops.length;
     imgEl.style.opacity = '0';
+
     setTimeout(() => {
+      if (!imgEl) return;
       imgEl.src = validBackdrops[currentIndex];
       imgEl.style.opacity = '1';
     }, 350);
@@ -1449,10 +1746,11 @@ function startDetailBackdropSlideshow(backdropsList, defaultBackdrop) {
 }
 
 async function openDetails(id, type) {
-  closeSearchModal();
-  if (detailBackdropTimer) clearInterval(detailBackdropTimer);
+  navigate({ view: 'details', id: Number(id), type });
+}
 
-  history.pushState({ view: 'details', id, type }, '', `#details-${type}-${id}`);
+async function loadDetails(id, type) {
+  clearDetailTimer();
 
   const overlay = document.getElementById("detailOverlay");
   const body = document.getElementById("detailBody");
@@ -1469,9 +1767,9 @@ async function openDetails(id, type) {
       api(`/${type}/${id}/images`, { include_image_language: 'en,null' })
     ]);
 
-    const title = data.title || data.name;
+    const title = data.title || data.name || 'Untitled';
     const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
-    
+
     const logoObj = (imagesData.logos || []).find(l => l.iso_639_1 === 'en') || (imagesData.logos || [])[0];
     const logoPath = logoObj ? logoObj.file_path : null;
 
@@ -1488,6 +1786,11 @@ async function openDetails(id, type) {
       }
     }
 
+    if (type === 'tv') {
+      state.currentTvId = Number(id);
+      state.totalSeasons = data.number_of_seasons || 1;
+    }
+
     const inProviders = providers.results?.IN?.flatrate || providers.results?.IN?.buy || [];
 
     const ottBoxHTML = `
@@ -1495,13 +1798,16 @@ async function openDetails(id, type) {
         <label>Available On (India)</label>
         ${inProviders.length ? `
           <div class="ott-card-logos">
-            ${inProviders.map(p => `<img class="ott-card-logo" src="${IMG_BASE + 'w92' + p.logo_path}" title="${esc(p.provider_name)}">`).join('')}
+            ${inProviders.map(p => p.logo_path
+              ? `<img class="ott-card-logo" src="${IMG_BASE + 'w92' + p.logo_path}" title="${esc(p.provider_name)}" alt="${esc(p.provider_name)}">`
+              : '').join('')}
           </div>
         ` : '<span>Not Available</span>'}
       </div>
     `;
 
     let rightSideHTML = '';
+
     if (type === 'movie') {
       const releaseDateFormatted = formatDate(data.release_date);
       const status = getBoxOfficeStatus(data.budget, data.revenue);
@@ -1529,8 +1835,6 @@ async function openDetails(id, type) {
         ${ottBoxHTML}
       `;
     } else {
-      state.currentTvId = id;
-      state.totalSeasons = data.number_of_seasons || 1;
       const firstAirFormatted = formatDate(data.first_air_date);
 
       let tvStatusText = 'N/A';
@@ -1547,9 +1851,8 @@ async function openDetails(id, type) {
           <label>Creator</label>
           <span>${esc(director)}</span>
         </div>
-        
-        <!-- CLICKABLE SEASONS CARD TO OPEN SEPARATE SEASON GUIDE PAGE -->
-        <div class="info-card clickable-card" onclick="openSeasonsPage(${id}, ${data.number_of_seasons || 1}, '${esc(title)}')">
+
+        <div class="info-card clickable-card" onclick="openSeasonsPage(${id}, ${data.number_of_seasons || 1}, '${safeAttrText(title)}')">
           <label>Seasons & Episodes ➔</label>
           <span style="color:var(--gold)">${data.number_of_seasons || 'N/A'} S • ${data.number_of_episodes || 'N/A'} Ep</span>
         </div>
@@ -1560,7 +1863,7 @@ async function openDetails(id, type) {
         </div>
         <div class="info-card">
           <label>Show Status</label>
-          <span style="color:var(--gold)">${tvStatusText}</span>
+          <span style="color:var(--gold)">${esc(tvStatusText)}</span>
         </div>
         ${ottBoxHTML}
       `;
@@ -1568,7 +1871,7 @@ async function openDetails(id, type) {
 
     const castHTML = (credits.cast || []).slice(0, 16).map(c => `
       <div class="cast-card">
-        <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="">
+        <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="${esc(c.name)}" loading="lazy">
         <div class="cast-name">${esc(c.name)}</div>
         <div class="cast-character">${esc(c.character)}</div>
       </div>
@@ -1578,7 +1881,7 @@ async function openDetails(id, type) {
       <div class="detail-wrapper">
         <div class="detail-hero-grid">
           <div class="detail-banner-wrap">
-            <img id="detailBannerImg" class="detail-banner-img" src="${image(data.backdrop_path, 'w780')}" alt="">
+            <img id="detailBannerImg" class="detail-banner-img" src="${image(data.backdrop_path, 'w780')}" alt="${esc(title)}">
             <div class="detail-banner-gradient"></div>
 
             <div class="detail-top-right-rating">
@@ -1586,10 +1889,9 @@ async function openDetails(id, type) {
             </div>
 
             <div class="banner-overlay-content">
-              ${logoPath 
-                ? `<img class="detail-logo-img" src="${image(logoPath, 'w500')}" alt="${esc(title)}">` 
-                : `<h1 class="detail-title-fallback">${esc(title)}</h1>`
-              }
+              ${logoPath
+                ? `<img class="detail-logo-img" src="${image(logoPath, 'w500')}" alt="${esc(title)}">`
+                : `<h1 class="detail-title-fallback">${esc(title)}</h1>`}
             </div>
           </div>
 
@@ -1599,10 +1901,9 @@ async function openDetails(id, type) {
         </div>
 
         <div class="detail-info-body">
-          <p class="detail-overview">${esc(data.overview)}</p>
+          <p class="detail-overview">${esc(data.overview || 'No overview available.')}</p>
         </div>
 
-        <!-- MAIN CAST LIST DIRECTLY SHOWN ON DETAILS PAGE -->
         <div style="padding:0 16px;">
           <h2 class="page-title" style="margin-bottom:14px;">👥 Top Cast</h2>
           <div class="cast-grid">
@@ -1613,45 +1914,65 @@ async function openDetails(id, type) {
     `;
 
     startDetailBackdropSlideshow(imagesData.backdrops, data.backdrop_path);
-
   } catch(e) {
     body.innerHTML = `<div class="empty" style="margin-top:100px">Failed to load details.</div>`;
   }
 }
 
 /* ============================================================
-   SEPARATE SEASONS GUIDE PAGE
+   SEASONS GUIDE
 ============================================================ */
 
-function openSeasonsPage(tvId, totalSeasons, showTitle) {
-  history.pushState({ view: 'seasons', tvId, totalSeasons }, '', `#seasons-${tvId}`);
+function openSeasonsPage(tvId, totalSeasons, encodedTitle = '') {
+  /* Route state is the source of truth. Refresh can reconstruct the page from tvId. */
+  navigate({ view: 'seasons', tvId: Number(tvId) });
+}
 
-  document.getElementById("seasonsOverlay").classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-  document.getElementById("seasonsPageTitle").innerText = `${showTitle || 'TV Show'} — Season Guide`;
-
+async function restoreSeasonsPage(tvId, totalSeasons = null, showTitle = '') {
+  const overlay = document.getElementById("seasonsOverlay");
   const select = document.getElementById("seasonSelect");
-  select.innerHTML = Array.from({ length: totalSeasons }, (_, i) => 
-    `<option value="${i + 1}">Season ${i + 1}</option>`
-  ).join('');
 
-  loadSeasonEpisodes(tvId, 1);
+  overlay.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+
+  try {
+    if (!totalSeasons || !showTitle) {
+      const data = await api(`/tv/${tvId}`);
+      totalSeasons = data.number_of_seasons || totalSeasons || 1;
+      showTitle = data.name || showTitle || 'TV Show';
+      state.currentTvId = tvId;
+      state.totalSeasons = totalSeasons;
+    }
+
+    document.getElementById("seasonsPageTitle").innerText = `${showTitle || 'TV Show'} — Season Guide`;
+
+    select.innerHTML = Array.from({ length: totalSeasons }, (_, i) =>
+      `<option value="${i + 1}">Season ${i + 1}</option>`
+    ).join('');
+
+    await loadSeasonEpisodes(tvId, 1);
+  } catch(e) {
+    document.getElementById("episodesList").innerHTML = `<div class="empty">Failed to load season guide.</div>`;
+  }
 }
 
 function closeSeasonsPage() {
-  history.back();
+  if (parseHash().view === 'seasons') history.back();
+  else hideAllOverlays();
 }
 
 async function loadSeasonEpisodes(tvId, seasonNum) {
   const container = document.getElementById("episodesList");
   if (!container) return;
+
   container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading episodes...</div>`;
 
   try {
     const data = await api(`/tv/${tvId}/season/${seasonNum}`);
+
     container.innerHTML = (data.episodes || []).map(ep => `
       <div class="ep-card" onclick="openEpisodePage(${tvId}, ${seasonNum}, ${ep.episode_number})">
-        <img class="ep-still" src="${image(ep.still_path, 'w300')}" alt="">
+        <img class="ep-still" src="${image(ep.still_path, 'w300')}" alt="${esc(ep.name)}" loading="lazy">
         <div class="ep-info">
           <h4 class="ep-title">E${ep.episode_number}. ${esc(ep.name)}</h4>
           <div class="ep-meta">
@@ -1668,44 +1989,79 @@ async function loadSeasonEpisodes(tvId, seasonNum) {
 }
 
 /* ============================================================
-   SEPARATE EPISODE DETAILS PAGE WITH DEDICATED BUTTONS
+   EPISODE DETAILS + EPISODE MEDIA
 ============================================================ */
 
-async function openEpisodePage(tvId, seasonNum, epNum) {
-  history.pushState({ view: 'episode', tvId, seasonNum, epNum }, '', `#ep-S${seasonNum}E${epNum}`);
+function openEpisodePage(tvId, seasonNum, epNum) {
+  navigate({
+    view: 'episode',
+    tvId: Number(tvId),
+    seasonNum: Number(seasonNum),
+    epNum: Number(epNum)
+  });
+}
 
+async function loadEpisodePage(tvId, seasonNum, epNum) {
   const overlay = document.getElementById("episodeOverlay");
   const body = document.getElementById("episodeBody");
+
   overlay.classList.remove("hidden");
   document.body.style.overflow = "hidden";
-
   body.innerHTML = `<div class="loading" style="margin-top:100px"><div class="spinner"></div>Loading Episode details...</div>`;
 
   try {
-    const [epData, epImages] = await Promise.all([
-      api(`/tv/${tvId}/season/${seasonNum}/episode/${epNum}`),
-      api(`/tv/${tvId}/season/${seasonNum}/episode/${epNum}/images`)
-    ]);
+    /*
+      Episode details and episode images are loaded separately.
+      The images request is deliberately isolated so an image API
+      problem does not break the entire episode page.
+    */
+    const epData = await api(`/tv/${tvId}/season/${seasonNum}/episode/${epNum}`, {
+      append_to_response: 'images',
+      include_image_language: 'en,null'
+    });
 
-    document.getElementById("epPageTitle").innerText = `S${seasonNum} E${epNum}. ${epData.name}`;
+    let epImages = epData.images || { stills: [] };
+
+    try {
+      const imageData = await api(`/tv/${tvId}/season/${seasonNum}/episode/${epNum}/images`, {
+        include_image_language: 'en,null'
+      });
+      if (imageData && Array.isArray(imageData.stills)) {
+        epImages = imageData;
+      }
+    } catch(imageError) {
+      /* Keep epData.images fallback. */
+    }
+
+    const stills = Array.isArray(epImages.stills) ? epImages.stills : [];
+
+    document.getElementById("epPageTitle").innerText =
+      `S${seasonNum} E${epNum}. ${epData.name || 'Episode Details'}`;
 
     const guestCastHTML = (epData.guest_stars || []).map(c => `
       <div class="cast-card">
-        <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="">
+        <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="${esc(c.name)}" loading="lazy">
         <div class="cast-name">${esc(c.name)}</div>
         <div class="cast-character">${esc(c.character)}</div>
       </div>
     `).join('');
 
-    const stillsHTML = (epImages.stills || []).map(s => `
-      <img class="media-item" src="${image(s.file_path, 'w500')}" onclick="openLightbox('${image(s.file_path, 'original')}')" loading="lazy">
+    const stillsHTML = stills.map(s => `
+      <img
+        class="media-item"
+        src="${image(s.file_path, 'w500')}"
+        data-full-src="${image(s.file_path, 'original')}"
+        alt="Episode still"
+        onclick="openLightbox(this.dataset.fullSrc)"
+        loading="lazy"
+      >
     `).join('');
 
     body.innerHTML = `
       <div class="ep-details-container">
-        <img class="ep-hero-img" src="${image(epData.still_path, 'w780')}" alt="">
-        <h1 class="ep-detail-title">${esc(epData.name)}</h1>
-        
+        <img class="ep-hero-img" src="${image(epData.still_path, 'w780')}" alt="${esc(epData.name)}">
+        <h1 class="ep-detail-title">${esc(epData.name || 'Untitled Episode')}</h1>
+
         <div class="ep-detail-meta">
           <span>📅 Release Date: ${formatDate(epData.air_date)}</span>
           <span>⭐ Rating: ${epData.vote_average ? epData.vote_average.toFixed(1) : 'N/A'}</span>
@@ -1714,10 +2070,13 @@ async function openEpisodePage(tvId, seasonNum, epNum) {
 
         <p class="ep-detail-overview">${esc(epData.overview || 'No episode overview available.')}</p>
 
-        <!-- SEPARATE DEDICATED BUTTONS FOR CAST AND MEDIA -->
         <div class="ep-action-buttons">
-          <button class="ep-btn active" onclick="toggleEpSubTab('epCastSec', this)">🎭 Guest Stars / Cast</button>
-          <button class="ep-btn" onclick="toggleEpSubTab('epMediaSec', this)">🖼️ Episode Media (${(epImages.stills || []).length})</button>
+          <button type="button" class="ep-btn active" onclick="toggleEpSubTab('epCastSec', this)">
+            🎭 Guest Stars / Cast
+          </button>
+          <button type="button" class="ep-btn" onclick="toggleEpSubTab('epMediaSec', this)">
+            🖼️ Episode Media (${stills.length})
+          </button>
         </div>
 
         <div id="epCastSec">
@@ -1727,48 +2086,61 @@ async function openEpisodePage(tvId, seasonNum, epNum) {
         </div>
 
         <div id="epMediaSec" class="hidden">
-          <div class="media-gallery">
-            ${stillsHTML || '<div class="empty">No extra media stills for this episode.</div>'}
-          </div>
+          ${stillsHTML
+            ? `<div class="media-gallery">${stillsHTML}</div>`
+            : `<div class="episode-media-empty">
+                 <div class="episode-media-empty-icon">🖼️</div>
+                 <div>No extra media stills are available for this episode.</div>
+               </div>`}
         </div>
       </div>
     `;
-
   } catch(e) {
     body.innerHTML = `<div class="empty" style="margin-top:100px">Failed to load episode details.</div>`;
   }
 }
 
 function closeEpisodePage() {
-  history.back();
+  if (parseHash().view === 'episode') history.back();
+  else hideAllOverlays();
 }
 
 function toggleEpSubTab(secId, btnEl) {
-  document.getElementById("epCastSec").classList.add("hidden");
-  document.getElementById("epMediaSec").classList.add("hidden");
-  
-  document.querySelectorAll('.ep-action-buttons .ep-btn').forEach(b => b.classList.remove('active'));
-  
-  document.getElementById(secId).classList.remove("hidden");
-  btnEl.classList.add("active");
+  const cast = document.getElementById("epCastSec");
+  const media = document.getElementById("epMediaSec");
+  if (!cast || !media) return;
+
+  cast.classList.add("hidden");
+  media.classList.add("hidden");
+
+  document.querySelectorAll('.ep-action-buttons .ep-btn').forEach(b => {
+    b.classList.remove('active');
+  });
+
+  const target = document.getElementById(secId);
+  if (target) target.classList.remove("hidden");
+  if (btnEl) btnEl.classList.add("active");
 }
 
 function openLightbox(src) {
+  if (!src) return;
   const lb = document.getElementById("lightbox");
   document.getElementById("lightboxImg").src = src;
   lb.classList.remove("hidden");
 }
 
 /* ============================================================
-   INITIALIZATION
+   INITIALIZATION — RESTORE CURRENT HASH ON REFRESH
 ============================================================ */
 
-window.addEventListener("DOMContentLoaded", () => {
-  history.replaceState({ view: 'home' }, '', ' ');
-  loadHeroSection();
-  loadBrowse();
+window.addEventListener("DOMContentLoaded", async () => {
+  const initialRoute = parseHash();
+  const initialHash = routeHash(initialRoute);
+
+  /* Never overwrite the current route with Home. */
+  history.replaceState(initialRoute, '', initialHash);
+
   setupInfiniteScroll();
+  await renderRoute(initialRoute, true);
 });
 </script>
-</body>
-</html>
