@@ -7,15 +7,16 @@
 
 <style>
 :root{
-  --bg:#080a0f;
-  --panel:#11151e;
-  --panel2:#171c28;
-  --card:#121620;
-  --border:#222834;
+  --bg:#07090e;
+  --panel:#10141e;
+  --panel2:#161b28;
+  --card:#10141e;
+  --border:rgba(255,255,255,0.08);
   --text:#f3f4f6;
   --muted:#9ca3af;
-  --gold:#fbbf24;
-  --shadow:0 15px 35px rgba(0,0,0,.7);
+  --gold:#f59e0b; /* Warm Cinematic Gold */
+  --gold-glow:rgba(245, 158, 11, 0.25);
+  --shadow:0 20px 40px rgba(0,0,0,.85);
 }
 
 *{
@@ -32,7 +33,7 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  padding-bottom:85px; /* Safe space for bottom navigation */
+  padding-bottom:95px; /* Safe space for floating bottom navigation */
 }
 
 button, select, input{
@@ -53,17 +54,17 @@ a{
 }
 
 /* ============================================================
-   FIXED BOTTOM NAVIGATION BAR (MOBILE NATIVE FEEL)
+   MODERN FLOATING GLASS BOTTOM NAVIGATION
 ============================================================ */
 
 .bottom-nav-wrapper{
   position:fixed;
-  bottom:12px;
+  bottom:16px;
   left:50%;
   transform:translateX(-50%);
   z-index:2000;
-  width:calc(100% - 24px);
-  max-width:480px;
+  width:calc(100% - 32px);
+  max-width:420px;
   pointer-events:none;
 }
 
@@ -72,13 +73,13 @@ a{
   display:flex;
   align-items:center;
   justify-content:space-around;
-  background:rgba(18, 21, 30, 0.92);
-  border:1px solid rgba(255, 255, 255, 0.15);
-  border-radius:32px;
-  padding:6px 10px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.8);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  background:rgba(15, 18, 26, 0.85);
+  border:1px solid rgba(255, 255, 255, 0.12);
+  border-radius:28px;
+  padding:6px;
+  box-shadow:0 12px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.15);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
 }
 
 .nav-btn{
@@ -86,26 +87,23 @@ a{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:3px;
-  padding:8px 16px;
+  gap:4px;
+  padding:8px 12px;
   border-radius:20px;
-  border:0;
+  border:1px solid transparent;
   background:transparent;
   color:var(--muted);
   font-size:11px;
   font-weight:700;
-  transition:all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:all .25s cubic-bezier(0.4, 0, 0.2, 1);
   flex:1;
 }
 
-.nav-btn:hover{
-  color:#fff;
-}
-
 .nav-btn.active{
-  background:#2e3444;
+  background:linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%);
   color:#ffffff;
-  box-shadow:0 4px 12px rgba(0,0,0,.4);
+  border-color:rgba(245, 158, 11, 0.35);
+  box-shadow:0 4px 15px var(--gold-glow);
 }
 
 .nav-icon{
@@ -114,23 +112,30 @@ a{
   fill:currentColor;
   display:block;
   flex-shrink:0;
+  transition:transform 0.2s;
+}
+
+.nav-btn.active .nav-icon{
+  fill:var(--gold);
+  transform:scale(1.1);
 }
 
 /* ============================================================
-   16:9 HERO SLIDER SECTION
+   16:9 HERO BANNER (NO ROUNDED CORNERS)
 ============================================================ */
 
 .hero-wrapper{
   width:100%;
   aspect-ratio:16/9;
   position:relative;
-  border-radius:18px;
+  border-radius:0 !important; /* EXACT 16:9 SHARP EDGES */
   overflow:hidden;
-  margin-top:10px;
-  margin-bottom:24px;
-  background:#11151e;
-  border:1px solid var(--border);
+  margin-top:0;
+  margin-bottom:20px;
+  background:#0b0e14;
+  border-bottom:1px solid var(--border);
   box-shadow:var(--shadow);
+  cursor:pointer;
 }
 
 .hero-slide{
@@ -159,34 +164,35 @@ a{
 .hero-gradient{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(8,10,15,0) 20%, rgba(8,10,15,0.95) 100%),
-             linear-gradient(90deg, rgba(8,10,15,0.7) 0%, rgba(8,10,15,0) 70%);
+  background:linear-gradient(180deg, rgba(7,9,14,0) 25%, rgba(7,9,14,0.98) 100%),
+             linear-gradient(90deg, rgba(7,9,14,0.7) 0%, rgba(7,9,14,0) 65%);
 }
 
 .hero-content{
   position:absolute;
-  bottom:14px;
-  left:14px;
-  right:14px;
+  bottom:16px;
+  left:16px;
+  right:16px;
   z-index:3;
-  max-width:600px;
+  max-width:650px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
-  gap:6px;
+  gap:8px;
 }
 
 .hero-title{
-  font-size:clamp(18px, 4.5vw, 28px);
+  font-size:clamp(20px, 5vw, 32px);
   font-weight:900;
   margin:0;
   color:#fff;
   line-height:1.15;
-  text-shadow:0 2px 8px rgba(0,0,0,0.9);
+  text-shadow:0 2px 12px rgba(0,0,0,0.9);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
   width:100%;
+  letter-spacing:-0.02em;
 }
 
 .hero-meta-row{
@@ -197,35 +203,44 @@ a{
   font-size:11px;
 }
 
+.tmdb-rating-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(15, 18, 26, 0.8);
+  border:1px solid rgba(245, 158, 11, 0.4);
+  padding:4px 9px;
+  border-radius:8px;
+  color:var(--gold);
+  font-weight:800;
+  font-size:11px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+}
+
+.meta-badge{
+  background:rgba(255, 255, 255, 0.08);
+  border:1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  padding:4px 9px;
+  border-radius:8px;
+  color:#f3f4f6;
+  font-weight:700;
+  font-size:11px;
+}
+
 .hero-overview{
   font-size:12px;
   color:#d1d5db;
-  line-height:1.4;
+  line-height:1.45;
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
   overflow:hidden;
-  text-shadow:0 2px 6px rgba(0,0,0,0.8);
+  text-shadow:0 2px 6px rgba(0,0,0,0.9);
   margin:0;
-}
-
-.hero-cta-btn{
-  background:#fff;
-  color:#000;
-  border:0;
-  padding:6px 14px;
-  border-radius:8px;
-  font-weight:800;
-  font-size:11px;
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  margin-top:2px;
-  transition:transform .2s;
-}
-
-.hero-cta-btn:active{
-  transform:scale(0.96);
 }
 
 .hero-dots{
@@ -235,26 +250,28 @@ a{
   z-index:4;
   display:flex;
   gap:6px;
-  background:rgba(8,10,15,0.6);
-  padding:4px 8px;
-  border-radius:12px;
-  backdrop-filter:blur(6px);
+  background:rgba(7,9,14,0.65);
+  padding:5px 10px;
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.1);
 }
 
 .hero-dot{
   width:6px;
   height:6px;
   border-radius:50%;
-  background:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.35);
   border:0;
   padding:0;
   transition:all .3s;
 }
 
 .hero-dot.active{
-  background:#fff;
-  width:16px;
+  background:var(--gold);
+  width:18px;
   border-radius:8px;
+  box-shadow:0 0 8px var(--gold-glow);
 }
 
 /* ============================================================
@@ -265,9 +282,9 @@ a{
   position:fixed;
   inset:0;
   z-index:6000;
-  background:rgba(8,10,15,.96);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  background:rgba(7,9,14,.96);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -278,8 +295,8 @@ a{
   position:absolute;
   top:16px;
   right:16px;
-  background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
   color:#fff;
   border-radius:50%;
   width:36px;
@@ -298,8 +315,8 @@ a{
 
 .search-input-large{
   width:100%;
-  background:#171c28;
-  border:1px solid var(--border);
+  background:#141824;
+  border:1px solid rgba(255,255,255,0.15);
   border-radius:14px;
   color:#fff;
   padding:14px 16px 14px 46px;
@@ -308,7 +325,7 @@ a{
 }
 
 .search-input-large:focus{
-  border-color:#4b5563;
+  border-color:var(--gold);
 }
 
 .search-icon-inside{
@@ -326,7 +343,7 @@ a{
   max-height:65vh;
   overflow-y:auto;
   border-radius:14px;
-  background:#121620;
+  background:#10141e;
   border:1px solid var(--border);
 }
 
@@ -364,7 +381,7 @@ a{
 .container{
   max-width:1450px;
   margin:auto;
-  padding:10px 16px 40px;
+  padding:0 16px 40px;
 }
 
 .grid{
@@ -380,7 +397,7 @@ a{
   border:1px solid var(--border);
   border-radius:12px;
   overflow:hidden;
-  transition:transform .2s;
+  transition:transform .2s, border-color .2s;
 }
 
 .movie-card:active{
@@ -390,7 +407,7 @@ a{
 .poster-wrap{
   position:relative;
   aspect-ratio:2/3;
-  background:#1a202c;
+  background:#141824;
   overflow:hidden;
 }
 
@@ -408,14 +425,14 @@ a{
   display:inline-flex;
   align-items:center;
   gap:3px;
-  padding:3px 6px;
+  padding:3px 7px;
   border-radius:6px;
-  background:rgba(8,10,15,.85);
-  border:1px solid rgba(255,255,255,.15);
+  background:rgba(15,18,26,.85);
+  border:1px solid rgba(245,158,11,.35);
   color:var(--gold);
   font-size:11px;
   font-weight:800;
-  backdrop-filter:blur(6px);
+  backdrop-filter:blur(8px);
 }
 
 .card-body{
@@ -433,21 +450,21 @@ a{
 }
 
 /* ============================================================
-   DETAILS OVERLAY (MOBILE OPTIMIZED)
+   DETAILS OVERLAY (MOBILE OPTIMIZED & SHARP EDGES)
 ============================================================ */
 
 .detail-overlay{
   position:fixed;
   inset:0;
   z-index:5000;
-  background:#080a0f;
+  background:#07090e;
   overflow-y:auto;
 }
 
 .detail-wrapper{
   max-width:1450px;
   margin:0 auto;
-  padding:16px 16px 100px; /* space for bottom nav bar */
+  padding:0 0 100px;
 }
 
 .detail-hero-grid{
@@ -460,11 +477,11 @@ a{
 .detail-banner-wrap{
   width:100%;
   aspect-ratio:16/9;
-  border-radius:16px;
+  border-radius:0 !important; /* EXACT 16:9 NO ROUNDED CORNERS */
   overflow:hidden;
   position:relative;
-  background:#11151e;
-  border:1px solid var(--border);
+  background:#0b0e14;
+  border-bottom:1px solid var(--border);
   box-shadow:var(--shadow);
 }
 
@@ -480,16 +497,16 @@ a{
 .detail-banner-gradient{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(8,10,15,0) 20%, rgba(8,10,15,0.95) 100%),
-             linear-gradient(90deg, rgba(8,10,15,0.6) 0%, rgba(8,10,15,0) 60%);
+  background:linear-gradient(180deg, rgba(7,9,14,0) 25%, rgba(7,9,14,0.98) 100%),
+             linear-gradient(90deg, rgba(7,9,14,0.6) 0%, rgba(7,9,14,0) 60%);
   z-index:1;
 }
 
 .banner-overlay-content{
   position:absolute;
-  bottom:12px;
-  left:14px;
-  right:14px;
+  bottom:14px;
+  left:16px;
+  right:16px;
   z-index:2;
   display:flex;
   flex-direction:column;
@@ -509,7 +526,7 @@ a{
   font-weight:900;
   margin:0;
   color:#fff;
-  text-shadow:0 2px 8px rgba(0,0,0,0.9);
+  text-shadow:0 2px 10px rgba(0,0,0,0.95);
   line-height:1.15;
 }
 
@@ -521,40 +538,16 @@ a{
   font-size:11px;
 }
 
-.tmdb-rating-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:rgba(8,10,15,0.85);
-  border:1px solid rgba(255,255,255,0.2);
-  padding:4px 8px;
-  border-radius:6px;
-  color:var(--gold);
-  font-weight:800;
-  font-size:11px;
-  backdrop-filter:blur(6px);
-}
-
-.meta-badge{
-  background:rgba(8,10,15,0.85);
-  border:1px solid rgba(255,255,255,0.2);
-  backdrop-filter:blur(6px);
-  padding:4px 8px;
-  border-radius:6px;
-  color:#f3f4f6;
-  font-weight:700;
-  font-size:11px;
-}
-
 /* 2-Column Info Grid for Mobile */
 .detail-right-info{
   display:grid;
   grid-template-columns:repeat(2, minmax(0, 1fr));
   gap:10px;
+  padding:0 16px;
 }
 
 .info-card{
-  background:rgba(17, 21, 32, 0.85);
+  background:rgba(16, 20, 30, 0.85);
   border:1px solid var(--border);
   border-radius:12px;
   padding:10px 12px;
@@ -608,6 +601,7 @@ a{
 .status-flop{background:#dc2626;color:#fff}
 
 .detail-info-body{
+  padding:0 16px;
   margin-bottom:20px;
 }
 
@@ -615,7 +609,7 @@ a{
   color:#d1d5db;
   line-height:1.5;
   font-size:13px;
-  margin:0 0 16px;
+  margin:12px 0 16px;
 }
 
 /* Horizontal Scrolling Action Buttons */
@@ -623,7 +617,7 @@ a{
   display:flex;
   gap:8px;
   overflow-x:auto;
-  padding-bottom:6px;
+  padding:0 16px 6px;
   margin-bottom:20px;
   scrollbar-width:none;
 }
@@ -648,12 +642,13 @@ a{
 }
 
 .action-btn.active{
-  background:#2e3444;
-  border-color:rgba(255,255,255,0.4);
+  background:linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border-color:rgba(245, 158, 11, 0.4);
   color:#fff;
 }
 
 .detail-tab-content{
+  padding:0 16px;
   margin-bottom:30px;
 }
 
@@ -685,7 +680,7 @@ a{
   aspect-ratio:1/1;
   object-fit:cover;
   border-radius:8px;
-  background:#1a202c;
+  background:#141824;
   margin-bottom:6px;
 }
 
@@ -712,7 +707,7 @@ a{
 }
 
 .season-select{
-  background:#111520;
+  background:#10141e;
   border:1px solid var(--border);
   color:#fff;
   padding:8px 12px;
@@ -731,7 +726,7 @@ a{
 .ep-card{
   display:flex;
   gap:12px;
-  background:#111520;
+  background:#10141e;
   border:1px solid var(--border);
   border-radius:10px;
   padding:10px;
@@ -743,7 +738,7 @@ a{
   aspect-ratio:16/9;
   object-fit:cover;
   border-radius:6px;
-  background:#1a202c;
+  background:#141824;
   flex-shrink:0;
 }
 
@@ -794,7 +789,7 @@ a{
 
 .media-tab-btn.active{
   color:#fff;
-  border-color:#fff;
+  border-color:var(--gold);
 }
 
 .media-gallery{
@@ -808,7 +803,7 @@ a{
   border-radius:6px;
   object-fit:cover;
   width:100%;
-  background:#1a202c;
+  background:#141824;
   border:1px solid var(--border);
 }
 
@@ -820,7 +815,7 @@ a{
   aspect-ratio:16/9;
   object-fit:contain;
   padding:6px;
-  background:#111520;
+  background:#10141e;
 }
 
 /* EPISODE OVERLAY */
@@ -829,7 +824,7 @@ a{
   position:fixed;
   inset:0;
   z-index:7000;
-  background:#080a0f;
+  background:#07090e;
   overflow-y:auto;
 }
 
@@ -843,7 +838,7 @@ a{
   width:100%;
   aspect-ratio:16/9;
   object-fit:cover;
-  border-radius:14px;
+  border-radius:0;
   border:1px solid var(--border);
   margin-bottom:16px;
 }
@@ -899,7 +894,7 @@ a{
   width:24px;
   height:24px;
   border:3px solid var(--border);
-  border-top-color:#fff;
+  border-top-color:var(--gold);
   border-radius:50%;
   margin:0 auto 10px;
   animation:spin .8s linear infinite;
@@ -924,7 +919,7 @@ a{
 
 <body>
 
-<!-- FIXED BOTTOM NAVIGATION BAR -->
+<!-- FIXED MODERN GLASS BOTTOM NAVIGATION BAR -->
 <div class="bottom-nav-wrapper">
   <nav class="bottom-nav">
     <button type="button" class="nav-btn active" data-tab="home" onclick="setActiveTab('home')">
@@ -951,20 +946,22 @@ a{
   <button class="search-modal-close" onclick="closeSearchModal()">✕</button>
   <div class="search-box-large">
     <span class="search-icon-inside">🔍</span>
-    <input id="searchInput" class="search-input-large" type="search" placeholder="Type movie or TV show name..." autocomplete="off">
+    <input id="searchInput" class="search-input-large" type="search" placeholder="Search movies or TV shows..." autocomplete="off">
   </div>
   <div id="searchResultsList" class="search-results-list hidden"></div>
 </div>
 
-<main class="container">
-  <!-- 16:9 HERO SLIDER CAROUSEL -->
+<main>
+  <!-- 16:9 HERO BANNER (FULL SHARP EDGES) -->
   <div id="heroSection" class="hero-wrapper" onmouseenter="pauseHeroTimer()" onmouseleave="resumeHeroTimer()">
     <div id="heroSlidesContainer"></div>
     <div id="heroDots" class="hero-dots"></div>
   </div>
 
-  <div id="results" class="grid"></div>
-  <div id="scrollSentinel" style="height:40px; margin-top:20px;"></div>
+  <div class="container">
+    <div id="results" class="grid"></div>
+    <div id="scrollSentinel" style="height:40px; margin-top:20px;"></div>
+  </div>
 </main>
 
 <!-- DETAILS OVERLAY -->
@@ -1062,7 +1059,7 @@ function getBoxOfficeStatus(budget, revenue) {
 }
 
 /* ============================================================
-   BROWSER POPSTATE NAVIGATION HISTORY API
+   BROWSER POPSTATE NAVIGATION HISTORY
 ============================================================ */
 
 window.addEventListener('popstate', (e) => {
@@ -1085,7 +1082,7 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ============================================================
-   16:9 HERO CAROUSEL LOGIC (3-SEC AUTO SLIDE)
+   16:9 HERO CAROUSEL LOGIC (NO BUTTON - FULL BANNER CLICKABLE)
 ============================================================ */
 
 async function loadHeroSection() {
@@ -1130,7 +1127,7 @@ function renderHeroSlides() {
     const releaseDate = formatDate(item.release_date || item.first_air_date);
 
     return `
-      <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+      <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="openDetails(${item.id}, '${type}')">
         <img class="hero-backdrop" src="${image(item.backdrop_path, 'w780')}" alt="${esc(title)}">
         <div class="hero-gradient"></div>
         <div class="hero-content">
@@ -1141,16 +1138,13 @@ function renderHeroSlides() {
             <span class="meta-badge">${type === 'tv' ? '📺 TV SHOW' : '🎬 MOVIE'}</span>
           </div>
           <p class="hero-overview">${esc(item.overview)}</p>
-          <button class="hero-cta-btn" onclick="openDetails(${item.id}, '${type}')">
-            ℹ️ View Details
-          </button>
         </div>
       </div>
     `;
   }).join('');
 
   dotsContainer.innerHTML = state.heroItems.map((_, idx) => `
-    <button class="hero-dot ${idx === 0 ? 'active' : ''}" onclick="goToHeroSlide(${idx})"></button>
+    <button class="hero-dot ${idx === 0 ? 'active' : ''}" onclick="event.stopPropagation(); goToHeroSlide(${idx})"></button>
   `).join('');
 }
 
@@ -1161,7 +1155,7 @@ function startHeroTimer() {
   heroAutoTimer = setInterval(() => {
     state.heroIndex = (state.heroIndex + 1) % state.heroItems.length;
     updateHeroDOM();
-  }, 3000); // 3 Seconds Change
+  }, 3000);
 }
 
 function stopHeroTimer() {
@@ -1297,7 +1291,7 @@ function setupInfiniteScroll() {
 }
 
 /* ============================================================
-   DETAILS MODAL & BACKDROP AUTO SLIDESHOW
+   DETAILS MODAL & BACKDROP SLIDESHOW
 ============================================================ */
 
 function startDetailBackdropSlideshow(backdropsList, defaultBackdrop) {
