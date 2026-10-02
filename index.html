@@ -1760,9 +1760,11 @@ async function loadDetails(id, type) {
   body.innerHTML = `<div class="loading" style="margin-top:100px"><div class="spinner"></div>Loading details...</div>`;
 
   try {
+    // TV details do not need the full-series cast/credits request.
+    // Movie details still load credits for the Director + Top Cast section.
     const [data, credits, providers, imagesData] = await Promise.all([
       api(`/${type}/${id}`),
-      api(`/${type}/${id}/credits`),
+      type === 'movie' ? api(`/${type}/${id}/credits`) : Promise.resolve({ cast: [], crew: [] }),
       api(`/${type}/${id}/watch/providers`),
       api(`/${type}/${id}/images`, { include_image_language: 'en,null' })
     ]);
@@ -1869,13 +1871,22 @@ async function loadDetails(id, type) {
       `;
     }
 
-    const castHTML = (credits.cast || []).slice(0, 16).map(c => `
-      <div class="cast-card">
-        <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="${esc(c.name)}" loading="lazy">
-        <div class="cast-name">${esc(c.name)}</div>
-        <div class="cast-character">${esc(c.character)}</div>
+    // Top Cast is intentionally shown only for Movies.
+    // TV shows use Guest Stars / Cast at the episode level instead.
+    const topCastHTML = type === 'movie' ? `
+      <div style="padding:0 16px;">
+        <h2 class="page-title" style="margin-bottom:14px;">👥 Top Cast</h2>
+        <div class="cast-grid">
+          ${(credits.cast || []).slice(0, 16).map(c => `
+            <div class="cast-card">
+              <img class="cast-img" src="${image(c.profile_path, 'w185')}" alt="${esc(c.name)}" loading="lazy">
+              <div class="cast-name">${esc(c.name)}</div>
+              <div class="cast-character">${esc(c.character)}</div>
+            </div>
+          `).join('') || '<div class="empty">No cast info available.</div>'}
+        </div>
       </div>
-    `).join('');
+    ` : '';
 
     body.innerHTML = `
       <div class="detail-wrapper">
@@ -1904,12 +1915,7 @@ async function loadDetails(id, type) {
           <p class="detail-overview">${esc(data.overview || 'No overview available.')}</p>
         </div>
 
-        <div style="padding:0 16px;">
-          <h2 class="page-title" style="margin-bottom:14px;">👥 Top Cast</h2>
-          <div class="cast-grid">
-            ${castHTML || '<div class="empty">No cast info available.</div>'}
-          </div>
-        </div>
+        ${topCastHTML}
       </div>
     `;
 
