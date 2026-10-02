@@ -7,16 +7,16 @@
 
 <style>
 :root{
-  --bg:#07090e;
-  --panel:#10141e;
-  --panel2:#161b28;
-  --card:#10141e;
+  --bg:#000000;
+  --panel:#0a0d14;
+  --panel2:#121622;
+  --card:#0d111a;
   --border:rgba(255,255,255,0.08);
   --text:#f3f4f6;
   --muted:#9ca3af;
-  --gold:#f59e0b; /* Warm Cinematic Gold */
+  --gold:#f59e0b;
   --gold-glow:rgba(245, 158, 11, 0.25);
-  --shadow:0 20px 40px rgba(0,0,0,.85);
+  --shadow:0 20px 40px rgba(0,0,0,.9);
 }
 
 *{
@@ -24,16 +24,16 @@
   -webkit-tap-highlight-color:transparent;
 }
 
-html{
-  scroll-behavior:smooth;
-}
-
-body{
+html, body{
   margin:0;
+  padding:0;
   background:var(--bg);
   color:var(--text);
   font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  padding-bottom:95px; /* Safe space for floating bottom navigation */
+}
+
+body{
+  padding-bottom:95px;
 }
 
 button, select, input{
@@ -54,7 +54,7 @@ a{
 }
 
 /* ============================================================
-   MODERN FLOATING GLASS BOTTOM NAVIGATION
+   SOLID BLACK BOTTOM NAVIGATION (NO BLUR / NO TRANSPARENCY)
 ============================================================ */
 
 .bottom-nav-wrapper{
@@ -73,13 +73,13 @@ a{
   display:flex;
   align-items:center;
   justify-content:space-around;
-  background:rgba(15, 18, 26, 0.85);
-  border:1px solid rgba(255, 255, 255, 0.12);
+  background:#000000; /* Pure Solid Black */
+  border:1px solid rgba(255, 255, 255, 0.15);
   border-radius:28px;
   padding:6px;
-  box-shadow:0 12px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.15);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  box-shadow:0 12px 32px rgba(0,0,0,0.95);
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
 }
 
 .nav-btn{
@@ -100,10 +100,10 @@ a{
 }
 
 .nav-btn.active{
-  background:linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%);
+  background:#141824;
   color:#ffffff;
-  border-color:rgba(245, 158, 11, 0.35);
-  box-shadow:0 4px 15px var(--gold-glow);
+  border-color:rgba(245, 158, 11, 0.4);
+  box-shadow:0 2px 10px var(--gold-glow);
 }
 
 .nav-icon{
@@ -121,18 +121,18 @@ a{
 }
 
 /* ============================================================
-   16:9 HERO BANNER (NO ROUNDED CORNERS)
+   16:9 HERO BANNER (ONLY NAME/LOGO & RATING)
 ============================================================ */
 
 .hero-wrapper{
   width:100%;
   aspect-ratio:16/9;
   position:relative;
-  border-radius:0 !important; /* EXACT 16:9 SHARP EDGES */
+  border-radius:0 !important;
   overflow:hidden;
   margin-top:0;
   margin-bottom:20px;
-  background:#0b0e14;
+  background:#000000;
   border-bottom:1px solid var(--border);
   box-shadow:var(--shadow);
   cursor:pointer;
@@ -164,8 +164,8 @@ a{
 .hero-gradient{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(7,9,14,0) 25%, rgba(7,9,14,0.98) 100%),
-             linear-gradient(90deg, rgba(7,9,14,0.7) 0%, rgba(7,9,14,0) 65%);
+  background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.95) 100%),
+             linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 65%);
 }
 
 .hero-content{
@@ -174,7 +174,6 @@ a{
   left:16px;
   right:16px;
   z-index:3;
-  max-width:650px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -187,139 +186,99 @@ a{
   margin:0;
   color:#fff;
   line-height:1.15;
-  text-shadow:0 2px 12px rgba(0,0,0,0.9);
+  text-shadow:0 2px 12px rgba(0,0,0,0.95);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  width:100%;
+  max-width:80%;
   letter-spacing:-0.02em;
-}
-
-.hero-meta-row{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:6px;
-  font-size:11px;
 }
 
 .tmdb-rating-pill{
   display:inline-flex;
   align-items:center;
   gap:4px;
-  background:rgba(15, 18, 26, 0.8);
+  background:rgba(0, 0, 0, 0.85);
   border:1px solid rgba(245, 158, 11, 0.4);
   padding:4px 9px;
   border-radius:8px;
   color:var(--gold);
   font-weight:800;
   font-size:11px;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+  box-shadow:0 2px 8px rgba(0,0,0,0.8);
 }
 
-.meta-badge{
-  background:rgba(255, 255, 255, 0.08);
-  border:1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  padding:4px 9px;
-  border-radius:8px;
-  color:#f3f4f6;
-  font-weight:700;
-  font-size:11px;
-}
-
-.hero-overview{
-  font-size:12px;
-  color:#d1d5db;
-  line-height:1.45;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  text-shadow:0 2px 6px rgba(0,0,0,0.9);
-  margin:0;
-}
-
+/* SMALL WHITE DOTS (NO BLUR CONTAINER) */
 .hero-dots{
   position:absolute;
   top:12px;
   right:12px;
   z-index:4;
   display:flex;
-  gap:6px;
-  background:rgba(7,9,14,0.65);
-  padding:5px 10px;
-  border-radius:20px;
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.1);
+  align-items:center;
+  gap:5px;
+  background:transparent !important;
+  padding:0;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:none !important;
 }
 
 .hero-dot{
-  width:6px;
-  height:6px;
+  width:5px;
+  height:5px;
   border-radius:50%;
-  background:rgba(255,255,255,0.35);
+  background:rgba(255, 255, 255, 0.4);
   border:0;
   padding:0;
-  transition:all .3s;
+  transition:all .3s ease;
 }
 
 .hero-dot.active{
-  background:var(--gold);
-  width:18px;
-  border-radius:8px;
-  box-shadow:0 0 8px var(--gold-glow);
+  background:#ffffff !important;
+  width:12px;
+  border-radius:6px;
+  box-shadow:0 0 6px rgba(255,255,255,0.8);
 }
 
 /* ============================================================
-   SEARCH OVERLAY MODAL
+   SOLID BLACK SEARCH PAGE (NO BLUR)
 ============================================================ */
 
-.search-modal{
+.search-page{
   position:fixed;
   inset:0;
   z-index:6000;
-  background:rgba(7,9,14,.96);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  background:#000000; /* Pure Solid Black */
   display:flex;
   flex-direction:column;
-  align-items:center;
-  padding:50px 16px 20px;
+  padding:16px 16px 100px;
+  overflow-y:auto;
 }
 
-.search-modal-close{
-  position:absolute;
-  top:16px;
-  right:16px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.15);
-  color:#fff;
-  border-radius:50%;
-  width:36px;
-  height:36px;
-  font-size:15px;
+.search-header{
   display:flex;
   align-items:center;
-  justify-content:center;
+  gap:12px;
+  margin-bottom:20px;
+  max-width:800px;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
 }
 
-.search-box-large{
-  width:100%;
-  max-width:600px;
+.search-input-wrap{
   position:relative;
+  flex:1;
 }
 
 .search-input-large{
   width:100%;
-  background:#141824;
-  border:1px solid rgba(255,255,255,0.15);
+  background:#0f131d;
+  border:1px solid rgba(255,255,255,0.18);
   border-radius:14px;
   color:#fff;
-  padding:14px 16px 14px 46px;
+  padding:14px 16px 14px 44px;
   font-size:15px;
   outline:none;
 }
@@ -336,42 +295,57 @@ a{
   color:var(--muted);
 }
 
-.search-results-list{
-  width:100%;
-  max-width:600px;
-  margin-top:12px;
-  max-height:65vh;
-  overflow-y:auto;
-  border-radius:14px;
-  background:#10141e;
-  border:1px solid var(--border);
+.search-close-btn{
+  background:#141824;
+  border:1px solid rgba(255,255,255,0.15);
+  color:#fff;
+  border-radius:12px;
+  padding:12px 16px;
+  font-weight:700;
+  font-size:13px;
 }
 
-.search-item{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:10px 12px;
-  border-bottom:1px solid var(--border);
+.search-results-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));
+  gap:14px;
+  max-width:1200px;
+  width:100%;
+  margin:0 auto;
+}
+
+.search-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
   cursor:pointer;
 }
 
-.search-item img{
-  width:40px;
-  height:56px;
+.search-card-poster{
+  width:100%;
+  aspect-ratio:2/3;
   object-fit:cover;
-  border-radius:6px;
+  background:#141824;
 }
 
-.search-item-info strong{
-  font-size:13px;
-  display:block;
+.search-card-body{
+  padding:8px;
+}
+
+.search-card-title{
+  font-size:12px;
+  font-weight:700;
   color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin:0 0 2px;
 }
 
-.search-item-info small{
+.search-card-sub{
+  font-size:10px;
   color:var(--muted);
-  font-size:11px;
 }
 
 /* ============================================================
@@ -397,7 +371,7 @@ a{
   border:1px solid var(--border);
   border-radius:12px;
   overflow:hidden;
-  transition:transform .2s, border-color .2s;
+  transition:transform .2s;
 }
 
 .movie-card:active{
@@ -427,12 +401,11 @@ a{
   gap:3px;
   padding:3px 7px;
   border-radius:6px;
-  background:rgba(15,18,26,.85);
+  background:rgba(0,0,0,.85);
   border:1px solid rgba(245,158,11,.35);
   color:var(--gold);
   font-size:11px;
   font-weight:800;
-  backdrop-filter:blur(8px);
 }
 
 .card-body{
@@ -450,14 +423,14 @@ a{
 }
 
 /* ============================================================
-   DETAILS OVERLAY (MOBILE OPTIMIZED & SHARP EDGES)
+   DETAILS OVERLAY
 ============================================================ */
 
 .detail-overlay{
   position:fixed;
   inset:0;
   z-index:5000;
-  background:#07090e;
+  background:#000000;
   overflow-y:auto;
 }
 
@@ -474,13 +447,14 @@ a{
   margin-bottom:20px;
 }
 
+/* DETAIL BANNER (HERO) — ONLY LOGO/TITLE & TOP RIGHT RATING */
 .detail-banner-wrap{
   width:100%;
   aspect-ratio:16/9;
-  border-radius:0 !important; /* EXACT 16:9 NO ROUNDED CORNERS */
+  border-radius:0 !important;
   overflow:hidden;
   position:relative;
-  background:#0b0e14;
+  background:#000000;
   border-bottom:1px solid var(--border);
   box-shadow:var(--shadow);
 }
@@ -497,28 +471,33 @@ a{
 .detail-banner-gradient{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(7,9,14,0) 25%, rgba(7,9,14,0.98) 100%),
-             linear-gradient(90deg, rgba(7,9,14,0.6) 0%, rgba(7,9,14,0) 60%);
+  background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.95) 100%),
+             linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 60%);
   z-index:1;
+}
+
+.detail-top-right-rating{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:3;
 }
 
 .banner-overlay-content{
   position:absolute;
-  bottom:14px;
+  bottom:16px;
   left:16px;
   right:16px;
   z-index:2;
   display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:8px;
+  align-items:flex-end;
 }
 
 .detail-logo-img{
   max-height:60px;
   max-width:70%;
   object-fit:contain;
-  filter:drop-shadow(0 3px 8px rgba(0,0,0,0.9));
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,0.95));
 }
 
 .detail-title-fallback{
@@ -530,15 +509,7 @@ a{
   line-height:1.15;
 }
 
-.detail-meta-row-overlay{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:6px;
-  font-size:11px;
-}
-
-/* 2-Column Info Grid for Mobile */
+/* 2-Column Info Grid */
 .detail-right-info{
   display:grid;
   grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -547,7 +518,7 @@ a{
 }
 
 .info-card{
-  background:rgba(16, 20, 30, 0.85);
+  background:#0d111a;
   border:1px solid var(--border);
   border-radius:12px;
   padding:10px 12px;
@@ -612,7 +583,6 @@ a{
   margin:12px 0 16px;
 }
 
-/* Horizontal Scrolling Action Buttons */
 .section-actions-bar{
   display:flex;
   gap:8px;
@@ -638,11 +608,10 @@ a{
   gap:6px;
   white-space:nowrap;
   flex-shrink:0;
-  transition:all .2s;
 }
 
 .action-btn.active{
-  background:linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%);
+  background:#1e2538;
   border-color:rgba(245, 158, 11, 0.4);
   color:#fff;
 }
@@ -707,7 +676,7 @@ a{
 }
 
 .season-select{
-  background:#10141e;
+  background:#0d111a;
   border:1px solid var(--border);
   color:#fff;
   padding:8px 12px;
@@ -726,7 +695,7 @@ a{
 .ep-card{
   display:flex;
   gap:12px;
-  background:#10141e;
+  background:#0d111a;
   border:1px solid var(--border);
   border-radius:10px;
   padding:10px;
@@ -815,16 +784,15 @@ a{
   aspect-ratio:16/9;
   object-fit:contain;
   padding:6px;
-  background:#10141e;
+  background:#0d111a;
 }
 
 /* EPISODE OVERLAY */
-
 .episode-overlay{
   position:fixed;
   inset:0;
   z-index:7000;
-  background:#07090e;
+  background:#000000;
   overflow-y:auto;
 }
 
@@ -910,16 +878,13 @@ a{
 
 @media(max-width:600px){
   .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-  .hero-overview{ display:none; }
-  .ep-card{ flex-direction:column; }
-  .ep-still{ width:100%; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- FIXED MODERN GLASS BOTTOM NAVIGATION BAR -->
+<!-- FIXED SOLID BLACK BOTTOM NAVIGATION BAR -->
 <div class="bottom-nav-wrapper">
   <nav class="bottom-nav">
     <button type="button" class="nav-btn active" data-tab="home" onclick="setActiveTab('home')">
@@ -941,18 +906,20 @@ a{
   </nav>
 </div>
 
-<!-- SEARCH MODAL -->
-<div id="searchModal" class="search-modal hidden">
-  <button class="search-modal-close" onclick="closeSearchModal()">✕</button>
-  <div class="search-box-large">
-    <span class="search-icon-inside">🔍</span>
-    <input id="searchInput" class="search-input-large" type="search" placeholder="Search movies or TV shows..." autocomplete="off">
+<!-- SOLID BLACK SEARCH PAGE -->
+<div id="searchPage" class="search-page hidden">
+  <div class="search-header">
+    <div class="search-input-wrap">
+      <span class="search-icon-inside">🔍</span>
+      <input id="searchInput" class="search-input-large" type="search" placeholder="Search movies or TV shows..." autocomplete="off">
+    </div>
+    <button class="search-close-btn" onclick="closeSearchModal()">Close</button>
   </div>
-  <div id="searchResultsList" class="search-results-list hidden"></div>
+  <div id="searchResultsGrid" class="search-results-grid"></div>
 </div>
 
 <main>
-  <!-- 16:9 HERO BANNER (FULL SHARP EDGES) -->
+  <!-- 16:9 HERO BANNER (ONLY TITLE/LOGO + RATING) -->
   <div id="heroSection" class="hero-wrapper" onmouseenter="pauseHeroTimer()" onmouseleave="resumeHeroTimer()">
     <div id="heroSlidesContainer"></div>
     <div id="heroDots" class="hero-dots"></div>
@@ -1029,11 +996,12 @@ function esc(str) {
   return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 }
 
+// Day Month Year Format (e.g., 02 October 2026)
 function formatDate(dateStr) {
   if (!dateStr) return 'N/A';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
 function formatRuntime(mins) {
@@ -1070,19 +1038,24 @@ window.addEventListener('popstate', (e) => {
   if (!currentState || currentState.view === 'home') {
     document.getElementById("detailOverlay").classList.add("hidden");
     document.getElementById("episodeOverlay").classList.add("hidden");
+    document.getElementById("searchPage").classList.add("hidden");
     document.body.style.overflow = "";
   } else if (currentState.view === 'details') {
     document.getElementById("detailOverlay").classList.remove("hidden");
     document.getElementById("episodeOverlay").classList.add("hidden");
+    document.getElementById("searchPage").classList.add("hidden");
     document.body.style.overflow = "hidden";
   } else if (currentState.view === 'episode') {
     document.getElementById("episodeOverlay").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  } else if (currentState.view === 'search') {
+    document.getElementById("searchPage").classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
 });
 
 /* ============================================================
-   16:9 HERO CAROUSEL LOGIC (NO BUTTON - FULL BANNER CLICKABLE)
+   16:9 HERO CAROUSEL LOGIC (NAME/LOGO AND RATING ONLY)
 ============================================================ */
 
 async function loadHeroSection() {
@@ -1124,7 +1097,6 @@ function renderHeroSlides() {
     const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
     const title = item.title || item.name;
     const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-    const releaseDate = formatDate(item.release_date || item.first_air_date);
 
     return `
       <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="openDetails(${item.id}, '${type}')">
@@ -1132,12 +1104,7 @@ function renderHeroSlides() {
         <div class="hero-gradient"></div>
         <div class="hero-content">
           <h2 class="hero-title">${esc(title)}</h2>
-          <div class="hero-meta-row">
-            <span class="tmdb-rating-pill">⭐ ${rating}</span>
-            <span class="meta-badge">📅 ${releaseDate}</span>
-            <span class="meta-badge">${type === 'tv' ? '📺 TV SHOW' : '🎬 MOVIE'}</span>
-          </div>
-          <p class="hero-overview">${esc(item.overview)}</p>
+          <div class="tmdb-rating-pill">⭐ ${rating}</div>
         </div>
       </div>
     `;
@@ -1194,6 +1161,7 @@ function updateHeroDOM() {
 ============================================================ */
 
 function setActiveTab(tab) {
+  closeSearchModal();
   if (state.tab === tab) return;
   state.tab = tab;
   state.page = 1;
@@ -1208,12 +1176,15 @@ function setActiveTab(tab) {
 }
 
 function openSearchModal() {
-  document.getElementById("searchModal").classList.remove("hidden");
+  history.pushState({ view: 'search' }, '', '#search');
+  document.getElementById("searchPage").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
   document.getElementById("searchInput").focus();
 }
 
 function closeSearchModal() {
-  document.getElementById("searchModal").classList.add("hidden");
+  document.getElementById("searchPage").classList.add("hidden");
+  document.body.style.overflow = "";
 }
 
 async function loadBrowse(append = false) {
@@ -1291,7 +1262,7 @@ function setupInfiniteScroll() {
 }
 
 /* ============================================================
-   DETAILS MODAL & BACKDROP SLIDESHOW
+   DETAILS MODAL (STRICT: ONLY NAME/LOGO & TOP-RIGHT RATING IN HERO)
 ============================================================ */
 
 function startDetailBackdropSlideshow(backdropsList, defaultBackdrop) {
@@ -1348,7 +1319,6 @@ async function openDetails(id, type) {
     };
 
     const title = data.title || data.name;
-    const releaseDate = formatDate(data.release_date || data.first_air_date);
     const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
     
     const logoObj = (imagesData.logos || []).find(l => l.iso_639_1 === 'en') || (imagesData.logos || [])[0];
@@ -1382,7 +1352,9 @@ async function openDetails(id, type) {
 
     let rightSideHTML = '';
     if (type === 'movie') {
+      const releaseDateFormatted = formatDate(data.release_date);
       const status = getBoxOfficeStatus(data.budget, data.revenue);
+
       rightSideHTML = `
         <div class="info-card">
           <label>Director</label>
@@ -1391,6 +1363,10 @@ async function openDetails(id, type) {
         <div class="info-card">
           <label>Runtime</label>
           <span>${formatRuntime(data.runtime)}</span>
+        </div>
+        <div class="info-card">
+          <label>Release Date</label>
+          <span>${releaseDateFormatted}</span>
         </div>
         <div class="info-card">
           <label>Box Office</label>
@@ -1402,6 +1378,18 @@ async function openDetails(id, type) {
         ${ottBoxHTML}
       `;
     } else {
+      // TV Show Specific Logic
+      const firstAirFormatted = formatDate(data.first_air_date);
+
+      let tvStatusText = 'N/A';
+      if (data.next_episode_to_air && data.next_episode_to_air.air_date) {
+        tvStatusText = `Next Ep: ${formatDate(data.next_episode_to_air.air_date)}`;
+      } else if (data.status === 'Ended' || data.status === 'Canceled') {
+        tvStatusText = 'Completed / Ended';
+      } else if (data.status) {
+        tvStatusText = data.status;
+      }
+
       rightSideHTML = `
         <div class="info-card">
           <label>Creator</label>
@@ -1410,6 +1398,14 @@ async function openDetails(id, type) {
         <div class="info-card">
           <label>Seasons & Episodes</label>
           <span>${data.number_of_seasons || 'N/A'} S • ${data.number_of_episodes || 'N/A'} Ep</span>
+        </div>
+        <div class="info-card">
+          <label>First Episode Air Date</label>
+          <span>${firstAirFormatted}</span>
+        </div>
+        <div class="info-card">
+          <label>Show Status</label>
+          <span style="color:var(--gold)">${tvStatusText}</span>
         </div>
         ${ottBoxHTML}
       `;
@@ -1429,17 +1425,16 @@ async function openDetails(id, type) {
           <div class="detail-banner-wrap">
             <img id="detailBannerImg" class="detail-banner-img" src="${image(data.backdrop_path, 'w780')}" alt="">
             <div class="detail-banner-gradient"></div>
-            
+
+            <div class="detail-top-right-rating">
+              <div class="tmdb-rating-pill">⭐ ${rating}</div>
+            </div>
+
             <div class="banner-overlay-content">
               ${logoPath 
                 ? `<img class="detail-logo-img" src="${image(logoPath, 'w500')}" alt="${esc(title)}">` 
                 : `<h1 class="detail-title-fallback">${esc(title)}</h1>`
               }
-              <div class="detail-meta-row-overlay">
-                <div class="tmdb-rating-pill">⭐ ${rating} / 10</div>
-                <span class="meta-badge">📅 ${releaseDate}</span>
-                <span class="meta-badge">${type === 'tv' ? '📺 TV SHOW' : '🎬 MOVIE'}</span>
-              </div>
             </div>
           </div>
 
@@ -1633,40 +1628,38 @@ function openLightbox(src) {
 ============================================================ */
 
 const searchInput = document.getElementById("searchInput");
-const searchResultsList = document.getElementById("searchResultsList");
+const searchResultsGrid = document.getElementById("searchResultsGrid");
 
 searchInput.addEventListener("input", async (e) => {
   const q = e.target.value.trim();
   if (q.length < 2) {
-    searchResultsList.classList.add("hidden");
+    searchResultsGrid.innerHTML = '';
     return;
   }
 
   try {
     const data = await api("/search/multi", { query: q });
-    const items = (data.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv').slice(0, 10);
+    const items = (data.results || []).filter(i => i.media_type === 'movie' || i.media_type === 'tv').slice(0, 16);
 
     if (!items.length) {
-      searchResultsList.classList.add("hidden");
+      searchResultsGrid.innerHTML = `<div class="empty">No results found for "${esc(q)}".</div>`;
       return;
     }
 
-    searchResultsList.innerHTML = items.map(item => {
+    searchResultsGrid.innerHTML = items.map(item => {
       const type = item.media_type;
       const title = item.title || item.name;
       const date = formatDate(item.release_date || item.first_air_date);
       return `
-        <div class="search-item" onclick="openDetails(${item.id}, '${type}')">
-          <img src="${image(item.poster_path, 'w185')}" alt="">
-          <div class="search-item-info">
-            <strong>${esc(title)}</strong>
-            <small>${type.toUpperCase()} • ${date}</small>
+        <div class="search-card" onclick="openDetails(${item.id}, '${type}')">
+          <img class="search-card-poster" src="${image(item.poster_path, 'w342')}" alt="">
+          <div class="search-card-body">
+            <h4 class="search-card-title">${esc(title)}</h4>
+            <div class="search-card-sub">${type.toUpperCase()} • ${date}</div>
           </div>
         </div>
       `;
     }).join("");
-
-    searchResultsList.classList.remove("hidden");
   } catch(e) {}
 });
 
